@@ -1,0 +1,2 @@
+public class RouteCompareInteractorTest {
+}
