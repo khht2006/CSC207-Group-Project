@@ -1,5 +1,7 @@
 package main.java.view;
 
+import main.java.interface_adapter.GetBikeCostViewModel;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,36 +10,29 @@ import java.awt.*;
  */
 public class GetCostPanel extends JPanel {
 
-    private final JLabel titleLabel;
-    //    private final JLabel walkCostLabel;
+    private final GetBikeCostViewModel viewModel;
     private final JLabel bikeCostLabel;
     private final JButton backButton;
+    private final JButton compareButton;
 
-    public GetCostPanel() {
-        titleLabel = new JLabel("Cost Comparison", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+    public GetCostPanel(GetBikeCostViewModel viewModel) {
+        this.viewModel = viewModel;
+        setLayout(new BorderLayout());
 
-//        walkCostLabel = new JLabel("Walking cost: $ 0", SwingConstants.CENTER);
-        bikeCostLabel = new JLabel("Biking cost: --", SwingConstants.CENTER);
+        bikeCostLabel = new JLabel("Biking cost:", SwingConstants.CENTER);
 
-        backButton = new JButton("Back to Compare Summary");
+        backButton = new JButton("Back");
 
-        setLayout(new BorderLayout(10, 10));
-        JPanel costPanel = new JPanel(new GridLayout(3, 1, 5, 5));
-//        costPanel.add(walkCostLabel);
-        costPanel.add(bikeCostLabel);
+        compareButton = new JButton("Compare Summary");
 
-        add(titleLabel, BorderLayout.NORTH);
-        add(costPanel, BorderLayout.CENTER);
+        add(bikeCostLabel, BorderLayout.CENTER);
         add(backButton, BorderLayout.SOUTH);
+        add(compareButton, BorderLayout.EAST);
     }
-    /**
-     * Update displayed costs (will be called by presenter or controller)
-     *
-     * @return
-     */
-    public JButton updateCosts(double walkCost, double bikeCost) {
-        bikeCostLabel.setText(String.format("Biking cost: $%.2f", bikeCost));
-        return null;
+    public JButton getBackButton() {
+        return backButton;
+    }
+    public JButton getCompareButton() {
+        return compareButton;
     }
 }
