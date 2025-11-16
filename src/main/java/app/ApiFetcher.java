@@ -7,11 +7,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import app.Config;
+// ... existing code ...
 
 /**
  * Low-level client for external APIs:
  * - OpenRouteService directions (walking, cycling)
+ * - OpenRouteService geocoding (search locations)
  * - Toronto Bike Share GBFS endpoints
  *
  * This class returns raw JSON strings.
@@ -23,6 +24,7 @@ public class ApiFetcher {
 
     private static final String ORS_BASE_URL = "https://api.openrouteservice.org";
     private static final String ORS_DIRECTIONS_PATH = "/v2/directions";
+    private static final String ORS_GEOCODE_PATH = "/geocode/search";
 
     // --- Bike Share endpoints ----------------------------------------------
 
@@ -49,7 +51,7 @@ public class ApiFetcher {
     /**
      * Generic directions call for a given profile.
      *
-     * @param profile  ORS profile, e.g. "foot-walking", "cycling-regular"
+     * @param profile ORS profile, e.g. "foot-walking", "cycling-regular"
      */
     public String fetchDirectionsJson(String profile,
                                       double startLon, double startLat,
@@ -103,6 +105,49 @@ public class ApiFetcher {
                                              double endLon, double endLat)
             throws IOException, InterruptedException {
         return fetchDirectionsJson("cycling-regular", startLon, startLat, endLon, endLat);
+    }
+
+    // --- Public methods: ORS geocoding -----------------------------------
+
+    /**
+     * Calls ORS geocode/search to find locations matching the given text.
+     *
+     * This returns raw JSON. Use a higher-level service to parse into Location entities.
+     *
+     * Docs: https://openrouteservice.org/dev/#/api-docs/geocode/search
+     */
+    public String fetchGeocodeJson(String text, int maxResults) throws IOException, InterruptedException {
+        if (text == null || text.isBlank()) {
+            throw new IllegalArgumentException("Geocode text must not be blank.");
+        }
+        if (maxResults <= 0) {
+            maxResults = 5;
+        }
+
+        String encodedText = encode(text);
+        String url = ORS_BASE_URL + ORS_GEOCODE_PATH
+                + "?api_key=" + encode(orsApiKey)
+                + "&text=" + encodedText
+                + "&size=" + maxResults
+                // Focus on Toronto / Canada; adjust as needed
+                + "&boundary.country=CA";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Accept", "application/json")
+                .GET()
+                .build();
+
+        HttpResponse<String> response =
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        int status = response.statusCode();
+        if (status < 200 || status >= 300) {
+            throw new IOException("ORS geocode request failed (" + status + "): "
+                    + response.body());
+        }
+
+        return response.body();
     }
 
     // --- Public methods: Bike Share GBFS ----------------------------------
