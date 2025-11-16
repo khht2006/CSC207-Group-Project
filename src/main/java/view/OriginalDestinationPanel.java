@@ -4,21 +4,34 @@ import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Panel where user enters:
  * - current location (origin)
  * - destination
  *
- * This panel does not perform geocoding; a controller should use the text
- * and call a Geocode use case to get Location entities.
+ * Also displays a list of text suggestions (addresses/place names).
+ * The panel is "dumb": it does not call APIs itself.
  */
 public class OriginalDestinationPanel extends JPanel {
+
+    public enum ActiveField {
+        ORIGIN,
+        DESTINATION,
+        NONE
+    }
 
     private final JTextField originField;
     private final JTextField destinationField;
     private final JButton continueButton;
     private final JButton swapButton;
+
+    private final DefaultListModel<String> suggestionListModel;
+    private final JList<String> suggestionList;
+
+    private ActiveField activeField = ActiveField.NONE;
 
     public OriginalDestinationPanel() {
         super(new BorderLayout(10, 10));
@@ -58,6 +71,16 @@ public class OriginalDestinationPanel extends JPanel {
 
         this.add(centerPanel, BorderLayout.CENTER);
 
+        // Suggestion list on the left
+        suggestionListModel = new DefaultListModel<>();
+        suggestionList = new JList<>(suggestionListModel);
+        suggestionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane suggestionScroll = new JScrollPane(suggestionList);
+        suggestionScroll.setBorder(BorderFactory.createTitledBorder("Suggestions"));
+
+        this.add(suggestionScroll, BorderLayout.WEST);
+
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         swapButton = new JButton("Swap");
         continueButton = new JButton("Continue");
@@ -65,8 +88,21 @@ public class OriginalDestinationPanel extends JPanel {
 
         bottomPanel.add(swapButton);
         bottomPanel.add(continueButton);
-
         this.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Track which field is active (for applying suggestions)
+        originField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                activeField = ActiveField.ORIGIN;
+            }
+        });
+        destinationField.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                activeField = ActiveField.DESTINATION;
+            }
+        });
 
         // Enable "Continue" only when both fields are non-empty
         DocumentListener docListener = new javax.swing.event.DocumentListener() {
@@ -107,12 +143,51 @@ public class OriginalDestinationPanel extends JPanel {
         destinationField.setText(text == null ? "" : text);
     }
 
+    public ActiveField getActiveField() {
+        return activeField;
+    }
+
     public void addContinueListener(ActionListener listener) {
         continueButton.addActionListener(listener);
     }
 
     public void addSwapListener(ActionListener listener) {
         swapButton.addActionListener(listener);
+    }
+
+    public void addOriginDocumentListener(DocumentListener listener) {
+        originField.getDocument().addDocumentListener(Objects.requireNonNull(listener));
+    }
+
+    public void addDestinationDocumentListener(DocumentListener listener) {
+        destinationField.getDocument().addDocumentListener(Objects.requireNonNull(listener));
+    }
+
+    /**
+     * Update suggestion list with new text entries (e.g., addresses).
+     */
+    public void updateSuggestions(List<String> suggestions) {
+        suggestionListModel.clear();
+        if (suggestions != null) {
+            for (String s : suggestions) {
+                suggestionListModel.addElement(s);
+            }
+        }
+    }
+
+    /**
+     * Register a listener when user clicks/changes selection in suggestion list.
+     */
+    public void addSuggestionSelectionListener(Runnable handler) {
+        suggestionList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && handler != null) {
+                handler.run();
+            }
+        });
+    }
+
+    public String getSelectedSuggestionText() {
+        return suggestionList.getSelectedValue();
     }
 
     // --- Helpers -----------------------------------------------------------

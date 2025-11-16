@@ -125,12 +125,21 @@ public class ApiFetcher {
         }
 
         String encodedText = encode(text);
+
+        // Bounding box around the City of Toronto (approximate).
+        // Restrict to Canada and bias toward addresses and venues.
+        int apiSize = Math.min(maxResults * 3, 15); // ask ORS for a few more; we'll rank & trim
+
         String url = ORS_BASE_URL + ORS_GEOCODE_PATH
                 + "?api_key=" + encode(orsApiKey)
                 + "&text=" + encodedText
-                + "&size=" + maxResults
-                // Focus on Toronto / Canada; adjust as needed
-                + "&boundary.country=CA";
+                + "&size=" + apiSize
+                + "&boundary.country=CA"
+                + "&boundary.rect.min_lon=-79.6393"
+                + "&boundary.rect.min_lat=43.5810"
+                + "&boundary.rect.max_lon=-79.1152"
+                + "&boundary.rect.max_lat=43.8555"
+                + "&layers=address,venue,street";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
