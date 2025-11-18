@@ -1,4 +1,4 @@
-package main.java.interface_adapter;
+package interface_adapter;
 
 public class GetBikeCostViewModel {
     private String bikeCostText = "Bike Cost:";
