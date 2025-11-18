@@ -1,6 +1,6 @@
-package main.java.view;
+package view;
 
-import main.java.interface_adapter.GetBikeCostViewModel;
+import interface_adapter.GetBikeCostViewModel;
 
 import javax.swing.*;
 import java.awt.*;

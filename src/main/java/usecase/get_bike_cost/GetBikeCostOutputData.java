@@ -1,4 +1,4 @@
-package main.java.usecase.get_bike_cost;
+package usecase.get_bike_cost;
 
 public class GetBikeCostOutputData {
     private final double bikeCost;
