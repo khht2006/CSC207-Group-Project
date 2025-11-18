@@ -1,7 +1,7 @@
-package main.java.interface_adapter;
+package interface_adapter;
 
-import main.java.usecase.get_bike_cost.GetBikeCostInputBoundary;
-import main.java.usecase.get_bike_cost.GetBikeCostInputData;
+import usecase.get_bike_cost.GetBikeCostInputBoundary;
+import usecase.get_bike_cost.GetBikeCostInputData;
 
 public class GetBikeCostController {
     private final GetBikeCostInputBoundary interactor;

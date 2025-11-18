@@ -1,4 +1,4 @@
-package main.java.usecase.get_bike_cost;
+package usecase.get_bike_cost;
 
 public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
     private static final double BIKE_UNLOCK_COST = 1.00;

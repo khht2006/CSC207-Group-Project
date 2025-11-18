@@ -1,6 +1,6 @@
-package main.java.interface_adapter;
-import main.java.usecase.get_bike_cost.GetBikeCostOutputBoundary;
-import main.java.usecase.get_bike_cost.GetBikeCostOutputData;
+package interface_adapter;
+import usecase.get_bike_cost.GetBikeCostOutputBoundary;
+import usecase.get_bike_cost.GetBikeCostOutputData;
 
 public class GetBikeCostPresenter implements GetBikeCostOutputBoundary{
     private final GetBikeCostViewModel viewModel;
