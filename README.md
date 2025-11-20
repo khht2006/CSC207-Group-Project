@@ -15,7 +15,7 @@ and costs for their public transit options (biking and walking).
 # Code Organization
 
 We organized our work into 5 layers:
-- Package 'app' contains the classes, including the 'Main' class to initialize and connect the frontend and backend 
+- Package 'app' contains the classes, including the 'main.Main' class to initialize and connect the frontend and backend 
 of our program.
 - Package 'entity' contains the entities we designed, including 'Routes'.
 - Package 'interface_adapter' contains classes to control the interface
