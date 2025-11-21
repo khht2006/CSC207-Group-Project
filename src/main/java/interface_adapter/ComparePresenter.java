@@ -1,3 +1,4 @@
+package interface_adapter;
 public class ComparePresenter {
 }
-package interface_adapter;
+
