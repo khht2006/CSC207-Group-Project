@@ -10,6 +10,7 @@ import javax.swing.event.DocumentListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * Controller for the "enter origin and destination" view.
@@ -22,15 +23,18 @@ public class OriginalDestinationController {
 
     private final OriginalDestinationPanel panel;
     private final GeocodeLocationInteractor geocodeInteractor;
+    private final BiConsumer<Location, Location> onLocationsResolved;
 
     // latest suggestions for each field
     private List<Location> originSuggestions = new ArrayList<>();
     private List<Location> destinationSuggestions = new ArrayList<>();
 
     public OriginalDestinationController(OriginalDestinationPanel panel,
-                                         GeocodeLocationInteractor geocodeInteractor) {
+                                         GeocodeLocationInteractor geocodeInteractor,
+                                         BiConsumer<Location, Location> onLocationsResolved) {
         this.panel = panel;
         this.geocodeInteractor = geocodeInteractor;
+        this.onLocationsResolved = onLocationsResolved;
 
         wireEvents();
     }
@@ -220,14 +224,9 @@ public class OriginalDestinationController {
                         return;
                     }
 
-                    String message = "Origin resolved to:\n  " + result.origin
-                            + "\n\nDestination resolved to:\n  " + result.destination;
-                    JOptionPane.showMessageDialog(
-                            panel,
-                            message,
-                            "Locations Found",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
+                    if (onLocationsResolved != null) {
+                        onLocationsResolved.accept(result.origin, result.destination);
+                    }
 
                 } catch (Exception ex) {
                     handleError(ex);
