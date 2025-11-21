@@ -1,4 +1,4 @@
-package main.java.api;
+package api;
 
 public class ORSRouteAPI {
 }

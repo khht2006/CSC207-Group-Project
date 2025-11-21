@@ -1,8 +1,6 @@
 package usecase;
 
-/**
- * Output data carrying the cycling duration in minutes.
- */
+// Output data carrying the cycling duration in minutes.
 public class BikeRouteOutputData {
     private final double durationMinutes;
     private final String errorMessage;

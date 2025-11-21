@@ -10,6 +10,7 @@ import javax.swing.event.DocumentListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * Controller for the "enter origin and destination" view.
@@ -22,15 +23,18 @@ public class OriginalDestinationController {
 
     private final OriginalDestinationPanel panel;
     private final GeocodeLocationInteractor geocodeInteractor;
+    private final BiConsumer<Location, Location> onLocationsResolved;
 
     // latest suggestions for each field
     private List<Location> originSuggestions = new ArrayList<>();
     private List<Location> destinationSuggestions = new ArrayList<>();
 
     public OriginalDestinationController(OriginalDestinationPanel panel,
-                                         GeocodeLocationInteractor geocodeInteractor) {
+                                         GeocodeLocationInteractor geocodeInteractor,
+                                         BiConsumer<Location, Location> onLocationsResolved) {
         this.panel = panel;
         this.geocodeInteractor = geocodeInteractor;
+        this.onLocationsResolved = onLocationsResolved;
 
         wireEvents();
     }
@@ -79,13 +83,10 @@ public class OriginalDestinationController {
             }
         });
 
-        // When user clicks a suggestion, apply it to the active field
         panel.addSuggestionSelectionListener(this::applySelectedSuggestionToActiveField);
     }
 
-    /**
-     * Fetch suggestions for origin or destination on a background thread.
-     */
+    // Fetch suggestions for origin or destination on a background thread.
     private void triggerSuggestionsAsync(boolean forOrigin) {
         String text = forOrigin ? panel.getOriginText().trim() : panel.getDestinationText().trim();
         if (text.isBlank()) {
@@ -102,7 +103,7 @@ public class OriginalDestinationController {
             @Override
             protected List<Location> doInBackground() throws Exception {
                 try {
-                    // e.g., top 5 suggestions
+                    // I use 5 and it's totally random
                     return geocodeInteractor.searchLocations(text, 5);
                 } catch (IOException | InterruptedException ex) {
                     return new ArrayList<>();
@@ -119,7 +120,6 @@ public class OriginalDestinationController {
                         destinationSuggestions = results;
                     }
 
-                    // Show suggestions for whichever field was just updated.
                     List<String> labels = new ArrayList<>();
                     for (Location loc : results) {
                         labels.add(loc.getName());
@@ -127,7 +127,6 @@ public class OriginalDestinationController {
                     panel.updateSuggestions(labels);
 
                 } catch (Exception ignored) {
-                    // If something goes wrong, just clear suggestions.
                     panel.updateSuggestions(List.of());
                 }
             }
@@ -144,13 +143,11 @@ public class OriginalDestinationController {
         switch (panel.getActiveField()) {
             case ORIGIN -> {
                 panel.setOriginText(selectedText);
-                // Optionally: we could find the matching Location entity here.
             }
             case DESTINATION -> {
                 panel.setDestinationText(selectedText);
             }
             case NONE -> {
-                // no active field – do nothing
             }
         }
     }
@@ -220,14 +217,9 @@ public class OriginalDestinationController {
                         return;
                     }
 
-                    String message = "Origin resolved to:\n  " + result.origin
-                            + "\n\nDestination resolved to:\n  " + result.destination;
-                    JOptionPane.showMessageDialog(
-                            panel,
-                            message,
-                            "Locations Found",
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
+                    if (onLocationsResolved != null) {
+                        onLocationsResolved.accept(result.origin, result.destination);
+                    }
 
                 } catch (Exception ex) {
                     handleError(ex);
