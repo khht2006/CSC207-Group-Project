@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Panel for displaying the cost comparison between Walking and Biking routes.
+ * Panel for displaying biking cost.
  */
 public class GetCostPanel extends JPanel {
 
@@ -19,16 +19,24 @@ public class GetCostPanel extends JPanel {
         this.viewModel = viewModel;
         setLayout(new BorderLayout());
 
+        setLayout(new BorderLayout());
+
         bikeCostLabel = new JLabel("Biking cost:", SwingConstants.CENTER);
+        bikeCostLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        add(bikeCostLabel, BorderLayout.CENTER);
 
         backButton = new JButton("Back");
-
         compareButton = new JButton("Compare Summary");
 
-        add(bikeCostLabel, BorderLayout.CENTER);
-        add(backButton, BorderLayout.SOUTH);
-        add(compareButton, BorderLayout.EAST);
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottom.add(backButton);
+        bottom.add(compareButton);
+        add(bottom, BorderLayout.SOUTH);
     }
+    public void updateBikeCostText() {
+        bikeCostLabel.setText("Biking cost: " + viewModel.getBikeCostText());
+    }
+
     public JButton getBackButton() {
         return backButton;
     }
