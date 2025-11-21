@@ -1,8 +1,6 @@
 package usecase;
 
-/**
- * Coordinates for querying a cycling route.
- */
+// Coordinates for querying a cycling route.
 public class BikeRouteInputData {
     private final double originLat;
     private final double originLon;

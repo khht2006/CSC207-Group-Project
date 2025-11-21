@@ -83,13 +83,10 @@ public class OriginalDestinationController {
             }
         });
 
-        // When user clicks a suggestion, apply it to the active field
         panel.addSuggestionSelectionListener(this::applySelectedSuggestionToActiveField);
     }
 
-    /**
-     * Fetch suggestions for origin or destination on a background thread.
-     */
+    // Fetch suggestions for origin or destination on a background thread.
     private void triggerSuggestionsAsync(boolean forOrigin) {
         String text = forOrigin ? panel.getOriginText().trim() : panel.getDestinationText().trim();
         if (text.isBlank()) {
@@ -106,7 +103,7 @@ public class OriginalDestinationController {
             @Override
             protected List<Location> doInBackground() throws Exception {
                 try {
-                    // e.g., top 5 suggestions
+                    // I use 5 and it's totally random
                     return geocodeInteractor.searchLocations(text, 5);
                 } catch (IOException | InterruptedException ex) {
                     return new ArrayList<>();
@@ -123,7 +120,6 @@ public class OriginalDestinationController {
                         destinationSuggestions = results;
                     }
 
-                    // Show suggestions for whichever field was just updated.
                     List<String> labels = new ArrayList<>();
                     for (Location loc : results) {
                         labels.add(loc.getName());
@@ -131,7 +127,6 @@ public class OriginalDestinationController {
                     panel.updateSuggestions(labels);
 
                 } catch (Exception ignored) {
-                    // If something goes wrong, just clear suggestions.
                     panel.updateSuggestions(List.of());
                 }
             }
@@ -148,13 +143,11 @@ public class OriginalDestinationController {
         switch (panel.getActiveField()) {
             case ORIGIN -> {
                 panel.setOriginText(selectedText);
-                // Optionally: we could find the matching Location entity here.
             }
             case DESTINATION -> {
                 panel.setDestinationText(selectedText);
             }
             case NONE -> {
-                // no active field – do nothing
             }
         }
     }
