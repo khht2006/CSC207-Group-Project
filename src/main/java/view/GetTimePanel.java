@@ -38,7 +38,8 @@ public class GetTimePanel extends JPanel {
         bottom.add(compareButton);
         add(bottom, BorderLayout.SOUTH);
     }
-    // Trigger fetching bike time for the given coordinates.
+
+    // It will fetching bike time for the given coordinates.
     public void requestBikeTime(double originLat,
                                 double originLon,
                                 double destinationLat,
@@ -46,7 +47,6 @@ public class GetTimePanel extends JPanel {
         controller.execute(originLat, originLon, destinationLat, destinationLon);
     }
 
-    // Refresh label text from the view model.
     public void updateBikeTimeText() {
         bikeTimeLabel.setText(viewModel.getBikeTimeText());
     }

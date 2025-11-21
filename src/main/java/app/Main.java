@@ -12,9 +12,6 @@ import view.OriginalDestinationPanel;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Entry point to show the initial "enter origin and destination" window.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -28,23 +25,19 @@ public class Main {
         ApiFetcher apiFetcher = new ApiFetcher();
         GeocodeLocationInteractor geocodeInteractor = new GeocodeLocationInteractor(apiFetcher);
 
-        // Bike time stack
         GetBikeTimeViewModel bikeTimeViewModel = new GetBikeTimeViewModel();
         GetBikeTimePresenter bikeTimePresenter = new GetBikeTimePresenter(bikeTimeViewModel);
         BikeRouteInteractor bikeRouteInteractor = new BikeRouteInteractor(apiFetcher, bikeTimePresenter);
         GetBikeTimeController bikeTimeController = new GetBikeTimeController(bikeRouteInteractor);
         GetTimePanel bikeTimePanel = new GetTimePanel(bikeTimeViewModel, bikeTimeController);
 
-        // Origin/destination panel
         OriginalDestinationPanel originDestPanel = new OriginalDestinationPanel();
 
-        // Simple navigator using CardLayout
         CardLayout layout = new CardLayout();
         JPanel root = new JPanel(layout);
         root.add(originDestPanel, "origin");
         root.add(bikeTimePanel, "bikeTime");
 
-        // Controller wires panel and use case; on success, show bike time
         new OriginalDestinationController(originDestPanel, geocodeInteractor, (origin, destination) -> {
             layout.show(root, "bikeTime");
             bikeTimePanel.requestBikeTime(
