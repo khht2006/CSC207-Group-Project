@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BikeRouteInteractor {
+public class BikeRouteInteractor implements BikeRouteInputBoundary {
 
     private static final Pattern DURATION_PATTERN =
             Pattern.compile("\"duration\"\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)", Pattern.DOTALL);

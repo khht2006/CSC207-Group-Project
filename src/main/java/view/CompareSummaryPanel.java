@@ -1,6 +1,6 @@
-package main.java.view;
+package view;
 
-import main.java.interface_adapter.CompareViewModel;
+import interface_adapter.CompareViewModel;
 import javax.swing.*;
 import java.awt.*;
 
