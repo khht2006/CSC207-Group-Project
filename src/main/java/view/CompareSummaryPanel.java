@@ -27,7 +27,7 @@ public class CompareSummaryPanel extends JPanel {
 
         backButton = new JButton("Back");
 
-        JPanel center = new JPanel(new GridLayout(4, 1, 5, 5));
+        JPanel center = new JPanel(new GridLayout(3, 1, 5, 5));
 
         center.add(walkTimeLabel);
         center.add(bikeTimeLabel);
@@ -38,30 +38,9 @@ public class CompareSummaryPanel extends JPanel {
         add(backButton, BorderLayout.SOUTH);
     }
 
-    public void updateSummary(double walkTime, double bikeTime, double bikeCost, double bikeDistance) {
-        if (walkTime >= 0) {
-            walkTimeLabel.setText(String.format("Walk Time: %.1f minutes", walkTime));
-        }
-        else {
-            walkTimeLabel.setText("Walk Time: --");
-        }
-        if (bikeTime >= 0) {
-            bikeTimeLabel.setText(String.format("Bike Time: %.1f minutes", bikeTime));
-        }
-        else {
-            bikeTimeLabel.setText("Bike Time: --");
-        }
-        if (bikeCost >= 0 && bikeDistance >= 0) {
-            bikeCostLabel.setText(String.format("Bike Cost: $%.2f minutes for %.2f km", bikeCost, bikeDistance));
-        }
-        else if (bikeCost >= 0) {
-            bikeCostLabel.setText(String.format("Bike Cost: $%.2f for -- km", bikeCost));
-        }
-        else if (bikeDistance >= 0) {
-            bikeCostLabel.setText(String.format("Bike Cost: -- for %.2f km", bikeDistance));
-        }
-        else {
-            bikeCostLabel.setText("Bike Cost: -- for -- km");
-        }
+    public void updateSummary() {
+        walkTimeLabel.setText(viewModel.getWalkTime());
+        bikeTimeLabel.setText(viewModel.getBikeTime());
+        bikeCostLabel.setText(viewModel.getBikeCost());
     }
 }
