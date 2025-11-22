@@ -57,6 +57,11 @@ public class Main {
         root.add(bikeTimePanel, "bikeTime");
         root.add(bikeCostPanel, "bikeCost");
 
+        // Back button → return to origin/destination screen
+        bikeTimePanel.getBackButton().addActionListener(e -> {
+            layout.show(root, "origin");
+        });
+
         new OriginalDestinationController(originDestPanel, geocodeInteractor, (origin, destination) -> {
             layout.show(root, "bikeTime");
             bikeTimePanel.requestBikeTime(
