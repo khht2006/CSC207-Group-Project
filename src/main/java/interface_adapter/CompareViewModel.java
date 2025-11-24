@@ -1,5 +1,9 @@
 package interface_adapter;
 
+
+/**
+ * The View Model for the Compare Summary view.
+ */
 public class CompareViewModel {
     private String walkTimeText = "Walk Time:";
     private String bikeTimeText = "Bike Time:";

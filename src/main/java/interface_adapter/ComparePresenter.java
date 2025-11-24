@@ -2,8 +2,13 @@ package interface_adapter;
 
 import usecase.BikeRouteOutputBoundary;
 import usecase.BikeRouteOutputData;
+
 import usecase.get_bike_cost.GetBikeCostOutputData;
 import usecase.get_bike_cost.GetBikeCostOutputBoundary;
+
+/**
+ * The Presenter for the Compare Summary case.
+ */
 
 public class ComparePresenter implements BikeRouteOutputBoundary, GetBikeCostOutputBoundary {
     private final CompareViewModel viewModel;

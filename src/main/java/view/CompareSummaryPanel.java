@@ -4,7 +4,10 @@ import interface_adapter.CompareViewModel;
 import javax.swing.*;
 import java.awt.*;
 
-// The View for when the user is comparing time and cost of each public transit option.
+/**
+ * The View for the Compare Summary use case.
+ */
+
 public class CompareSummaryPanel extends JPanel {
     private final CompareViewModel viewModel;
     private final JLabel titleLabel;
