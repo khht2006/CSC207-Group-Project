@@ -25,26 +25,34 @@ public class WalkRouteInteractor {
     }
 
     public WalkRouteResponse execute() throws Exception {
+
+        // Retrieve coordinates
         Location start = currentLocationUseCase.getLocation();
         Location end = destinationUseCase.getDestinationLocation();
 
+        // ORS Directions Endpoint
         String url = "https://api.openrouteservice.org/v2/directions/foot-walking/json";
 
+        // JSON request body
         JSONObject body = new JSONObject();
         JSONArray coords = new JSONArray();
         coords.put(new JSONArray().put(start.getLongitude()).put(start.getLatitude()));
         coords.put(new JSONArray().put(end.getLongitude()).put(end.getLatitude()));
         body.put("coordinates", coords);
 
+
+
+        // Make request
         JSONObject responseJson = apiFetcher.postJson(url, body.toString(), orsApiKey);
 
+        // Parse response
         JSONObject summary = responseJson
                 .getJSONArray("routes")
                 .getJSONObject(0)
                 .getJSONObject("summary");
 
-        double distanceMeters = summary.getDouble("distance");
-        double durationSeconds = summary.getDouble("duration");
+        double distanceMeters = summary.getDouble("distance"); // meters
+        double durationSeconds = summary.getDouble("duration"); // seconds
 
         double distanceKm = distanceMeters / 1000.0;
         double timeMinutes = durationSeconds / 60.0;
@@ -52,6 +60,7 @@ public class WalkRouteInteractor {
         return new WalkRouteResponse(distanceKm, timeMinutes);
     }
 
+    // DTO response
     public static class WalkRouteResponse {
         public final double distanceKm;
         public final double timeMinutes;
