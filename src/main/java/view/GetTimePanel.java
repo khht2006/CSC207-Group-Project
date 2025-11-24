@@ -16,6 +16,7 @@ public class GetTimePanel extends JPanel {
 
     private final JLabel bikeTimeLabel;
     private final JButton backButton;
+    private final JButton costButton;
     private final JButton compareButton;
 
     public GetTimePanel(GetBikeTimeViewModel viewModel,
@@ -29,12 +30,14 @@ public class GetTimePanel extends JPanel {
         bikeTimeLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
 
         backButton = new JButton("Back");
+        costButton = new JButton("See Bike Cost");
         compareButton = new JButton("Compare Summary");
 
         add(bikeTimeLabel, BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.add(backButton);
+        bottom.add(costButton);
         bottom.add(compareButton);
         add(bottom, BorderLayout.SOUTH);
     }
@@ -54,6 +57,8 @@ public class GetTimePanel extends JPanel {
     public JButton getBackButton() {
         return backButton;
     }
+
+    public JButton getCostButton() { return costButton;}
 
     public JButton getCompareButton() {
         return compareButton;
