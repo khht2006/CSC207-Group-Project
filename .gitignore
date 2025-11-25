@@ -9,8 +9,6 @@
 .idea/dataSources.local.xml
 # Production output
 /out
-# Shelf
-.idea/shelf
 # Ignore macOS files.
 .DS_Store
 **/.DS_Store
