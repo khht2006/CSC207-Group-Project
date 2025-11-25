@@ -15,7 +15,7 @@ public class WalkRouteInteractor {
     public WalkRouteResponse execute(double startLat, double startLng,
                                      double endLat, double endLng) throws Exception {
 
-        // Call existing API method (lon, lat order!)
+        // Call existing API method
         String jsonString = apiFetcher.fetchWalkingDirectionsJson(
                 startLng, startLat, endLng, endLat);
 
