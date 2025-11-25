@@ -1,4 +1,15 @@
 /src/main/resources/config.properties
+# IntelliJ user-specific files
+.idea/workspace.xml
+.idea/shelf/
+.idea/httpRequests/
+.idea/usage.statistics.xml
+.idea/dataSources/
+.idea/dataSources.local.xml
+# Production output
+/out
+# Shelf
+.idea/shelf
 # Ignore macOS files.
 .DS_Store
 **/.DS_Store
