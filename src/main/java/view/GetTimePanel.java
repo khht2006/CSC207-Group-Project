@@ -63,4 +63,9 @@ public class GetTimePanel extends JPanel {
     public JButton getCompareButton() {
         return compareButton;
     }
+
+    public double getBikeTimeMinutes() {
+        return viewModel.getBikeTimeValue();
+    }
+
 }
