@@ -15,12 +15,13 @@ public class WalkRouteInteractor {
     public WalkRouteResponse execute(double startLat, double startLng,
                                      double endLat, double endLng) throws Exception {
 
-        // Call existing API method
+        // Call the existing method from ApiFetcher
         String jsonString = apiFetcher.fetchWalkingDirectionsJson(
                 startLng, startLat, endLng, endLat);
 
         JSONObject responseJson = new JSONObject(jsonString);
 
+        // Parse JSON
         JSONObject summary = responseJson
                 .getJSONArray("routes")
                 .getJSONObject(0)
@@ -32,6 +33,7 @@ public class WalkRouteInteractor {
         return new WalkRouteResponse(distanceKm, timeMinutes);
     }
 
+    // Object to store the data that we will return
     public static class WalkRouteResponse {
         public final double distanceKm;
         public final double timeMinutes;
