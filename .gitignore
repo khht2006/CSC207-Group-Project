@@ -1,12 +1,8 @@
 #DO NOT REMOVE
 /src/main/resources/config.properties
 # IntelliJ user-specific files
-.idea/workspace.xml
-.idea/shelf/
-.idea/httpRequests/
-.idea/usage.statistics.xml
-.idea/dataSources/
-.idea/dataSources.local.xml
+.idea/
+*.iml
 # Production output
 /out
 # Ignore macOS files.
