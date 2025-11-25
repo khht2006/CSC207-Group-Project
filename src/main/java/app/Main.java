@@ -23,10 +23,10 @@ import view.GetCostPanel;
 import view.OriginalDestinationPanel;
 
 import javax.swing.*;
-import java.awt.*;
-
+/**
+* Following clean architecture principles
+ */
 public class Main {
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(Main::createAndShowUI);
     }
@@ -136,5 +136,9 @@ public class Main {
         frame.setSize(600, 300);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            JFrame app = AppBuilder.build();  // Build everything using AppBuilder
+            app.setVisible(true);            // Show UI
+        });
     }
 }
