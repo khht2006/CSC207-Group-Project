@@ -41,6 +41,27 @@ class BikeRouteInteractorTest {
         Assertions.assertEquals(expectedMinutes, presenter.captured.getDurationMinutes(), 1e-6);
     }
 
+    private static StubApiFetcher getStubApiFetcher() {
+        String sampleJson = """
+                {
+                  "type": "FeatureCollection",
+                  "features": [
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "summary": {
+                          "distance": 1234.5,
+                          "duration": 1200.5
+                        }
+                      }
+                    }
+                  ]
+                }
+                """;
+        
+        return new StubApiFetcher(sampleJson);
+    }
+
     private static class StubApiFetcher extends ApiFetcher {
         private final String json;
 
