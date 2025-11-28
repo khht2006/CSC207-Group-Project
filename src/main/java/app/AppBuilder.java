@@ -3,6 +3,8 @@ package app;
 import api.ApiFetcher;
 import interface_adapter.*;
 import usecase.*;
+import usecase.search_history.*;
+import usecase.get_bike_cost.*;
 import view.*;
 
 import javax.swing.*;
@@ -20,13 +22,17 @@ import java.awt.*;
  * Returns JFrame.
  */
 public class AppBuilder {
+    static final String ORIGIN = "origin";
+    static final String BIKE_TIME = "bikeTime";
+    static final String BIKE_COST = "bikeCost";
+    static final String SEARCH_HISTORY_FILE = "search_history.txt";
 
     private AppBuilder() {}
 
     public static JFrame build() {
 
         // Delete history at app startup
-        new java.io.File("search_history.txt").delete();
+        clearSearchHistory();
 
         ApiFetcher apiFetcher = new ApiFetcher();
         GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
@@ -61,9 +67,9 @@ public class AppBuilder {
         CardLayout layout = new CardLayout();
         JPanel root = new JPanel(layout);
 
-        root.add(originPanel, "origin");
-        root.add(bikeTimePanel, "bikeTime");
-        root.add(bikeCostPanel, "bikeCost");
+        root.add(originPanel, ORIGIN);
+        root.add(bikeTimePanel, BIKE_TIME);
+        root.add(bikeCostPanel, BIKE_COST);
         root.add(comparePanel, "compare");
         root.add(historyPanel, "searchHistory");
 
@@ -72,7 +78,7 @@ public class AppBuilder {
                 originPanel,
                 geocode,
                 (origin, dest) -> {
-                    layout.show(root, "bikeTime");
+                    layout.show(root, BIKE_TIME);
 
                     bikeTimePanel.requestBikeTime(
                             origin.getLatitude(), origin.getLongitude(),
@@ -110,7 +116,7 @@ public class AppBuilder {
 
         // Navigation: bikeTime → bikeCost
         bikeTimePanel.getCostButton().addActionListener(e -> {
-            layout.show(root, "bikeCost");
+            layout.show(root, BIKE_COST);
             bikeCostController.calculateCost();
             bikeCostPanel.updateBikeCostText();
         });
@@ -130,9 +136,9 @@ public class AppBuilder {
         });
 
         // Back buttons
-        bikeTimePanel.getBackButton().addActionListener(e -> layout.show(root, "origin"));
-        bikeCostPanel.getBackButton().addActionListener(e -> layout.show(root, "bikeTime"));
-        comparePanel.getBackButton().addActionListener(e -> layout.show(root, "bikeCost"));
+        bikeTimePanel.getBackButton().addActionListener(e -> layout.show(root, ORIGIN));
+        bikeCostPanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_TIME));
+        comparePanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_COST));
 
         // Search History
         originPanel.getViewHistoryButton().addActionListener(e -> {
@@ -142,7 +148,7 @@ public class AppBuilder {
             layout.show(root, "searchHistory");
         });
 
-        historyPanel.getBackButton().addActionListener(e -> layout.show(root, "origin"));
+        historyPanel.getBackButton().addActionListener(e -> layout.show(root, ORIGIN));
 
         JFrame frame = new JFrame("Grapes Trip Planner");
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -151,5 +157,13 @@ public class AppBuilder {
         frame.setLocationRelativeTo(null);
 
         return frame;
+    }
+
+    private static void clearSearchHistory() {
+        try {
+            java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(AppBuilder.SEARCH_HISTORY_FILE));
+        } catch (java.io.IOException ignored) {
+            // Ignore errors if file cannot be deleted
+        }
     }
 }
