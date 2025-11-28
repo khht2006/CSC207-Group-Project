@@ -34,6 +34,12 @@ public class AppNavigator {
         layout.show(root, "bikeCost");
     }
 
+    /**Show the search history screen.
+     */
+    public void showSearchHistory() {
+        layout.show(root, "searchHistory");
+    }
+
     /** Show the comparison summary screen (for future use). */
     public void showCompareSummary() {
         layout.show(root, "compare");
