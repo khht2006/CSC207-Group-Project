@@ -1,7 +1,6 @@
 package usecase;
 
-import app.ApiFetcher;
-import org.json.JSONArray;
+import api.ApiFetcher;
 import org.json.JSONObject;
 
 public class WalkRouteInteractor {

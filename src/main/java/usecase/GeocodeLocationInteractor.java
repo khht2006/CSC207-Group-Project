@@ -1,6 +1,6 @@
 package usecase;
 
-import app.ApiFetcher;
+import api.ApiFetcher;
 import entity.Location;
 
 import java.io.IOException;
