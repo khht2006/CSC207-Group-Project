@@ -16,7 +16,7 @@ import java.awt.*;
  * - Controllers
  * - Swing panels
  * - Navigation (CardLayout)
- *
+ * <p>
  * Returns JFrame.
  */
 public class AppBuilder {
