@@ -1,15 +1,12 @@
-import app.ApiFetcher;
-import org.junit.Assert;
-import org.junit.Test;
-import usecase.BikeRouteInputData;
-import usecase.BikeRouteInteractor;
-import usecase.BikeRouteOutputBoundary;
-import usecase.BikeRouteOutputData;
+package usecase;
 
-public class BikeRouteInteractorTest {
+import api.ApiFetcher;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
+class BikeRouteInteractorTest {
     @Test
-    public void parsesDurationMinutesFromOrsJson() {
+    void parsesDurationMinutesFromOrsJson() {
         // Given ORS-like directions JSON with a duration in seconds
         String sampleJson = """
                 {
@@ -38,10 +35,31 @@ public class BikeRouteInteractorTest {
         interactor.execute(input);
 
         // Then
-        Assert.assertNotNull("Presenter should receive output", presenter.captured);
-        Assert.assertFalse("Output should not have error", presenter.captured.hasError());
+        Assertions.assertNotNull(presenter.captured, "Presenter should receive output");
+        Assertions.assertFalse(presenter.captured.hasError(), "Output should not have error");
         double expectedMinutes = 1200.5 / 60.0;
-        Assert.assertEquals(expectedMinutes, presenter.captured.getDurationMinutes(), 1e-6);
+        Assertions.assertEquals(expectedMinutes, presenter.captured.getDurationMinutes(), 1e-6);
+    }
+
+    private static StubApiFetcher getStubApiFetcher() {
+        String sampleJson = """
+                {
+                  "type": "FeatureCollection",
+                  "features": [
+                    {
+                      "type": "Feature",
+                      "properties": {
+                        "summary": {
+                          "distance": 1234.5,
+                          "duration": 1200.5
+                        }
+                      }
+                    }
+                  ]
+                }
+                """;
+        
+        return new StubApiFetcher(sampleJson);
     }
 
     private static class StubApiFetcher extends ApiFetcher {
