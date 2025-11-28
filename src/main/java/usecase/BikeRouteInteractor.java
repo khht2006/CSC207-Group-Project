@@ -1,6 +1,6 @@
 package usecase;
 
-import app.ApiFetcher;
+import api.ApiFetcher;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class BikeRouteInteractor implements BikeRouteInputBoundary {
 
     private static final Pattern DURATION_PATTERN =
-            Pattern.compile("\"duration\"\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)", Pattern.DOTALL);
+            Pattern.compile("\"duration\"\\s*:\\s*(\\d+(?:\\.\\d+)?)", Pattern.DOTALL);
 
     private final ApiFetcher apiFetcher;
     private final BikeRouteOutputBoundary presenter;

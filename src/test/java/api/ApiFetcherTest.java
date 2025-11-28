@@ -1,9 +1,11 @@
-package ApiTest;
-import app.ApiFetcher;
+package api;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class ApiTestMain {
-    public static void main(String[] args) throws Exception {
+class ApiFetcherTest {
+    @Test
+    void lengthTest() throws Exception {
         ApiFetcher fetcher = new ApiFetcher();
 
         // Example coordinates: Toronto City Hall to UofT (approx)
@@ -13,9 +15,9 @@ public class ApiTestMain {
         double endLat = 43.6629;
 
         String walkJson = fetcher.fetchWalkingDirectionsJson(startLon, startLat, endLon, endLat);
-        System.out.println("Walking JSON length: " + walkJson.length());
-
         String bikeInfo = fetcher.fetchBikeStationInformationJson();
-        System.out.println("Station info JSON length: " + bikeInfo.length());
+
+        Assertions.assertEquals(2806, walkJson.length());
+        Assertions.assertEquals(474285, bikeInfo.length());
     }
 }

@@ -1,18 +1,27 @@
 package app;
 
+import api.ApiFetcher;
 import interface_adapter.*;
 import usecase.*;
-import usecase.get_bike_cost.*;
-import usecase.search_history.*;
 import view.*;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * AppBuilder constructs the entire application.
+ * AppBuilder constructs the entire application:
+ * - API fetcher
+ * - Interactors (use cases)
+ * - Presenters + view models
+ * - Controllers
+ * - Swing panels
+ * - Navigation (CardLayout)
+ * <p>
+ * Returns JFrame.
  */
 public class AppBuilder {
+
+    private AppBuilder() {}
 
     public static JFrame build() {
 
@@ -136,7 +145,7 @@ public class AppBuilder {
         historyPanel.getBackButton().addActionListener(e -> layout.show(root, "origin"));
 
         JFrame frame = new JFrame("Grapes Trip Planner");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         frame.add(root, BorderLayout.CENTER);
         frame.setSize(600, 300);
         frame.setLocationRelativeTo(null);
