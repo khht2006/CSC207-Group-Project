@@ -7,7 +7,6 @@ import java.awt.*;
 /**
  * The View for the Compare Summary use case.
  */
-
 public class CompareSummaryPanel extends JPanel {
     private final CompareViewModel viewModel;
     private final JLabel titleLabel;
@@ -24,14 +23,18 @@ public class CompareSummaryPanel extends JPanel {
         titleLabel = new JLabel("Comparison Summary", SwingConstants.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
 
-        walkTimeLabel = new JLabel("Walk time: --", SwingConstants.CENTER);
-        bikeTimeLabel = new JLabel("Bike time: --", SwingConstants.CENTER);
-        bikeCostLabel = new JLabel("Bike cost: -- for -- distance", SwingConstants.CENTER);
+        walkTimeLabel = new JLabel("Walk Time: -- minutes", SwingConstants.CENTER);
+        walkTimeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+        bikeTimeLabel = new JLabel("Bike Time: -- minutes", SwingConstants.CENTER);
+        bikeTimeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+        bikeCostLabel = new JLabel("Bike Cost: --", SwingConstants.CENTER);
+        bikeCostLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         backButton = new JButton("Back");
 
         JPanel center = new JPanel(new GridLayout(3, 1, 5, 5));
-
         center.add(walkTimeLabel);
         center.add(bikeTimeLabel);
         center.add(bikeCostLabel);
