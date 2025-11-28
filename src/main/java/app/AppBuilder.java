@@ -32,6 +32,9 @@ public class AppBuilder {
         GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
         SearchHistoryData historyGateway = new SearchHistoryGateway();
 
+        // Walking time use case
+        WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
+
         // Bike time use case
         GetBikeTimeViewModel bikeTimeVM = new GetBikeTimeViewModel();
         GetBikeTimePresenter bikeTimePresenter = new GetBikeTimePresenter(bikeTimeVM);
@@ -47,7 +50,7 @@ public class AppBuilder {
                 new GetBikeCostController(bikeCostInteractor, bikeTimeVM);
         GetCostPanel bikeCostPanel = new GetCostPanel(bikeCostVM);
 
-        //  Compare
+        // Compare summary
         CompareViewModel compareVM = new CompareViewModel();
         CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareVM);
 
@@ -64,6 +67,7 @@ public class AppBuilder {
         root.add(comparePanel, "compare");
         root.add(historyPanel, "searchHistory");
 
+
         new OriginalDestinationController(
                 originPanel,
                 geocode,
@@ -75,17 +79,25 @@ public class AppBuilder {
                             dest.getLatitude(), dest.getLongitude()
                     );
                     bikeTimePanel.updateBikeTimeText();
-
                     double bikeTime = bikeTimeVM.getBikeTimeValue();
 
-                    // Cost calculation
+                    double walkTime;
+                    try {
+                        WalkRouteInteractor.WalkRouteResponse walk =
+                                walkRoute.execute(
+                                        origin.getLatitude(), origin.getLongitude(),
+                                        dest.getLatitude(), dest.getLongitude()
+                                );
+                        walkTime = walk.timeMinutes;
+                    } catch (Exception ex) {
+                        walkTime = -1;  // fallback
+                    }
+
+                    bikeTimePanel.setWalkTimeText(walkTime);
+
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
                     double bikeCost = bikeCostVM.getBikeCostValue();
 
-                    // need to change after walking usecase is finished
-                    double walkTime = bikeTime;
-
-                    // Save record
                     historyGateway.save(new SearchRecord(
                             origin.getName(),
                             dest.getName(),
@@ -96,26 +108,28 @@ public class AppBuilder {
                 }
         );
 
-        //  Navigation buttons
+        // Navigation: bikeTime → bikeCost
         bikeTimePanel.getCostButton().addActionListener(e -> {
             layout.show(root, "bikeCost");
             bikeCostController.calculateCost();
             bikeCostPanel.updateBikeCostText();
         });
 
+        // Navigation: bikeCost → compare summary
         bikeCostPanel.getCompareButton().addActionListener(e -> {
 
-            double t = bikeTimeVM.getBikeTimeValue();
+            double bikeT = bikeTimeVM.getBikeTimeValue();
+            double walkT = bikeTimePanel.getWalkTimeValue();
 
-            // FIX: separate lines so it does NOT repeat
-            compareVM.setWalkTimeText("Walk Time: " + t + " min");
-            compareVM.setBikeTimeText("Bike Time: " + t + " min");
+            compareVM.setWalkTimeText(walkT);
+            compareVM.setBikeTimeText(bikeT);
             compareVM.setBikeCostText(bikeCostVM.getBikeCostText());
 
             comparePanel.updateSummary();
             layout.show(root, "compare");
         });
 
+        // Back buttons
         bikeTimePanel.getBackButton().addActionListener(e -> layout.show(root, "origin"));
         bikeCostPanel.getBackButton().addActionListener(e -> layout.show(root, "bikeTime"));
         comparePanel.getBackButton().addActionListener(e -> layout.show(root, "bikeCost"));
