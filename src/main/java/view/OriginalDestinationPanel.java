@@ -27,7 +27,6 @@ public class OriginalDestinationPanel extends JPanel {
     private final JTextField destinationField;
     private final JButton continueButton;
     private final JButton swapButton;
-    private final JButton viewHistoryButton;
 
     private final DefaultListModel<String> suggestionListModel;
     private final JList<String> suggestionList;
@@ -87,11 +86,8 @@ public class OriginalDestinationPanel extends JPanel {
         continueButton = new JButton("Continue");
         continueButton.setEnabled(false);
 
-        viewHistoryButton = new JButton("View Search History");
-
         bottomPanel.add(swapButton);
         bottomPanel.add(continueButton);
-        bottomPanel.add(viewHistoryButton);
         this.add(bottomPanel, BorderLayout.SOUTH);
 
         // Track which field is active (for applying suggestions)
@@ -192,10 +188,6 @@ public class OriginalDestinationPanel extends JPanel {
 
     public String getSelectedSuggestionText() {
         return suggestionList.getSelectedValue();
-    }
-
-    public JButton getViewHistoryButton() {
-        return viewHistoryButton;
     }
 
     // --- Helpers -----------------------------------------------------------
