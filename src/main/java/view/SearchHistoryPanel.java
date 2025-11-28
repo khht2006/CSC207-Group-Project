@@ -41,20 +41,25 @@ public class SearchHistoryPanel extends JPanel {
         StringBuilder sb = new StringBuilder();
 
         for (SearchRecord r : records) {
-            sb.append(
-                            r.getOrigin())
+
+            String walk = String.format("%.1f", r.getWalkTime());
+            String bike = String.format("%.1f", r.getBikeTime());
+            String cost = String.format("%.2f", r.getBikeCost());
+
+            sb.append(r.getOrigin())
                     .append(" → ")
                     .append(r.getDestination())
                     .append("\n")
-                    .append("Walk: ").append(r.getWalkTime()).append(" min")
-                    .append(" | Bike: ").append(r.getBikeTime()).append(" min")
-                    .append(" | Cost: $").append(r.getBikeCost())
+                    .append("Walk: ").append(walk).append(" min")
+                    .append(" | Bike: ").append(bike).append(" min")
+                    .append(" | Cost: $").append(cost)
                     .append("\n")
                     .append("------------------------------------------------\n");
         }
 
         area.setText(sb.toString());
     }
+
 
     public JButton getBackButton() {
         return backButton;
