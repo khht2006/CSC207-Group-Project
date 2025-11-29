@@ -3,9 +3,23 @@ package usecase.search_history;
 import java.util.List;
 
 /**
- * Saves and loads search history records.
+ * Gateway interface for saving and loading search history records.
+ * <p>
+ * Implementations provide persistent storage for {@link SearchRecord} objects.
  */
 public interface SearchHistoryData {
+
+    /**
+     * Saves a single search history record.
+     *
+     * @param record the record to save
+     */
     void save(SearchRecord record);
-    java.util.List<SearchRecord> load();
+
+    /**
+     * Returns all saved search history records.
+     *
+     * @return a list of previously saved records
+     */
+    List<SearchRecord> load();
 }

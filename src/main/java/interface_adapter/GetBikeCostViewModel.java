@@ -1,19 +1,35 @@
 package interface_adapter;
 
 /**
- * View model for displaying bike travel cost.
+ * View model for storing and displaying the formatted bike travel cost.
  */
 public class GetBikeCostViewModel {
+
+    /** The formatted bike cost text shown in the UI. */
     private String bikeCostText = "Bike Cost:";
+
+    /**
+     * Returns the formatted bike cost text.
+     *
+     * @return the displayed bike cost text
+     */
     public String getBikeCostText() {
         return bikeCostText;
     }
+
+    /**
+     * Sets the formatted bike cost text.
+     *
+     * @param bikeCostText the text to display
+     */
     public void setBikeCostText(String bikeCostText) {
         this.bikeCostText = bikeCostText;
     }
 
     /**
-     * Extracts the numeric bike cost from string.
+     * Extracts the numeric bike cost value from the formatted text.
+     *
+     * @return the numeric bike cost, or 0.0 if no number is present
      */
     public double getBikeCostValue() {
         String number = bikeCostText.replaceAll("[^0-9.]", "");
