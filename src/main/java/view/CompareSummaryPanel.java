@@ -47,7 +47,8 @@ public class CompareSummaryPanel extends JPanel {
     public void updateSummary() {
         walkTimeLabel.setText(viewModel.getWalkTime());
         bikeTimeLabel.setText(viewModel.getBikeTime());
-        bikeCostLabel.setText(viewModel.getBikeCost());
+        String cost = viewModel.getBikeCost();
+        bikeCostLabel.setText("Bike Cost: " + cost);
     }
 
     public JButton getBackButton() {
