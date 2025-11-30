@@ -1,13 +1,13 @@
 package view;
 
-import interface_adapter.GetBikeCostViewModel;
+import java.awt.*;
 
 import javax.swing.*;
-import java.awt.*;
+
+import interface_adapter.GetBikeCostViewModel;
 
 /**
  * Panel for displaying the computed biking cost.
- * <p>
  * This view shows the formatted bike cost to the user. It also provides
  * navigation buttons for going back to bike and walk time or viewing the comparison summary.
  */
@@ -27,14 +27,15 @@ public class GetCostPanel extends JPanel {
         this.viewModel = viewModel;
         setLayout(new BorderLayout());
 
+        final int textFontSize = 16;
         bikeCostLabel = new JLabel("Biking cost:", SwingConstants.CENTER);
-        bikeCostLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        bikeCostLabel.setFont(new Font("SansSerif", Font.BOLD, textFontSize));
         add(bikeCostLabel, BorderLayout.CENTER);
 
         backButton = new JButton("Back");
         compareButton = new JButton("Compare Summary");
 
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.add(backButton);
         bottom.add(compareButton);
         add(bottom, BorderLayout.SOUTH);

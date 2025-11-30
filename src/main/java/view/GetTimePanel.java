@@ -1,10 +1,11 @@
 package view;
 
-import interface_adapter.GetBikeTimeController;
-import interface_adapter.GetBikeTimeViewModel;
+import java.awt.*;
 
 import javax.swing.*;
-import java.awt.*;
+
+import interface_adapter.GetBikeTimeController;
+import interface_adapter.GetBikeTimeViewModel;
 
 /**
  * Panel for displaying biking time and walking time.
@@ -30,7 +31,7 @@ public class GetTimePanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        Font timeFont = new Font("SansSerif", Font.BOLD, 16);
+        final Font timeFont = new Font("SansSerif", Font.BOLD, 16);
 
         bikeTimeLabel = new JLabel(viewModel.getBikeTimeText(), SwingConstants.CENTER);
         bikeTimeLabel.setFont(timeFont);
@@ -41,18 +42,24 @@ public class GetTimePanel extends JPanel {
         backButton = new JButton("Back");
         costButton = new JButton("See Bike Cost");
 
-        JPanel center = new JPanel(new GridLayout(2, 1));
+        final JPanel center = new JPanel(new GridLayout(2, 1));
         center.add(bikeTimeLabel);
         center.add(walkTimeLabel);
         add(center, BorderLayout.CENTER);
 
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.add(backButton);
         bottom.add(costButton);
         add(bottom, BorderLayout.SOUTH);
     }
 
-    /** Fetches bike time for the given coordinates. */
+    /**
+     * Fetches bike time for the given coordinates.
+     * @param originLat origin lat coord
+     * @param originLon origin lon coord
+     * @param destinationLat destination lat coord
+     * @param destinationLon destination lon coord
+     */
     public void requestBikeTime(double originLat,
                                 double originLon,
                                 double destinationLat,
@@ -65,6 +72,10 @@ public class GetTimePanel extends JPanel {
         bikeTimeLabel.setText(viewModel.getBikeTimeText());
     }
 
+    /**
+     * Set display text for walk time.
+     * @param minutes walk time in minutes
+     */
     public void setWalkTimeText(double minutes) {
         walkTimeValue = minutes;
         walkTimeLabel.setText(String.format("Walk Time: %.1f minutes", minutes));

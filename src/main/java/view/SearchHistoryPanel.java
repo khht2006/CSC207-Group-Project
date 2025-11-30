@@ -1,10 +1,11 @@
 package view;
 
-import entity.SearchRecord;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+
+import javax.swing.*;
+
+import entity.SearchRecord;
 
 /**
  * Panel for displaying previously saved search history records.
@@ -20,8 +21,9 @@ public class SearchHistoryPanel extends JPanel {
     public SearchHistoryPanel() {
         setLayout(new BorderLayout());
 
-        JLabel title = new JLabel("Search History", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 18));
+        final JLabel title = new JLabel("Search History", SwingConstants.CENTER);
+        final int titleFontSize = 18;
+        title.setFont(new Font("SansSerif", Font.BOLD, titleFontSize));
 
         area = new JTextArea();
         area.setEditable(false);
@@ -46,13 +48,13 @@ public class SearchHistoryPanel extends JPanel {
      * @param records the list of records to show
      */
     public void setHistory(List<SearchRecord> records) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         for (SearchRecord r : records) {
 
-            String walk = String.format("%.1f", r.getWalkTime());
-            String bike = String.format("%.1f", r.getBikeTime());
-            String cost = String.format("%.2f", r.getBikeCost());
+            final String walk = String.format("%.1f", r.getWalkTime());
+            final String bike = String.format("%.1f", r.getBikeTime());
+            final String cost = String.format("%.2f", r.getBikeCost());
 
             sb.append(r.getOrigin())
                     .append(" → ")

@@ -1,8 +1,10 @@
 package view;
 
-import interface_adapter.CompareViewModel;
-import javax.swing.*;
 import java.awt.*;
+
+import javax.swing.*;
+
+import interface_adapter.CompareViewModel;
 
 /**
  * The View for the Compare Summary use case.
@@ -20,21 +22,28 @@ public class CompareSummaryPanel extends JPanel {
         this.viewModel = viewModel;
         setLayout(new BorderLayout());
 
+        final int titleFontSize = 18;
+        final int textFontSize = 14;
+        final String textFont = "SansSerif";
         titleLabel = new JLabel("Comparison Summary", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+        titleLabel.setFont(new Font(textFont, Font.BOLD, titleFontSize));
 
         walkTimeLabel = new JLabel("Walk Time: -- minutes", SwingConstants.CENTER);
-        walkTimeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        walkTimeLabel.setFont(new Font(textFont, Font.PLAIN, textFontSize));
 
         bikeTimeLabel = new JLabel("Bike Time: -- minutes", SwingConstants.CENTER);
-        bikeTimeLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        bikeTimeLabel.setFont(new Font(textFont, Font.PLAIN, textFontSize));
 
         bikeCostLabel = new JLabel("Bike Cost: --", SwingConstants.CENTER);
-        bikeCostLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        bikeCostLabel.setFont(new Font(textFont, Font.PLAIN, textFontSize));
 
         backButton = new JButton("Back");
 
-        JPanel center = new JPanel(new GridLayout(3, 1, 5, 5));
+        final int centerRows = 3;
+        final int centerCols = 1;
+        final int centerGap = 5;
+
+        final JPanel center = new JPanel(new GridLayout(centerRows, centerCols, centerGap, centerGap));
         center.add(walkTimeLabel);
         center.add(bikeTimeLabel);
         center.add(bikeCostLabel);
@@ -44,10 +53,13 @@ public class CompareSummaryPanel extends JPanel {
         add(backButton, BorderLayout.SOUTH);
     }
 
+    /**
+     * Update compare summary text.
+     */
     public void updateSummary() {
         walkTimeLabel.setText(viewModel.getWalkTime());
         bikeTimeLabel.setText(viewModel.getBikeTime());
-        String cost = viewModel.getBikeCost();
+        final String cost = viewModel.getBikeCost();
         bikeCostLabel.setText("Bike Cost: " + cost);
     }
 
