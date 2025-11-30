@@ -1,11 +1,11 @@
 package app;
 
-import javax.swing.*;
 import java.awt.*;
+
+import javax.swing.*;
 
 /**
  * The helper class for switching views inside a CardLayout.
- *
  * The application stores panels inside a parent container "root",
  * and AppNavigator provides clean methods to show each screen.
  */
@@ -34,13 +34,16 @@ public class AppNavigator {
         layout.show(root, "bikeCost");
     }
 
-    /**Show the search history screen.
+    /**
+     * Show the search history screen.
      */
     public void showSearchHistory() {
         layout.show(root, "searchHistory");
     }
 
-    /** Show the comparison summary screen (for future use). */
+    /**
+     * Show the comparison summary screen (for future use).
+     */
     public void showCompareSummary() {
         layout.show(root, "compare");
     }
