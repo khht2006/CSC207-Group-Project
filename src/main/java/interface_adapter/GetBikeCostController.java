@@ -27,6 +27,7 @@ public class GetBikeCostController {
 
     /**
      * Reads the biking time from the view model, parses it into minutes,
+     * and sends the input data to the interactor for cost calculation.
      */
     public void calculateCost() {
         String timeText = timeViewModel.getBikeTimeText();

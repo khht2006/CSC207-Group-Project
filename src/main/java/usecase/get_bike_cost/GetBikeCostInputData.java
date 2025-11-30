@@ -2,7 +2,6 @@ package usecase.get_bike_cost;
 
 /**
  * Input data for the GetBikeCost use case.
- * <p>
  */
 public class GetBikeCostInputData {
 
