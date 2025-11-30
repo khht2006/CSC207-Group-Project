@@ -1,6 +1,6 @@
 package usecase.search_history;
 
-import java.util.List;
+import entity.SearchRecord;
 
 /**
  * Saves and loads search history records.

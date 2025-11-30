@@ -1,6 +1,6 @@
 package view;
 
-import usecase.search_history.SearchRecord;
+import entity.SearchRecord;
 
 import javax.swing.*;
 import java.awt.*;

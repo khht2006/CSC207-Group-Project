@@ -1,4 +1,4 @@
-package usecase.search_history;
+package entity;
 
 /**
  * A record storing origin, destination, and trip results.
