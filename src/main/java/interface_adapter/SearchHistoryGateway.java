@@ -56,7 +56,9 @@ public class SearchHistoryGateway implements SearchHistoryData {
                     ));
                 }
             }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+            // no existing files (empty history).
+        }
 
         return history;
     }
