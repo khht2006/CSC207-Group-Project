@@ -4,11 +4,17 @@ package usecase.get_bike_cost;
  * Calculates the total cost of a BikeShare trip.
  */
 public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
+
     private static final double BIKE_UNLOCK_COST = 1.00;
     private static final double BIKE_MINUTE_COST = 0.12;
 
     private final GetBikeCostOutputBoundary presenter;
 
+    /**
+     * Creates a new {@code GetBikeCostInteractor} with the given presenter.
+     *
+     * @param presenter the output boundary that will receive the computed cost
+     */
     public GetBikeCostInteractor(GetBikeCostOutputBoundary presenter) {
         this.presenter = presenter;
     }
@@ -19,9 +25,9 @@ public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
     @Override
     public void execute(GetBikeCostInputData inputData) {
         double timeInMinutes = inputData.getBikeTimeMinutes();
-        double totalCost = BIKE_UNLOCK_COST + BIKE_MINUTE_COST *timeInMinutes;
-        GetBikeCostOutputData outputData = new GetBikeCostOutputData(totalCost);
+        double totalCost = BIKE_UNLOCK_COST + BIKE_MINUTE_COST * timeInMinutes;
 
+        GetBikeCostOutputData outputData = new GetBikeCostOutputData(totalCost);
         presenter.present(outputData);
     }
 }
