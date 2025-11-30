@@ -106,7 +106,7 @@ public class AppBuilder {
                                         origin.getLatitude(), origin.getLongitude(),
                                         dest.getLatitude(), dest.getLongitude()
                                 );
-                        walkTime = walk.timeMinutes;
+                        walkTime = walk.getTimeMinutes();
                     } catch (Exception ex) {
                         walkTime = -1;
                     }
