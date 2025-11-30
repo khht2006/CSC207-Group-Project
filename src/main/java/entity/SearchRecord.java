@@ -1,4 +1,4 @@
-package usecase.search_history;
+package entity;
 
 /**
  * A search history record containing the user's origin, destination,

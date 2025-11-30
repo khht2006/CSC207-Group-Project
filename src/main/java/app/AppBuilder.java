@@ -1,10 +1,11 @@
 package app;
 
 import api.ApiFetcher;
+import entity.*;
 import interface_adapter.*;
 import usecase.*;
-import usecase.search_history.*;
 import usecase.get_bike_cost.*;
+import usecase.search_history.*;
 import view.*;
 
 import javax.swing.*;
@@ -18,13 +19,16 @@ import java.awt.*;
  * - Controllers
  * - Swing panels
  * - Navigation (CardLayout)
- * <p>
+ *
  * Returns JFrame.
  */
 public class AppBuilder {
+
     static final String ORIGIN = "origin";
     static final String BIKE_TIME = "bikeTime";
     static final String BIKE_COST = "bikeCost";
+    static final String SEARCH_HISTORY = "searchHistory";
+    static final String COMPARE = "compare";
     static final String SEARCH_HISTORY_FILE = "search_history.txt";
 
     private AppBuilder() {}
@@ -60,9 +64,17 @@ public class AppBuilder {
         CompareViewModel compareVM = new CompareViewModel();
         CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareVM);
 
-        // Origin + Search History
+        // Origin and Search History
         OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
         SearchHistoryPanel historyPanel = new SearchHistoryPanel();
+
+        // Search History CA use case wiring
+        SearchHistoryViewModel historyVM = new SearchHistoryViewModel();
+        SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyVM);
+        SearchHistoryInteractor historyInteractor =
+                new SearchHistoryInteractor(historyGateway, historyPresenter);
+        SearchHistoryController historyController =
+                new SearchHistoryController(historyInteractor);
 
         CardLayout layout = new CardLayout();
         JPanel root = new JPanel(layout);
@@ -70,14 +82,14 @@ public class AppBuilder {
         root.add(originPanel, ORIGIN);
         root.add(bikeTimePanel, BIKE_TIME);
         root.add(bikeCostPanel, BIKE_COST);
-        root.add(comparePanel, "compare");
-        root.add(historyPanel, "searchHistory");
-
+        root.add(comparePanel, COMPARE);
+        root.add(historyPanel, SEARCH_HISTORY);
 
         new OriginalDestinationController(
                 originPanel,
                 geocode,
                 (origin, dest) -> {
+
                     layout.show(root, BIKE_TIME);
 
                     bikeTimePanel.requestBikeTime(
@@ -96,7 +108,7 @@ public class AppBuilder {
                                 );
                         walkTime = walk.timeMinutes;
                     } catch (Exception ex) {
-                        walkTime = -1;  // fallback
+                        walkTime = -1;
                     }
 
                     bikeTimePanel.setWalkTimeText(walkTime);
@@ -104,54 +116,50 @@ public class AppBuilder {
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
                     double bikeCost = bikeCostVM.getBikeCostValue();
 
-                    historyGateway.save(new SearchRecord(
-                            origin.getName(),
-                            dest.getName(),
+                    SearchRecord record = new SearchRecord(
+                            originPanel.getOriginText(),
+                            originPanel.getDestinationText(),
                             bikeTime,
                             bikeCost,
                             walkTime
-                    ));
+                    );
+
+                    historyGateway.save(record);
                 }
         );
 
-        // Navigation: bikeTime → bikeCost
+        // Navigation buttons
         bikeTimePanel.getCostButton().addActionListener(e -> {
             layout.show(root, BIKE_COST);
             bikeCostController.calculateCost();
             bikeCostPanel.updateBikeCostText();
         });
 
-        // Navigation: bikeCost → compare summary
         bikeCostPanel.getCompareButton().addActionListener(e -> {
-
-            double bikeT = bikeTimeVM.getBikeTimeValue();
-            double walkT = bikeTimePanel.getWalkTimeValue();
-
-            compareVM.setWalkTimeText(walkT);
-            compareVM.setBikeTimeText(bikeT);
+            compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
+            compareVM.setBikeTimeText(bikeTimeVM.getBikeTimeValue());
             compareVM.setBikeCostText(bikeCostVM.getBikeCostText());
-
             comparePanel.updateSummary();
-            layout.show(root, "compare");
+            layout.show(root, COMPARE);
         });
 
-        // Back buttons
         bikeTimePanel.getBackButton().addActionListener(e -> layout.show(root, ORIGIN));
         bikeCostPanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_TIME));
         comparePanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_COST));
 
-        // Search History
+        // Search History button
         originPanel.getViewHistoryButton().addActionListener(e -> {
-            var records = historyGateway.load();
-            if (records.isEmpty()) historyPanel.setNoHistoryMessage();
+            historyController.execute();
+            var records = historyVM.getHistory();
+            if (records == null || records.isEmpty()) historyPanel.setNoHistoryMessage();
             else historyPanel.setHistory(records);
-            layout.show(root, "searchHistory");
+            layout.show(root, SEARCH_HISTORY);
         });
 
         historyPanel.getBackButton().addActionListener(e -> layout.show(root, ORIGIN));
 
         JFrame frame = new JFrame("Grapes Trip Planner");
-        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(root, BorderLayout.CENTER);
         frame.setSize(600, 300);
         frame.setLocationRelativeTo(null);
@@ -161,9 +169,7 @@ public class AppBuilder {
 
     private static void clearSearchHistory() {
         try {
-            java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(AppBuilder.SEARCH_HISTORY_FILE));
-        } catch (java.io.IOException ignored) {
-            // Ignore errors if file cannot be deleted
-        }
+            java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(SEARCH_HISTORY_FILE));
+        } catch (java.io.IOException ignored) {}
     }
 }

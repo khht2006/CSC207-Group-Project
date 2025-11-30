@@ -1,5 +1,7 @@
 package usecase.search_history;
 
+import entity.SearchRecord;
+
 import java.util.List;
 
 /**

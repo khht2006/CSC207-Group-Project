@@ -1,7 +1,7 @@
 package interface_adapter;
 
 import usecase.search_history.SearchHistoryData;
-import usecase.search_history.SearchRecord;
+import entity.SearchRecord;
 
 import java.io.*;
 import java.util.ArrayList;
