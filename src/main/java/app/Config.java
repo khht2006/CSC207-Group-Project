@@ -16,7 +16,8 @@ public final class Config {
     }
 
     /**
-     * Returns the OpenRouteService API key loaded from src/main/resources/config.properties.
+     * Load the ORS API key from the config.properties file on the classpath.
+     * @return Returns the OpenRouteService API key loaded from src/main/resources/config.properties.
      */
     public static String getOrsApiKey() {
         if (orsApiKey == null) {
@@ -26,7 +27,7 @@ public final class Config {
     }
 
     private static String loadOrsApiKey() {
-        Properties props = new Properties();
+        final Properties props = new Properties();
 
         // Load from classpath: src/main/resources/config.properties
         try (InputStream in = Config.class.getClassLoader()
@@ -35,11 +36,12 @@ public final class Config {
                 throw new IllegalStateException("Could not find " + CONFIG_FILE + " on classpath.");
             }
             props.load(in);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new IllegalStateException("Could not load " + CONFIG_FILE, e);
         }
 
-        String key = props.getProperty(ORS_API_KEY_PROPERTY);
+        final String key = props.getProperty(ORS_API_KEY_PROPERTY);
         if (key == null || key.isBlank()) {
             throw new IllegalStateException(ORS_API_KEY_PROPERTY + " missing in " + CONFIG_FILE);
         }

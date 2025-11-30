@@ -1,4 +1,5 @@
 package entity;
+
 public class Route {
     private final double distanceMeters;
     private final double durationSeconds;

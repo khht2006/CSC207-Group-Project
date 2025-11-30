@@ -1,14 +1,18 @@
 package app;
 
 import javax.swing.*;
-/**
-* Following clean architecture principles
- */
+
 public class Main {
+    /**
+     * Main app entry point.
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame app = AppBuilder.build();  // Build everything using AppBuilder
-            app.setVisible(true);            // Show UI
+            // Build everything using AppBuilder
+            final JFrame app = AppBuilder.build();
+            // Show UI
+            app.setVisible(true);
         });
     }
 }
