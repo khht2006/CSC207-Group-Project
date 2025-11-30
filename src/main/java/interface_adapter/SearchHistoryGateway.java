@@ -8,12 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Saves and loads search history records from "search_history.txt".
+ * File-based implementation of {@link SearchHistoryData}.
  */
 public class SearchHistoryGateway implements SearchHistoryData {
 
     private static final String FILE_PATH = "search_history.txt";
 
+    /**
+     * Saves a search record by appending it to the history file.
+     *
+     * @param record the record to save
+     */
     @Override
     public void save(SearchRecord record) {
         try (FileWriter writer = new FileWriter(FILE_PATH, true)) {
@@ -27,7 +32,11 @@ public class SearchHistoryGateway implements SearchHistoryData {
         } catch (IOException ignored) {}
     }
 
-    /** Loads all search history records from the file. */
+    /**
+     * Loads all stored search history records from the file.
+     *
+     * @return a list of {@link SearchRecord} objects parsed from the file
+     */
     @Override
     public List<SearchRecord> load() {
         List<SearchRecord> history = new ArrayList<>();

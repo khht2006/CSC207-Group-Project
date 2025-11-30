@@ -6,7 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Panel for displaying biking cost.
+ * Panel for displaying the computed biking cost.
+ * <p>
+ * This view shows the formatted bike cost to the user. It also provides
+ * navigation buttons for going back to bike and walk time or viewing the comparison summary.
  */
 public class GetCostPanel extends JPanel {
 
@@ -15,10 +18,13 @@ public class GetCostPanel extends JPanel {
     private final JButton backButton;
     private final JButton compareButton;
 
+    /**
+     * Creates a new {@code GetCostPanel} bound to the given view model.
+     *
+     * @param viewModel the view model containing the displayed bike cost text
+     */
     public GetCostPanel(GetBikeCostViewModel viewModel) {
         this.viewModel = viewModel;
-        setLayout(new BorderLayout());
-
         setLayout(new BorderLayout());
 
         bikeCostLabel = new JLabel("Biking cost:", SwingConstants.CENTER);
@@ -33,13 +39,28 @@ public class GetCostPanel extends JPanel {
         bottom.add(compareButton);
         add(bottom, BorderLayout.SOUTH);
     }
+
+    /**
+     * Updates the displayed biking cost based on the view model's text.
+     */
     public void updateBikeCostText() {
         bikeCostLabel.setText("Biking cost: " + viewModel.getBikeCostText());
     }
 
+    /**
+     * Returns the back button for navigation.
+     *
+     * @return the back button
+     */
     public JButton getBackButton() {
         return backButton;
     }
+
+    /**
+     * Returns the button that navigates to the comparison summary view.
+     *
+     * @return the compare summary button
+     */
     public JButton getCompareButton() {
         return compareButton;
     }

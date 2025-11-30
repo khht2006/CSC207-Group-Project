@@ -6,15 +6,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-
 /**
- * A panel that displays saved search history records.
+ * Panel for displaying previously saved search history records.
  */
 public class SearchHistoryPanel extends JPanel {
 
     private final JTextArea area;
     private final JButton backButton;
 
+    /**
+     * Creates a new {@code SearchHistoryPanel}.
+     */
     public SearchHistoryPanel() {
         setLayout(new BorderLayout());
 
@@ -31,12 +33,18 @@ public class SearchHistoryPanel extends JPanel {
         add(backButton, BorderLayout.SOUTH);
     }
 
-    /** Shows a message when no history exists. */
+    /**
+     * Displays a message indicating that no history is available.
+     */
     public void setNoHistoryMessage() {
         area.setText("No history yet.");
     }
 
-    /** Displays all saved search history records in a formatted list. */
+    /**
+     * Displays all saved search history records in a formatted list.
+     *
+     * @param records the list of records to show
+     */
     public void setHistory(List<SearchRecord> records) {
         StringBuilder sb = new StringBuilder();
 
@@ -60,7 +68,11 @@ public class SearchHistoryPanel extends JPanel {
         area.setText(sb.toString());
     }
 
-
+    /**
+     * Returns the back button for navigation.
+     *
+     * @return the back button
+     */
     public JButton getBackButton() {
         return backButton;
     }
