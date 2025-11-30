@@ -75,15 +75,12 @@ public final class AppBuilder {
         final CardLayout layout = new CardLayout();
         final JPanel root = new JPanel(layout);
         // Search History CA use case wiring
-        SearchHistoryViewModel historyVM = new SearchHistoryViewModel();
-        SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyVM);
-        SearchHistoryInteractor historyInteractor =
+        final SearchHistoryViewModel historyViewModel = new SearchHistoryViewModel();
+        final SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyViewModel);
+        final SearchHistoryInteractor historyInteractor =
                 new SearchHistoryInteractor(historyGateway, historyPresenter);
-        SearchHistoryController historyController =
+        final SearchHistoryController historyController =
                 new SearchHistoryController(historyInteractor);
-
-        CardLayout layout = new CardLayout();
-        JPanel root = new JPanel(layout);
 
         root.add(originPanel, ORIGIN);
         root.add(bikeTimePanel, BIKE_TIME);
@@ -123,7 +120,7 @@ public final class AppBuilder {
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
                     final double bikeCost = bikeCostViewModel.getBikeCostValue();
 
-                    SearchRecord record = new SearchRecord(
+                    final SearchRecord record = new SearchRecord(
                             originPanel.getOriginText(),
                             originPanel.getDestinationText(),
                             bikeTime,
@@ -136,14 +133,14 @@ public final class AppBuilder {
         );
 
         // Navigation buttons
-        bikeTimePanel.getCostButton().addActionListener(e -> {
+        bikeTimePanel.getCostButton().addActionListener(actionEvent -> {
             layout.show(root, BIKE_COST);
             bikeCostController.calculateCost();
             bikeCostPanel.updateBikeCostText();
         });
 
         // Navigation: bikeCost → compare summary
-        bikeCostPanel.getCompareButton().addActionListener(e -> {
+        bikeCostPanel.getCompareButton().addActionListener(actionEvent -> {
 
             compareViewModel.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
             compareViewModel.setBikeTimeText(bikeTimeViewModel.getBikeTimeValue());
@@ -154,20 +151,24 @@ public final class AppBuilder {
         });
 
         // Back buttons
-        bikeTimePanel.getBackButton().addActionListener(e -> layout.show(root, ORIGIN));
-        bikeCostPanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_TIME));
-        comparePanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_COST));
+        bikeTimePanel.getBackButton().addActionListener(actionEvent -> layout.show(root, ORIGIN));
+        bikeCostPanel.getBackButton().addActionListener(actionEvent -> layout.show(root, BIKE_TIME));
+        comparePanel.getBackButton().addActionListener(actionEvent -> layout.show(root, BIKE_COST));
 
         // Search History button
-        originPanel.getViewHistoryButton().addActionListener(e -> {
+        originPanel.getViewHistoryButton().addActionListener(actionEvent -> {
             historyController.execute();
-            var records = historyVM.getHistory();
-            if (records == null || records.isEmpty()) historyPanel.setNoHistoryMessage();
-            else historyPanel.setHistory(records);
+            final var records = historyViewModel.getHistory();
+            if (records == null || records.isEmpty()) {
+                historyPanel.setNoHistoryMessage();
+            }
+            else {
+                historyPanel.setHistory(records);
+            }
             layout.show(root, SEARCH_HISTORY);
         });
 
-        historyPanel.getBackButton().addActionListener(e -> layout.show(root, ORIGIN));
+        historyPanel.getBackButton().addActionListener(actionEvent -> layout.show(root, ORIGIN));
 
         final JFrame frame = new JFrame("Grapes Trip Planner");
         final int frameWidth = 600;

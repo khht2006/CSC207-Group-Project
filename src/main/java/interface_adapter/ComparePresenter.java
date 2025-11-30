@@ -5,7 +5,6 @@ import usecase.BikeRouteOutputData;
 import usecase.get_bike_cost.GetBikeCostOutputBoundary;
 import usecase.get_bike_cost.GetBikeCostOutputData;
 
-
 /**
  * The Presenter for the Compare Summary case.
  */
@@ -19,13 +18,13 @@ public class ComparePresenter implements BikeRouteOutputBoundary, GetBikeCostOut
 
     @Override
     public void present(BikeRouteOutputData outputData) {
-        double minutes = outputData.getDurationMinutes();
+        final double minutes = outputData.getDurationMinutes();
         viewModel.setBikeTimeText(minutes);
     }
 
     @Override
     public void present(GetBikeCostOutputData outputData) {
-        double cost = outputData.getBikeCost();
+        final double cost = outputData.getBikeCost();
         viewModel.setBikeCostText(String.format("$%.2f", cost));
     }
 
