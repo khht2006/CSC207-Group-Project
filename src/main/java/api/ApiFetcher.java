@@ -1,4 +1,6 @@
-package app;
+package api;
+
+import app.Config;
 
 import java.io.IOException;
 import java.net.URI;
@@ -7,14 +9,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-// ... existing code ...
 
 /**
  * Low-level client for external APIs:
  * - OpenRouteService directions (walking, cycling)
  * - OpenRouteService geocoding (search locations)
  * - Toronto Bike Share GBFS endpoints
- *
+ * <p>
  * This class returns raw JSON strings.
  * Higher-level code (gateways / services) should parse these.
  */
@@ -38,6 +39,7 @@ public class ApiFetcher {
 
     private final String orsApiKey;
     private final HttpClient httpClient;
+    static final String APP_JSON = "application/json";
 
     // --- Constructor -------------------------------------------------------
 
@@ -73,7 +75,7 @@ public class ApiFetcher {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Authorization", orsApiKey)
-                .header("Content-Type", "application/json")
+                .header("Content-Type", APP_JSON)
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
 
@@ -111,12 +113,13 @@ public class ApiFetcher {
 
     /**
      * Calls ORS geocode/search to find locations matching the given text.
-     *
+     * <p>
      * This returns raw JSON. Use a higher-level service to parse into Location entities.
-     *
-     * Docs: https://openrouteservice.org/dev/#/api-docs/geocode/search
+     * <p>
+     * Docs: <a href="https://openrouteservice.org/dev/#/api-docs/geocode/search">...</a>
      */
     public String fetchGeocodeJson(String text, int maxResults) throws IOException, InterruptedException {
+       
         if (text == null || text.isBlank()) {
             throw new IllegalArgumentException("Geocode text must not be blank.");
         }
@@ -128,7 +131,7 @@ public class ApiFetcher {
 
         // Bounding box around the City of Toronto (approximate).
         // Restrict to Canada and bias toward addresses and venues.
-        int apiSize = Math.min(maxResults * 3, 15); // ask ORS for a few more; we'll rank & trim
+        int apiSize = Math.min(maxResults * 3, 15); // ask ORS for a few more; we'll rank and trim
 
         String url = ORS_BASE_URL + ORS_GEOCODE_PATH
                 + "?api_key=" + encode(orsApiKey)
@@ -143,7 +146,7 @@ public class ApiFetcher {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .header("Accept", "application/json")
+                .header("Accept", APP_JSON)
                 .GET()
                 .build();
 
@@ -182,7 +185,7 @@ public class ApiFetcher {
     private String getJson(String url) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .header("Accept", "application/json")
+                .header("Accept", APP_JSON)
                 .GET()
                 .build();
 

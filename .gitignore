@@ -8,3 +8,6 @@
 # Ignore macOS files.
 .DS_Store
 **/.DS_Store
+target/
+# local search history
+search_history.txt
