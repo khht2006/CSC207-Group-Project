@@ -1,6 +1,6 @@
 package usecase;
 
-import app.ApiFetcher;
+import api.ApiFetcher;
 import entity.Location;
 
 import java.io.IOException;
@@ -10,14 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
  * Use case for geocoding free-text location input into Location entities.
- *
+ * <p>
  * This is a minimal implementation that parses the ORS geocode/search JSON
  * in a simple way (not a full JSON parser). It extracts:
  * - properties.housenumber + properties.street + properties.locality (if available)
  * - properties.name (e.g. CN Tower) as fallback
  * - properties.label as last fallback
  * - geometry.coordinates [lon, lat]
- *
+ * <p>
  * It returns a list of Location suggestions.
  */
 public class GeocodeLocationInteractor {
@@ -48,7 +48,7 @@ public class GeocodeLocationInteractor {
 
     // "coordinates":[-79.3832,43.6536]
     private static final Pattern COORD_PATTERN =
-            Pattern.compile("\"coordinates\"\\s*:\\s*\\[\\s*([-0-9.]+)\\s*,\\s*([-0-9.]+)\\s*\\]");
+            Pattern.compile("\"coordinates\"\\s*:\\s*\\[\\s*([-0-9.]+)\\s*,\\s*([-0-9.]+)\\s*]");
 
     public GeocodeLocationInteractor(ApiFetcher apiFetcher) {
         this.apiFetcher = apiFetcher;

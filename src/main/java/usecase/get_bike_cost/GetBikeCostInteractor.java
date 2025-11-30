@@ -1,10 +1,7 @@
 package usecase.get_bike_cost;
 
 /**
- * Interactor for calculating the total Bike Share cost.
- * <p>
- * Uses the bike travel time from the input data to compute the cost and
- * passes the result to the output boundary.
+ * Calculates the total cost of a BikeShare trip.
  */
 public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
 
@@ -22,10 +19,8 @@ public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
         this.presenter = presenter;
     }
 
-    /**
-     * Computes the bike cost and forwards the result.
-     *
-     * @param inputData the input containing the bike travel time in minutes
+    /**  Executes the bike cost calculation use case.
+     * @param inputData the input data containing the bike time in minutes.
      */
     @Override
     public void execute(GetBikeCostInputData inputData) {
@@ -36,3 +31,4 @@ public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
         presenter.present(outputData);
     }
 }
+
