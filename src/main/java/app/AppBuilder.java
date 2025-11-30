@@ -28,20 +28,24 @@ public class AppBuilder {
 
     public static JFrame build() {
 
+        // Delete history at app startup
         new java.io.File("search_history.txt").delete();
 
         ApiFetcher apiFetcher = new ApiFetcher();
         GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
         SearchHistoryData historyGateway = new SearchHistoryGateway();
 
+        // Walking time use case
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
 
+        // Bike time use case
         GetBikeTimeViewModel bikeTimeVM = new GetBikeTimeViewModel();
         GetBikeTimePresenter bikeTimePresenter = new GetBikeTimePresenter(bikeTimeVM);
         BikeRouteInteractor bikeRoute = new BikeRouteInteractor(apiFetcher, bikeTimePresenter);
         GetBikeTimeController bikeTimeController = new GetBikeTimeController(bikeRoute);
         GetTimePanel bikeTimePanel = new GetTimePanel(bikeTimeVM, bikeTimeController);
 
+        // Bike cost use case
         GetBikeCostViewModel bikeCostVM = new GetBikeCostViewModel();
         GetBikeCostPresenter bikeCostPresenter = new GetBikeCostPresenter(bikeCostVM);
         GetBikeCostInteractor bikeCostInteractor = new GetBikeCostInteractor(bikeCostPresenter);
@@ -49,9 +53,11 @@ public class AppBuilder {
                 new GetBikeCostController(bikeCostInteractor, bikeTimeVM);
         GetCostPanel bikeCostPanel = new GetCostPanel(bikeCostVM);
 
+        // Compare summary
         CompareViewModel compareVM = new CompareViewModel();
         CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareVM);
 
+        // Origin + Search History
         OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
         SearchHistoryPanel historyPanel = new SearchHistoryPanel();
 
@@ -76,6 +82,7 @@ public class AppBuilder {
                 originPanel,
                 geocode,
                 (origin, dest) -> {
+
                     layout.show(root, "bikeTime");
 
                     bikeTimePanel.requestBikeTime(
@@ -109,16 +116,20 @@ public class AppBuilder {
                             bikeCost,
                             walkTime
                     );
+
+                    // Save user-entered inputs, not geocoder labels
                     historyGateway.save(record);
                 }
         );
 
+        // Navigation: Time → bikeCost
         bikeTimePanel.getCostButton().addActionListener(e -> {
             layout.show(root, "bikeCost");
             bikeCostController.calculateCost();
             bikeCostPanel.updateBikeCostText();
         });
 
+        // Navigation: bikeCost → compare summary
         bikeCostPanel.getCompareButton().addActionListener(e -> {
 
             double bikeT = bikeTimeVM.getBikeTimeValue();
@@ -132,10 +143,12 @@ public class AppBuilder {
             layout.show(root, "compare");
         });
 
+        // Back buttons
         bikeTimePanel.getBackButton().addActionListener(e -> layout.show(root, "origin"));
         bikeCostPanel.getBackButton().addActionListener(e -> layout.show(root, "bikeTime"));
         comparePanel.getBackButton().addActionListener(e -> layout.show(root, "bikeCost"));
 
+        // Search History
         originPanel.getViewHistoryButton().addActionListener(e -> {
             historyController.execute();
             var records = historyVM.getHistory();
