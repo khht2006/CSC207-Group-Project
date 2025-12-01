@@ -8,7 +8,7 @@ public class CompareViewModel {
     private String walkTimeText = "Walk Time: -- minutes";
     private String bikeTimeText = "Bike Time: -- minutes";
     private String bikeCostText = "Bike Cost: --";
-    private String diffInMinutes = "Time saved by taking a bike: -- minutes";
+    private String diffInMinutesText = "Time saved by biking: -- minutes";
 
     public String getWalkTime() {
         return walkTimeText;
@@ -35,10 +35,10 @@ public class CompareViewModel {
     }
 
     public String getDiffInMinutes() {
-        return diffInMinutes;
+        return diffInMinutesText;
     }
 
-    public void setDiffInMinutes(String diffInMinutes) {
-        this.diffInMinutes = diffInMinutes;
+    public void setDiffInMinutesText(double diffInMinutes) {
+        this.diffInMinutesText = String.format("Time saved by biking: %.1f minutes", diffInMinutes);
     }
 }
