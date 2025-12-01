@@ -5,7 +5,6 @@ import usecase.get_bike_cost.GetBikeCostInputData;
 
 /**
  * Controller for the GetBikeCost use case.
- * <p>
  * Extracts the biking time from the view model, converts it to a numeric
  * value, and sends it to the interactor for cost calculation.
  */
@@ -30,16 +29,16 @@ public class GetBikeCostController {
      * and sends the input data to the interactor for cost calculation.
      */
     public void calculateCost() {
-        String timeText = timeViewModel.getBikeTimeText();
+        final String timeText = timeViewModel.getBikeTimeText();
 
-        String numberOnly = timeText
+        final String numberOnly = timeText
                 .replace("Bike Time:", "")
                 .replace("minutes", "")
                 .trim();
 
-        double minutes = Double.parseDouble(numberOnly);
+        final double minutes = Double.parseDouble(numberOnly);
 
-        GetBikeCostInputData inputData = new GetBikeCostInputData(minutes);
+        final GetBikeCostInputData inputData = new GetBikeCostInputData(minutes);
         interactor.execute(inputData);
     }
 }

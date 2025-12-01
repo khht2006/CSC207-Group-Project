@@ -1,24 +1,18 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import interface_adapter.GetBikeTimeController;
 import interface_adapter.GetBikeTimeViewModel;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Panel for displaying biking time and walking time.
  */
 public class GetTimePanel extends JPanel {
 
-    private final GetBikeTimeViewModel viewModel;
-    private final GetBikeTimeController controller;
+    private final transient GetBikeTimeViewModel viewModel;
+    private final transient GetBikeTimeController controller;
 
     private final JLabel bikeTimeLabel;
     private final JLabel walkTimeLabel;
@@ -42,23 +36,23 @@ public class GetTimePanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        Font timeFont = new Font("SansSerif", Font.BOLD, 16);
+        final Font timeFont = new Font("SansSerif", Font.BOLD, 16);
 
-        bikeTimeLabel = new JLabel(viewModel.getBikeTimeText(), JLabel.CENTER);
+        bikeTimeLabel = new JLabel(viewModel.getBikeTimeText(), SwingConstants.CENTER);
         bikeTimeLabel.setFont(timeFont);
 
-        walkTimeLabel = new JLabel("Walk Time: -- minutes", JLabel.CENTER);
+        walkTimeLabel = new JLabel("Walk Time: -- minutes", SwingConstants.CENTER);
         walkTimeLabel.setFont(timeFont);
 
         backButton = new JButton("Back");
         costButton = new JButton("See Bike Cost");
 
-        JPanel center = new JPanel(new GridLayout(2, 1));
+        final JPanel center = new JPanel(new GridLayout(2, 1));
         center.add(bikeTimeLabel);
         center.add(walkTimeLabel);
         add(center, BorderLayout.CENTER);
 
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.add(backButton);
         bottom.add(costButton);
         add(bottom, BorderLayout.SOUTH);
@@ -66,14 +60,15 @@ public class GetTimePanel extends JPanel {
 
     /**
      * Fetches bike time for the given coordinates.
-     *
-     * @param originLat origin latitude
-     * @param originLon origin longitude
-     * @param destinationLat destination latitude
-     * @param destinationLon destination longitude
+     * @param originLat origin lat coord
+     * @param originLon origin lon coord
+     * @param destinationLat destination lat coord
+     * @param destinationLon destination lon coord
      */
-    public void requestBikeTime(double originLat, double originLon,
-                                double destinationLat, double destinationLon) {
+    public void requestBikeTime(double originLat,
+                                double originLon,
+                                double destinationLat,
+                                double destinationLon) {
         controller.execute(originLat, originLon, destinationLat, destinationLon);
     }
 
@@ -83,9 +78,8 @@ public class GetTimePanel extends JPanel {
     }
 
     /**
-     * Updates the displayed walking time.
-     *
-     * @param minutes walking time in minutes
+     * Set display text for walk time.
+     * @param minutes walk time in minutes
      */
     public void setWalkTimeText(double minutes) {
         walkTimeValue = minutes;

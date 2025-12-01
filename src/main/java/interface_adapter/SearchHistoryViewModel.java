@@ -1,7 +1,8 @@
 package interface_adapter;
 
-import entity.SearchRecord;
 import java.util.List;
+
+import entity.SearchRecord;
 
 /**
  * View model for storing the loaded search history records.
