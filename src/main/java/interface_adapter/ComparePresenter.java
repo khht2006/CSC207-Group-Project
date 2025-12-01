@@ -8,7 +8,7 @@ import usecase.get_bike_cost.GetBikeCostOutputData;
 /**
  * The Presenter for the Compare Summary case.
  */
-public class ComparePresenter implements BikeRouteOutputBoundary, GetBikeCostOutputBoundary {
+public class ComparePresenter implements CompareSummaryOutputBoundary {
 
     private final CompareViewModel viewModel;
 
@@ -16,16 +16,20 @@ public class ComparePresenter implements BikeRouteOutputBoundary, GetBikeCostOut
         this.viewModel = viewModel;
     }
 
-    @Override
-    public void present(BikeRouteOutputData outputData) {
-        final double minutes = outputData.getDurationMinutes();
-        viewModel.setBikeTimeText(minutes);
-    }
+    /**
+     * Formats the output data and stores in view model.
+     * @param outputData the data containing the computed bike cost
+     */
+    public void present(CompareSummaryOutputData outputData) {
+        final double bikeMinutes = outputData.getBikeMinutes();
+        final double walkMinutes = outputData.getWalkMinutes();
+        final double bikeCost = outputData.getBikeCost();
+        final double diffInMinutes = outputData.getDiffInMinutes();
 
-    @Override
-    public void present(GetBikeCostOutputData outputData) {
-        final double cost = outputData.getBikeCost();
-        viewModel.setBikeCostText(String.format("$%.2f", cost));
+        viewModel.setBikeTimeText(bikeMinutes);
+        viewModel.setWalkTimeText(walkMinutes);
+        viewModel.setBikeCostText(String.format("$%.2f", bikeCost));
+        viewModel.setDiffInMinutesText(diffInMinutes);
     }
 
     public CompareViewModel getViewModel() {
