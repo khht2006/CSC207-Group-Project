@@ -1,4 +1,4 @@
-package usecase.search_history;
+package entity;
 
 /**
  * A search history record containing the user's origin, destination,
@@ -29,9 +29,38 @@ public class SearchRecord {
         this.walkTime = walkTime;
     }
 
-    public String getOrigin() { return origin; }
-    public String getDestination() { return destination; }
-    public double getBikeTime() { return bikeTime; }
-    public double getBikeCost() { return bikeCost; }
-    public double getWalkTime() { return walkTime; }
+    /**
+     * @return the origin location
+     */
+    public String getOrigin() {
+        return origin;
+    }
+
+    /**
+     * @return the destination location
+     */
+    public String getDestination() {
+        return destination;
+    }
+
+    /**
+     * @return the biking time in minutes
+     */
+    public double getBikeTime() {
+        return bikeTime;
+    }
+
+    /**
+     * @return the biking cost
+     */
+    public double getBikeCost() {
+        return bikeCost;
+    }
+
+    /**
+     * @return the walking time in minutes
+     */
+    public double getWalkTime() {
+        return walkTime;
+    }
 }

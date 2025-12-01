@@ -19,8 +19,10 @@ public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
         this.presenter = presenter;
     }
 
-    /**  Executes the bike cost calculation use case.
-     * @param inputData the input data containing the bike time in minutes.
+    /**
+     * Executes the bike cost calculation use case.
+     *
+     * @param inputData the input data containing the bike time in minutes
      */
     @Override
     public void execute(GetBikeCostInputData inputData) {
@@ -31,4 +33,3 @@ public class GetBikeCostInteractor implements GetBikeCostInputBoundary {
         presenter.present(outputData);
     }
 }
-
