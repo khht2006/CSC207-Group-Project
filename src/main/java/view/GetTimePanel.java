@@ -30,25 +30,39 @@ public class GetTimePanel extends JPanel {
 
         setLayout(new BorderLayout());
 
+        JLabel header = new JLabel("Route Time Summary", SwingConstants.CENTER);
+        header.setFont(new Font("SansSerif", Font.BOLD, 22));
+        header.setBorder(BorderFactory.createEmptyBorder(20, 10, 30, 10));
+        add(header, BorderLayout.NORTH);
+
         Font timeFont = new Font("SansSerif", Font.BOLD, 16);
 
-        bikeTimeLabel = new JLabel(viewModel.getBikeTimeText(), SwingConstants.CENTER);
+        bikeTimeLabel = new JLabel(viewModel.getBikeTimeText());
         bikeTimeLabel.setFont(timeFont);
 
-        walkTimeLabel = new JLabel("Walk Time: -- minutes", SwingConstants.CENTER);
+        walkTimeLabel = new JLabel("Walk Time: -- minutes");
         walkTimeLabel.setFont(timeFont);
+
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 40, 30));
+
+        bikeTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        walkTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        centerPanel.add(bikeTimeLabel);
+        centerPanel.add(Box.createVerticalStrut(10));
+        centerPanel.add(walkTimeLabel);
+
+        add(centerPanel, BorderLayout.CENTER);
 
         backButton = new JButton("Back");
         costButton = new JButton("See Bike Cost");
 
-        JPanel center = new JPanel(new GridLayout(2, 1));
-        center.add(bikeTimeLabel);
-        center.add(walkTimeLabel);
-        add(center, BorderLayout.CENTER);
-
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         bottom.add(backButton);
         bottom.add(costButton);
+
         add(bottom, BorderLayout.SOUTH);
     }
 
