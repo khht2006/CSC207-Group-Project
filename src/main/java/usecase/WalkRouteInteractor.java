@@ -58,7 +58,7 @@ public class WalkRouteInteractor {
      */
     public static class WalkRouteResponse {
         private final double distanceKm;
-        private final double timeMinutes;
+        public final double timeMinutes;
 
         /**
          * Creates a new WalkRouteResponse.
