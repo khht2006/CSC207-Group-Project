@@ -1,4 +1,4 @@
-package usecase;
+package usecase.fetch_location;
 
 import api.ApiFetcher;
 import entity.Location;

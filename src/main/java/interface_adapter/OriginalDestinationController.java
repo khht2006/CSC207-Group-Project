@@ -1,7 +1,7 @@
 package interface_adapter;
 
 import entity.Location;
-import usecase.GeocodeLocationInteractor;
+import usecase.fetch_location.GeocodeLocationInteractor;
 import view.OriginalDestinationPanel;
 
 import javax.swing.*;
