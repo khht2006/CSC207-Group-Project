@@ -1,4 +1,4 @@
-package usecase;
+package usecase.geocode_location;
 
 import api.ApiFetcher;
 import entity.Location;
@@ -10,18 +10,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
  * Use case for geocoding free-text location input into Location entities.
- * <p>
  * This is a minimal implementation that parses the ORS geocode/search JSON
  * in a simple way (not a full JSON parser). It extracts:
  * - properties.housenumber + properties.street + properties.locality (if available)
  * - properties.name (e.g. CN Tower) as fallback
  * - properties.label as last fallback
  * - geometry.coordinates [lon, lat]
- * <p>
  * It returns a list of Location suggestions.
  */
-public class GeocodeLocationInteractor {
-
+public class GeocodeLocationInteractor implements GeocodeInputBoundary {
+    final GeocodeOutputBoundary userPresenter;
     private final ApiFetcher apiFetcher;
 
     // Regex patterns tailored for ORS geocode JSON structure
@@ -50,8 +48,25 @@ public class GeocodeLocationInteractor {
     private static final Pattern COORD_PATTERN =
             Pattern.compile("\"coordinates\"\\s*:\\s*\\[\\s*([-0-9.]+)\\s*,\\s*([-0-9.]+)\\s*]");
 
-    public GeocodeLocationInteractor(ApiFetcher apiFetcher) {
+    public GeocodeLocationInteractor(ApiFetcher apiFetcher, GeocodeOutputBoundary userPresenter) {
         this.apiFetcher = apiFetcher;
+        this.userPresenter = userPresenter;
+    }
+
+    @Override
+    public void execute(GeocodeInputData inputData) {
+        try {
+            List<Location> locations = searchLocations(inputData.getQuery(), inputData.getMaxResults());
+            // Convert List<Location> to GeocodeOutputData
+            GeocodeOutputData outputData = new GeocodeOutputData(
+                    locations.stream().map(Location::getName).toList(),
+                    locations.stream().map(Location::getLatitude).toList(),
+                    locations.stream().map(Location::getLongitude).toList()
+            );
+            userPresenter.prepareSuccessView(outputData);
+        } catch (Exception e) {
+            userPresenter.prepareFailView(e.getMessage());
+        }
     }
 
     /**

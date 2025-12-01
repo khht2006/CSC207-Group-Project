@@ -10,7 +10,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import entity.Location;
-import usecase.GeocodeLocationInteractor;
+import usecase.geocode_location.GeocodeLocationInteractor;
 import view.OriginalDestinationPanel;
 
 /**

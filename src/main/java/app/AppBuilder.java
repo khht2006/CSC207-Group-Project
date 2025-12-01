@@ -7,6 +7,7 @@ import api.ApiFetcher;
 import entity.*;
 import interface_adapter.*;
 import usecase.*;
+import usecase.geocode_location.GeocodeLocationInteractor;
 import usecase.get_bike_cost.*;
 import usecase.search_history.*;
 import view.*;
