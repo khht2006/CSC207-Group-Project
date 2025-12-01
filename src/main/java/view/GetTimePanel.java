@@ -89,7 +89,7 @@ public class GetTimePanel extends JPanel {
      */
     public void setWalkTimeText(double minutes) {
         walkTimeValue = minutes;
-        walkTimeLabel.setText(String.format("Walk Time: %.1f minutes", minutes));
+        walkTimeLabel.setText(String.format("Walk Time: %.2f minutes", minutes));
     }
 
     /** Returns the stored walking time. */
