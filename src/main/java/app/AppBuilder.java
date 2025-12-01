@@ -10,6 +10,9 @@ import interface_adapter.GetBikeTimePresenter;
 import interface_adapter.GetBikeTimeViewModel;
 import interface_adapter.OriginalDestinationController;
 import interface_adapter.SearchHistoryGateway;
+import interface_adapter.SearchHistoryViewModel;
+import interface_adapter.SearchHistoryPresenter;
+import interface_adapter.SearchHistoryController;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -26,6 +29,7 @@ import usecase.WalkRouteInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
 import usecase.search_history.SearchHistoryData;
+import usecase.search_history.SearchHistoryInteractor;
 import entity.SearchRecord;
 import view.CompareSummaryPanel;
 import view.GetCostPanel;
@@ -91,6 +95,12 @@ public final class AppBuilder {
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
 
         SearchHistoryData historyGateway = new SearchHistoryGateway();
+
+        // ------- Search History Use Case -------
+        SearchHistoryViewModel historyVM = new SearchHistoryViewModel();
+        SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyVM);
+        SearchHistoryInteractor historyInteractor = new SearchHistoryInteractor(historyGateway, historyPresenter);
+        SearchHistoryController historyController = new SearchHistoryController(historyInteractor);
 
         // ------- Bike Time Use Case -------
         GetBikeTimeViewModel bikeTimeVM = new GetBikeTimeViewModel();
@@ -158,8 +168,9 @@ public final class AppBuilder {
 
         // ------- Search History -------
         originPanel.getViewHistoryButton().addActionListener(e -> {
-            var records = historyGateway.load();
-            if (records.isEmpty()) {
+            historyController.execute();
+            var records = historyVM.getHistory();
+            if (records == null || records.isEmpty()) {
                 historyPanel.setNoHistoryMessage();
             } else {
                 historyPanel.setHistory(records);
