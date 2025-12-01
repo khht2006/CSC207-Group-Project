@@ -21,6 +21,7 @@ public class CompareSummaryPanel extends JPanel {
     private final JLabel walkTimeLabel;
     private final JLabel bikeTimeLabel;
     private final JLabel bikeCostLabel;
+    private final JLabel diffInMinutesLabel;
     private final JButton backButton;
 
     /**
@@ -44,12 +45,16 @@ public class CompareSummaryPanel extends JPanel {
         bikeCostLabel = new JLabel("Bike Cost: --", SwingConstants.CENTER);
         bikeCostLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
+        diffInMinutesLabel = new JLabel("Time saved by taking a bike: --", SwingConstants.CENTER);
+        diffInMinutesLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
         backButton = new JButton("Back");
 
-        JPanel center = new JPanel(new GridLayout(3, 1, 5, 5));
+        final JPanel center = new JPanel(new GridLayout(4, 1, 5, 5));
         center.add(walkTimeLabel);
         center.add(bikeTimeLabel);
         center.add(bikeCostLabel);
+        center.add(diffInMinutesLabel);
 
         add(titleLabel, BorderLayout.NORTH);
         add(center, BorderLayout.CENTER);
@@ -60,8 +65,9 @@ public class CompareSummaryPanel extends JPanel {
     public void updateSummary() {
         walkTimeLabel.setText(viewModel.getWalkTime());
         bikeTimeLabel.setText(viewModel.getBikeTime());
-        String cost = viewModel.getBikeCost();
+        final String cost = viewModel.getBikeCost();
         bikeCostLabel.setText("Bike Cost: " + cost);
+        diffInMinutesLabel.setText(viewModel.getDiffInMinutes());
     }
 
     /** Returns the back button. */
