@@ -1,6 +1,6 @@
 package interface_adapter;
 
-import usecase.search_history.SearchHistoryData;
+import usecase.search_history.SearchHistoryInputData;
 import entity.SearchRecord;
 
 import java.io.*;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * File-based implementation of {@link SearchHistoryData}.
+ * File-based implementation of {@link SearchHistoryInputData}.
  */
-public class SearchHistoryGateway implements SearchHistoryData {
+public class SearchHistoryGateway implements SearchHistoryInputData {
 
     private static final String FILE_PATH = "search_history.txt";
 
