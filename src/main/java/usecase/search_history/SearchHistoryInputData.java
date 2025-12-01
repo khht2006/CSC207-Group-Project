@@ -9,7 +9,7 @@ import java.util.List;
  * <p>
  * Implementations provide persistent storage for {@link SearchRecord} objects.
  */
-public interface SearchHistoryData {
+public interface SearchHistoryInputData {
 
     /**
      * Saves a single search history record.
