@@ -6,6 +6,7 @@ import usecase.*;
 import usecase.search_history.*;
 import usecase.get_bike_cost.*;
 import view.*;
+import usecase.WalkRouteInteractor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +28,8 @@ public class AppBuilder {
     static final String BIKE_COST = "bikeCost";
     static final String SEARCH_HISTORY_FILE = "search_history.txt";
 
-    private AppBuilder() {}
+    private AppBuilder() {
+    }
 
     public static JFrame build() {
 
@@ -82,26 +84,29 @@ public class AppBuilder {
 
                     bikeTimePanel.requestBikeTime(
                             origin.getLatitude(), origin.getLongitude(),
-                            dest.getLatitude(), dest.getLongitude()
+                            dest.getLatitude(), dest.getLongitude(),
+                            dest.getName()
                     );
                     bikeTimePanel.updateBikeTimeText();
-                    double bikeTime = bikeTimeVM.getBikeTimeValue();
+
+                    double bikeTime = bikeTimeVM.getTotalTimeMinutes();
+                    double cyclingTime = bikeTimeVM.getCyclingTimeMinutes();
 
                     double walkTime;
                     try {
-                        WalkRouteInteractor.WalkRouteResponse walk =
+                        entity.Route walkRouteResult =
                                 walkRoute.execute(
                                         origin.getLatitude(), origin.getLongitude(),
                                         dest.getLatitude(), dest.getLongitude()
                                 );
-                        walkTime = walk.timeMinutes;
+                        walkTime = walkRouteResult.getDurationSeconds() / 60.0;
                     } catch (Exception ex) {
                         walkTime = -1;  // fallback
                     }
 
                     bikeTimePanel.setWalkTimeText(walkTime);
 
-                    bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
+                    bikeCostInteractor.execute(new GetBikeCostInputData(cyclingTime));
                     double bikeCost = bikeCostVM.getBikeCostValue();
 
                     historyGateway.save(new SearchRecord(
@@ -124,7 +129,7 @@ public class AppBuilder {
         // Navigation: bikeCost → compare summary
         bikeCostPanel.getCompareButton().addActionListener(e -> {
 
-            double bikeT = bikeTimeVM.getBikeTimeValue();
+            double bikeT = bikeTimeVM.getTotalTimeMinutes();
             double walkT = bikeTimePanel.getWalkTimeValue();
 
             compareVM.setWalkTimeText(walkT);

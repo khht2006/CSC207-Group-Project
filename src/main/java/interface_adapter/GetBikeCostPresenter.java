@@ -10,6 +10,7 @@ public class GetBikeCostPresenter implements GetBikeCostOutputBoundary{
 
     public void present(GetBikeCostOutputData outputData) {
         viewModel.setBikeCostText(String.format("$%.2f",outputData.getBikeCost()));
+        viewModel.setBikeCostValue(outputData.getBikeCost());
     }
     public GetBikeCostViewModel getViewModel() {
         return viewModel;

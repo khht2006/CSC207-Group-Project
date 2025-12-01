@@ -5,6 +5,8 @@ package interface_adapter;
  */
 public class GetBikeCostViewModel {
     private String bikeCostText = "Bike Cost:";
+    private double bikeCostValue;
+
     public String getBikeCostText() {
         return bikeCostText;
     }
@@ -12,14 +14,11 @@ public class GetBikeCostViewModel {
         this.bikeCostText = bikeCostText;
     }
 
-    /**
-     * Extracts the numeric bike cost from string.
-     */
+    public void setBikeCostValue(double bikeCostValue) {
+        this.bikeCostValue = bikeCostValue;
+    }
+
     public double getBikeCostValue() {
-        String number = bikeCostText.replaceAll("[^0-9.]", "");
-        if (number.isEmpty()) {
-            return 0.0;
-        }
-        return Double.parseDouble(number);
+        return bikeCostValue;
     }
 }

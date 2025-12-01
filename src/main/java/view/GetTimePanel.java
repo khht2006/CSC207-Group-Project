@@ -53,11 +53,10 @@ public class GetTimePanel extends JPanel {
     }
 
     /** Fetches bike time for the given coordinates. */
-    public void requestBikeTime(double originLat,
-                                double originLon,
-                                double destinationLat,
-                                double destinationLon) {
-        controller.execute(originLat, originLon, destinationLat, destinationLon);
+    public void requestBikeTime(double originLat, double originLon,
+                                double destinationLat, double destinationLon,
+                                String destinationName) {
+        controller.execute(originLat, originLon, destinationLat, destinationLon, destinationName);
     }
 
     /** Updates the displayed bike time. */

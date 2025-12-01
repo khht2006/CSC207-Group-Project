@@ -13,12 +13,11 @@ public class GetBikeTimeController {
     }
 
     // Triggers calculation of cycling time for the provided coordinates.
-    public void execute(double originLat,
-                        double originLon,
-                        double destinationLat,
-                        double destinationLon) {
+    public void execute(double originLat, double originLon,
+                        double destinationLat, double destinationLon,
+                        String destinationName) {
         BikeRouteInputData inputData = new BikeRouteInputData(
-                originLat, originLon, destinationLat, destinationLon);
+                originLat, originLon, destinationLat, destinationLon, destinationName);
         interactor.execute(inputData);
     }
 }

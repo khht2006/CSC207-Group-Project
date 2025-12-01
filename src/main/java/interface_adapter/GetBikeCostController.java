@@ -17,17 +17,8 @@ public class GetBikeCostController {
      * Calculate the total travel cost for biking.
      */
     public void calculateCost() {
-        String timeText = timeViewModel.getBikeTimeText();
-
-        String numberOnly = timeText
-                .replace("Bike Time:", "")
-                .replace("minutes", "")
-                .trim();
-
-        double minutes = Double.parseDouble(numberOnly);
-
+        double minutes = timeViewModel.getCyclingTimeMinutes();
         GetBikeCostInputData inputData = new GetBikeCostInputData(minutes);
-
         interactor.execute(inputData);
     }
 

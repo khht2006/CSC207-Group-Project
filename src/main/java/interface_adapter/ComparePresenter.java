@@ -19,7 +19,7 @@ public class ComparePresenter implements BikeRouteOutputBoundary, GetBikeCostOut
 
     @Override
     public void present(BikeRouteOutputData outputData) {
-        double minutes = outputData.getDurationMinutes();
+        double minutes = outputData.getTotalDurationMinutes();
         viewModel.setBikeTimeText(minutes);
     }
 
