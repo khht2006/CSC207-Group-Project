@@ -20,7 +20,7 @@ public class GetBikeTimePresenter implements BikeRouteOutputBoundary {
             return;
         }
 
-        double minutes = outputData.getDurationMinutes();
+        final double minutes = outputData.getDurationMinutes();
         viewModel.setBikeTimeText(String.format("Bike Time: %.1f minutes", minutes));
     }
 

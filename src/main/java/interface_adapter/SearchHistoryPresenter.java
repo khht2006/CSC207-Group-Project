@@ -5,7 +5,6 @@ import usecase.search_history.SearchHistoryOutputData;
 
 /**
  * Presenter for the Search History use case.
- * <p>
  * Formats the retrieved search history records and updates the view model.
  */
 public class SearchHistoryPresenter implements SearchHistoryOutputBoundary {

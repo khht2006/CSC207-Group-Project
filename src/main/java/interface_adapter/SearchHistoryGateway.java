@@ -7,6 +7,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.SearchRecord;
+import usecase.search_history.SearchHistoryData;
+
 /**
  * File-based implementation of {@link SearchHistoryInputData}.
  */
@@ -23,13 +26,15 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
     public void save(SearchRecord record) {
         try (FileWriter writer = new FileWriter(FILE_PATH, true)) {
             writer.write(
-                    record.getOrigin() + "|" +
-                            record.getDestination() + "|" +
-                            record.getBikeTime() + "|" +
-                            record.getBikeCost() + "|" +
-                            record.getWalkTime() + "\n"
+                    record.getOrigin() + "|"
+                            + record.getDestination() + "|"
+                            + record.getBikeTime() + "|"
+                            + record.getBikeCost() + "|"
+                            + record.getWalkTime() + "\n"
             );
-        } catch (IOException ignored) {}
+        }
+        catch (IOException ignored) {
+        }
     }
 
     /**
@@ -39,14 +44,15 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
      */
     @Override
     public List<SearchRecord> load() {
-        List<SearchRecord> history = new ArrayList<>();
+        final List<SearchRecord> history = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                String[] p = line.split("\\|");
-                if (p.length == 5) {
+                final String[] p = line.split("\\|");
+                final int len = 5;
+                if (p.length == len) {
                     history.add(new SearchRecord(
                             p[0],
                             p[1],
@@ -56,7 +62,8 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
                     ));
                 }
             }
-        } catch (IOException ignored) {
+        }
+        catch (IOException ignored) {
             // no existing files (empty history).
         }
 
