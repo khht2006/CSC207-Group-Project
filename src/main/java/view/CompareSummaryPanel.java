@@ -1,16 +1,14 @@
 package view;
 
-import java.awt.*;
-
-import javax.swing.*;
-
 import interface_adapter.CompareViewModel;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The View for the Compare Summary use case.
  */
 public class CompareSummaryPanel extends JPanel {
-    private final CompareViewModel viewModel;
+    private final transient CompareViewModel viewModel;
     private final JLabel titleLabel;
     private final JLabel walkTimeLabel;
     private final JLabel bikeTimeLabel;
@@ -18,6 +16,11 @@ public class CompareSummaryPanel extends JPanel {
 
     private final JButton backButton;
 
+    /**
+     * Constructs the CompareSummaryPanel with the given view model.
+     *
+     * @param viewModel the view model providing summary data
+     */
     public CompareSummaryPanel(CompareViewModel viewModel) {
         this.viewModel = viewModel;
         setLayout(new BorderLayout());
@@ -56,6 +59,7 @@ public class CompareSummaryPanel extends JPanel {
     /**
      * Update compare summary text.
      */
+    /** Updates the summary labels with current values from the view model. */
     public void updateSummary() {
         walkTimeLabel.setText(viewModel.getWalkTime());
         bikeTimeLabel.setText(viewModel.getBikeTime());
@@ -63,6 +67,7 @@ public class CompareSummaryPanel extends JPanel {
         bikeCostLabel.setText("Bike Cost: " + cost);
     }
 
+    /** Returns the back button. */
     public JButton getBackButton() {
         return backButton;
     }

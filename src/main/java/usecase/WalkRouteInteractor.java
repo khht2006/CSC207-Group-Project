@@ -1,27 +1,47 @@
 package usecase;
 
 import api.ApiFetcher;
+import java.io.IOException;
 import org.json.JSONObject;
 
+/**
+ * Interactor responsible for retrieving walking route data.
+ * It requests data from an API and converts it into a response object.
+ */
 public class WalkRouteInteractor {
 
     private final ApiFetcher apiFetcher;
 
+    /**
+     * Constructs the WalkRouteInteractor.
+     *
+     * @param apiFetcher dependency used to fetch walking directions
+     */
     public WalkRouteInteractor(ApiFetcher apiFetcher) {
         this.apiFetcher = apiFetcher;
     }
 
-    public WalkRouteResponse execute(double startLat, double startLng,
-                                     double endLat, double endLng) throws Exception {
+    /**
+     * Executes the walking route use case.
+     *
+     * @param startLat starting latitude
+     * @param startLng starting longitude
+     * @param endLat destination latitude
+     * @param endLng destination longitude
+     * @return response containing distance and estimated travel time
+     * @throws IOException if fetching or parsing the API response fails
+     * @throws InterruptedException if the request is interrupted
+     */
+    public WalkRouteResponse execute(
+            double startLat,
+            double startLng,
+            double endLat,
+            double endLng) throws IOException, InterruptedException {
 
-        // Call the existing method from ApiFetcher
         String jsonString = apiFetcher.fetchWalkingDirectionsJson(
                 startLng, startLat, endLng, endLat);
 
-        JSONObject responseJson = new JSONObject(jsonString);
-
-        // Parse JSON
-        JSONObject summary = responseJson
+        JSONObject summary = new JSONObject(jsonString)
                 .getJSONArray("routes")
                 .getJSONObject(0)
                 .getJSONObject("summary");
@@ -32,14 +52,41 @@ public class WalkRouteInteractor {
         return new WalkRouteResponse(distanceKm, timeMinutes);
     }
 
-    // Object to store the data that we will return
+    /**
+     * Value object representing walking route data.
+     * Must be public to be accessible by presentation and framework layers.
+     */
     public static class WalkRouteResponse {
-        public final double distanceKm;
+        private final double distanceKm;
         public final double timeMinutes;
 
+        /**
+         * Creates a new WalkRouteResponse.
+         *
+         * @param distanceKm route distance in kilometers
+         * @param timeMinutes estimated duration in minutes
+         */
         public WalkRouteResponse(double distanceKm, double timeMinutes) {
             this.distanceKm = distanceKm;
             this.timeMinutes = timeMinutes;
+        }
+
+        /**
+         * Returns the total route distance in kilometers.
+         *
+         * @return the distance in km
+         */
+        public double getDistanceKm() {
+            return distanceKm;
+        }
+
+        /**
+         * Returns the estimated travel time in minutes.
+         *
+         * @return the time in minutes
+         */
+        public double getTimeMinutes() {
+            return timeMinutes;
         }
     }
 }

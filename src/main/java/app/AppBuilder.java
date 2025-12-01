@@ -1,7 +1,6 @@
 package app;
 
 import java.awt.*;
-
 import javax.swing.*;
 
 import api.ApiFetcher;
@@ -112,6 +111,7 @@ public final class AppBuilder {
                         walkTime = walk.timeMinutes;
                     }
                     catch (Exception ex) {
+                        // Safe to ignore: if walking route lookup fails, use -1 to indicate unavailable
                         walkTime = -1;
                     }
 
@@ -120,7 +120,7 @@ public final class AppBuilder {
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
                     final double bikeCost = bikeCostViewModel.getBikeCostValue();
 
-                    final SearchRecord record = new SearchRecord(
+                    final SearchRecord searchRecord = new SearchRecord(
                             originPanel.getOriginText(),
                             originPanel.getDestinationText(),
                             bikeTime,
@@ -128,7 +128,7 @@ public final class AppBuilder {
                             walkTime
                     );
 
-                    historyGateway.save(record);
+                    historyGateway.save(searchRecord);
                 }
         );
 
