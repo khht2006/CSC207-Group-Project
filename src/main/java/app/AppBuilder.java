@@ -28,7 +28,7 @@ import usecase.GeocodeLocationInteractor;
 import usecase.WalkRouteInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
-import usecase.search_history.SearchHistoryData;
+import usecase.search_history.SearchHistoryInputData;
 import usecase.search_history.SearchHistoryInteractor;
 import entity.SearchRecord;
 import view.CompareSummaryPanel;
@@ -94,11 +94,11 @@ public final class AppBuilder {
         GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
 
-        SearchHistoryData historyGateway = new SearchHistoryGateway();
+        SearchHistoryInputData historyGateway = new SearchHistoryGateway();
 
         // ------- Search History Use Case -------
-        SearchHistoryViewModel historyVM = new SearchHistoryViewModel();
-        SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyVM);
+        SearchHistoryViewModel historyViewModel = new SearchHistoryViewModel();
+        SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyViewModel);
         SearchHistoryInteractor historyInteractor = new SearchHistoryInteractor(historyGateway, historyPresenter);
         SearchHistoryController historyController = new SearchHistoryController(historyInteractor);
 
@@ -169,7 +169,7 @@ public final class AppBuilder {
         // ------- Search History -------
         originPanel.getViewHistoryButton().addActionListener(e -> {
             historyController.execute();
-            var records = historyVM.getHistory();
+            var records = historyViewModel.getHistory();
             if (records == null || records.isEmpty()) {
                 historyPanel.setNoHistoryMessage();
             } else {
@@ -215,7 +215,7 @@ public final class AppBuilder {
             WalkRouteInteractor walkRoute,
             GetBikeCostInteractor costInteractor,
             GetBikeCostViewModel costVM,
-            SearchHistoryData historyGateway
+            SearchHistoryInputData historyGateway
     ) {
         layout.show(root, BIKE_TIME);
 

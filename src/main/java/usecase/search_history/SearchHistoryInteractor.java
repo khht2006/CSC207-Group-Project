@@ -9,7 +9,7 @@ package usecase.search_history;
  */
 public class SearchHistoryInteractor implements SearchHistoryInputBoundary {
 
-    private final SearchHistoryData gateway;
+    private final SearchHistoryInputData gateway;
     private final SearchHistoryOutputBoundary presenter;
 
     /**
@@ -18,7 +18,7 @@ public class SearchHistoryInteractor implements SearchHistoryInputBoundary {
      * @param gateway   the data access interface used to load stored search history
      * @param presenter the output boundary that formats the data for the UI
      */
-    public SearchHistoryInteractor(SearchHistoryData gateway,
+    public SearchHistoryInteractor(SearchHistoryInputData gateway,
                                    SearchHistoryOutputBoundary presenter) {
         this.gateway = gateway;
         this.presenter = presenter;
