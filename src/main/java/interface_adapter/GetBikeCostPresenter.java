@@ -1,10 +1,10 @@
 package interface_adapter;
+
 import usecase.get_bike_cost.GetBikeCostOutputBoundary;
 import usecase.get_bike_cost.GetBikeCostOutputData;
 
 /**
  * Presenter for the GetBikeCost use case.
- * <p>
  * Formats the computed bike cost and updates the {@link GetBikeCostViewModel}.
  */
 public class GetBikeCostPresenter implements GetBikeCostOutputBoundary {

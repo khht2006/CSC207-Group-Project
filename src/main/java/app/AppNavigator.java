@@ -1,11 +1,12 @@
 package app;
 
-import java.awt.CardLayout;
-import javax.swing.JPanel;
+import javax.swing.*;
+import java.awt.*;
 
 /**
- * AppNavigator provides clean UI navigation between screens
- * managed inside a {@link CardLayout}.
+ * The helper class for switching views inside a CardLayout.
+ * The application stores panels inside a parent container "root",
+ * and AppNavigator provides clean methods to show each screen.
  */
 public class AppNavigator {
 

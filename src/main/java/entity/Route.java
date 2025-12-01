@@ -5,7 +5,6 @@ package entity;
  * It contains distance (meters) and duration (seconds).
  */
 public class Route {
-
     private final double distanceMeters;
     private final double durationSeconds;
 
