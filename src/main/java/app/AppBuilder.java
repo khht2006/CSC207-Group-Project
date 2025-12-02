@@ -27,7 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import usecase.BikeRouteInteractor;
-import usecase.GeocodeLocationInteractor;
+import usecase.fetch_location.GeocodeLocationInteractor;
 import usecase.WalkRouteInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
@@ -157,12 +157,12 @@ public class AppBuilder {
 
                     double walkTime;
                     try {
-                        entity.Route walkRouteResult =
+                        final WalkRouteInteractor.WalkRouteResponse walk =
                                 walkRoute.execute(
                                         origin.getLatitude(), origin.getLongitude(),
                                         dest.getLatitude(), dest.getLongitude()
                                 );
-                        walkTime = walkRouteResult.getDurationSeconds() / 60.0;
+                        walkTime = walk.getTimeMinutes();
                     } catch (Exception ex) {
                         walkTime = -1;  // fallback
                     }
@@ -170,6 +170,7 @@ public class AppBuilder {
                     bikeTimePanel.setWalkTimeText(walkTime);
 
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
+                    bikeCostPanel.updateBikeCostText();
                     final double bikeCost = bikeCostVM.getBikeCostValue();
 
                     final SearchRecord searchRecord = new SearchRecord(
@@ -214,8 +215,7 @@ public class AppBuilder {
             final var records = historyViewModel.getHistory();
             if (records == null || records.isEmpty()) {
                 historyPanel.setNoHistoryMessage();
-            }
-            else {
+            } else {
                 historyPanel.setHistory(records);
             }
             layout.show(root, SEARCH_HISTORY);
@@ -264,7 +264,8 @@ public class AppBuilder {
 
         bikeTimePanel.requestBikeTime(
                 origin.getLatitude(), origin.getLongitude(),
-                dest.getLatitude(), dest.getLongitude()
+                dest.getLatitude(), dest.getLongitude(),
+                dest.getName()
 
         );
         bikeTimePanel.updateBikeTimeText();
@@ -273,12 +274,12 @@ public class AppBuilder {
 
         double walkTime;
         try {
-            WalkRouteInteractor.WalkRouteResponse walk =
+            final WalkRouteInteractor.WalkRouteResponse walk =
                     walkRoute.execute(
                             origin.getLatitude(), origin.getLongitude(),
                             dest.getLatitude(), dest.getLongitude()
                     );
-            walkTime = walk.timeMinutes;
+            walkTime = walk.getTimeMinutes();
         } catch (Exception ex) {
             walkTime = -1;
         }

@@ -30,6 +30,10 @@ public class CompareViewModel {
         return bikeCostText;
     }
 
+    public void setBikeCost(double cost) {
+        this.bikeCostText = String.format("$%.2f", cost);
+    }
+
     public void setBikeCostText(String costText) {
         this.bikeCostText = costText;
     }

@@ -22,6 +22,14 @@ public class GetBikeCostViewModel {
         this.bikeCostText = bikeCostText;
     }
 
+    public void setBoldBikeCostValue(double bikeCostValue) {
+        this.bikeCostValue = bikeCostValue;
+    }
+
+    public double getBoldBikeCostValue() {
+        return bikeCostValue;
+    }
+
     /**
      * Extracts the numeric bike cost value from the formatted text.
      *
