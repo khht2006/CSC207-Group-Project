@@ -127,3 +127,4 @@ public class OriginalDestinationPanel extends JPanel {
     public JButton getViewHistoryButton() { return viewHistoryButton; }
     public JButton getDeleteHistoryButton() { return deleteHistoryButton; }
 }
+//

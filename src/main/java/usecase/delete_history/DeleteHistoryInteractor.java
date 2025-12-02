@@ -19,3 +19,4 @@ public class DeleteHistoryInteractor implements DeleteHistoryInputBoundary {
         presenter.present(new DeleteHistoryOutputData(true));
     }
 }
+//

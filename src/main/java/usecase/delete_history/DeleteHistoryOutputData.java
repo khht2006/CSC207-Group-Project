@@ -11,3 +11,4 @@ public class DeleteHistoryOutputData {
         return success;
     }
 }
+//

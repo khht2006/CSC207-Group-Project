@@ -12,3 +12,4 @@ public class DeleteHistoryViewModel {
         this.deleted = deleted;
     }
 }
+//

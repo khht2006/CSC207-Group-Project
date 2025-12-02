@@ -75,3 +75,4 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
         }
     }
 }
+//

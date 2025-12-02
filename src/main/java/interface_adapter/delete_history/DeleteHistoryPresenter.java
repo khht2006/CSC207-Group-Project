@@ -16,3 +16,4 @@ public class DeleteHistoryPresenter implements DeleteHistoryOutputBoundary {
         viewModel.setDeleted(data.isSuccess());
     }
 }
+//

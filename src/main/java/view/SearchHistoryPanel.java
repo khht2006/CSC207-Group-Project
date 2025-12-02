@@ -68,3 +68,4 @@ public class SearchHistoryPanel extends JPanel {
         area.setText(sb.toString());
     }
 }
+//

@@ -27,3 +27,4 @@ public interface SearchHistoryInputData {
     void deleteAll();
 
 }
+//

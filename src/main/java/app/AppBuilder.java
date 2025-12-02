@@ -20,7 +20,7 @@ import interface_adapter.delete_history.DeleteHistoryPresenter;
 import interface_adapter.delete_history.DeleteHistoryViewModel;
 
 import usecase.delete_history.DeleteHistoryInteractor;
-import usecase.delete_history.DeleteHistoryInputBoundary;
+
 
 import interface_adapter.fetch_location.GeocodePresenter;
 import interface_adapter.fetch_location.GeocodeViewModel;
@@ -28,9 +28,6 @@ import usecase.fetch_location.GeocodeLocationInteractor;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
