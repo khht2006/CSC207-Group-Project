@@ -1,20 +1,20 @@
 package interface_adapter;
 
-import entity.Location;
-import usecase.GeocodeLocationInteractor;
-import view.OriginalDestinationPanel;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import entity.Location;
+import usecase.GeocodeLocationInteractor;
+import view.OriginalDestinationPanel;
+
 /**
  * Controller for the "enter origin and destination" view.
- *
  * Now supports:
  * - live suggestion lists for origin/destination (list of possible addresses)
  * - selecting a suggestion to fill the corresponding text field
@@ -40,14 +40,14 @@ public class OriginalDestinationController {
     }
 
     private void wireEvents() {
-        panel.addSwapListener(e -> {
-            String origin = panel.getOriginText();
-            String dest = panel.getDestinationText();
+        panel.addSwapListener(actionEvent -> {
+            final String origin = panel.getOriginText();
+            final String dest = panel.getDestinationText();
             panel.setOriginText(dest);
             panel.setDestinationText(origin);
         });
 
-        panel.addContinueListener(e -> handleContinueAsync());
+        panel.addContinueListener(actionEvent -> handleContinueAsync());
 
         panel.addOriginDocumentListener(new DocumentListener() {
             @Override
@@ -88,24 +88,27 @@ public class OriginalDestinationController {
 
     // Fetch suggestions for origin or destination on a background thread.
     private void triggerSuggestionsAsync(boolean forOrigin) {
-        String text = forOrigin ? panel.getOriginText().trim() : panel.getDestinationText().trim();
+        final String text = forOrigin ? panel.getOriginText().trim() : panel.getDestinationText().trim();
         if (text.isBlank()) {
             panel.updateSuggestions(List.of());
             if (forOrigin) {
                 originSuggestions = new ArrayList<>();
-            } else {
+            }
+            else {
                 destinationSuggestions = new ArrayList<>();
             }
             return;
         }
 
-        SwingWorker<List<Location>, Void> worker = new SwingWorker<>() {
+        final SwingWorker<List<Location>, Void> worker = new SwingWorker<>() {
+
             @Override
             protected List<Location> doInBackground() throws Exception {
                 try {
-                    // I use 5 and it's totally random
-                    return geocodeInteractor.searchLocations(text, 5);
-                } catch (IOException | InterruptedException ex) {
+                    final int random = 5;
+                    return geocodeInteractor.searchLocations(text, random);
+                }
+                catch (IOException | InterruptedException ex) {
                     return new ArrayList<>();
                 }
             }
@@ -113,20 +116,22 @@ public class OriginalDestinationController {
             @Override
             protected void done() {
                 try {
-                    List<Location> results = get();
+                    final List<Location> results = get();
                     if (forOrigin) {
                         originSuggestions = results;
-                    } else {
+                    }
+                    else {
                         destinationSuggestions = results;
                     }
 
-                    List<String> labels = new ArrayList<>();
+                    final List<String> labels = new ArrayList<>();
                     for (Location loc : results) {
                         labels.add(loc.getName());
                     }
                     panel.updateSuggestions(labels);
 
-                } catch (Exception ignored) {
+                }
+                catch (Exception ignored) {
                     panel.updateSuggestions(List.of());
                 }
             }
@@ -135,7 +140,7 @@ public class OriginalDestinationController {
     }
 
     private void applySelectedSuggestionToActiveField() {
-        String selectedText = panel.getSelectedSuggestionText();
+        final String selectedText = panel.getSelectedSuggestionText();
         if (selectedText == null || selectedText.isBlank()) {
             return;
         }
@@ -153,12 +158,12 @@ public class OriginalDestinationController {
     }
 
     /**
-     * Continue: still uses best location for each field, but user has had the chance
+     * Continue: still uses the best location for each field, but user has had the chance
      * to pick a suggestion first.
      */
     private void handleContinueAsync() {
-        String originText = panel.getOriginText().trim();
-        String destText = panel.getDestinationText().trim();
+        final String originText = panel.getOriginText().trim();
+        final String destText = panel.getDestinationText().trim();
 
         if (originText.equalsIgnoreCase(destText)) {
             JOptionPane.showMessageDialog(
@@ -172,16 +177,18 @@ public class OriginalDestinationController {
 
         panel.setEnabled(false);
 
-        SwingWorker<GeocodeResult, Void> worker = new SwingWorker<>() {
+        final SwingWorker<GeocodeResult, Void> worker = new SwingWorker<>() {
+
             @Override
             protected GeocodeResult doInBackground() {
                 try {
                     // You could try to match originText/destText against the suggestion lists first;
                     // for now we just use findBestLocation again.
-                    Location originLoc = geocodeInteractor.findBestLocation(originText);
-                    Location destLoc = geocodeInteractor.findBestLocation(destText);
+                    final Location originLoc = geocodeInteractor.findBestLocation(originText);
+                    final Location destLoc = geocodeInteractor.findBestLocation(destText);
                     return GeocodeResult.success(originLoc, destLoc);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex) {
                     return GeocodeResult.failure(ex);
                 }
             }
@@ -190,7 +197,7 @@ public class OriginalDestinationController {
             protected void done() {
                 panel.setEnabled(true);
                 try {
-                    GeocodeResult result = get();
+                    final GeocodeResult result = get();
 
                     if (result.error != null) {
                         handleError(result.error);
@@ -221,7 +228,8 @@ public class OriginalDestinationController {
                         onLocationsResolved.accept(result.origin, result.destination);
                     }
 
-                } catch (Exception ex) {
+                }
+                catch (Exception ex) {
                     handleError(ex);
                 }
             }
@@ -230,15 +238,16 @@ public class OriginalDestinationController {
         worker.execute();
     }
 
-    private void handleError(Exception ex) {
-        if (ex instanceof IOException) {
+    private void handleError(Exception exception) {
+        if (exception instanceof IOException) {
             JOptionPane.showMessageDialog(
                     panel,
-                    "Error contacting geocoding service.\nPlease try again.\n\n" + ex.getMessage(),
+                    "Error contacting geocoding service.\nPlease try again.\n\n" + exception.getMessage(),
                     "Geocoding Error",
                     JOptionPane.ERROR_MESSAGE
             );
-        } else if (ex instanceof InterruptedException) {
+        }
+        else if (exception instanceof InterruptedException) {
             Thread.currentThread().interrupt();
             JOptionPane.showMessageDialog(
                     panel,
@@ -246,20 +255,21 @@ public class OriginalDestinationController {
                     "Geocoding Interrupted",
                     JOptionPane.ERROR_MESSAGE
             );
-        } else {
+        }
+        else {
             JOptionPane.showMessageDialog(
                     panel,
-                    "Unexpected error: " + ex,
+                    "Unexpected error: " + exception,
                     "Error",
                     JOptionPane.ERROR_MESSAGE
             );
         }
     }
 
-    private static class GeocodeResult {
-        final Location origin;
-        final Location destination;
-        final Exception error;
+    private static final class GeocodeResult {
+        private final Location origin;
+        private final Location destination;
+        private final Exception error;
 
         private GeocodeResult(Location origin, Location destination, Exception error) {
             this.origin = origin;

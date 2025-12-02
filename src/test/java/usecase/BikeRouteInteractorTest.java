@@ -53,25 +53,48 @@ class BikeRouteInteractorTest {
         Assertions.assertEquals("Destination Place", presenter.captured.getDestinationName());
     }
 
-    private static StubApiFetcher getStubApiFetcher() {
-        String sampleJson = """
-                {
-                  "type": "FeatureCollection",
-                  "features": [
-                    {
-                      "type": "Feature",
-                      "properties": {
-                        "summary": {
-                          "distance": 1234.5,
-                          "duration": 1200.5
-                        }
-                      }
-                    }
-                  ]
-                }
+    @Test
+    void presentsErrorWhenDurationMissing() {
+        // No duration field -> parseDurationMinutes should throw
+        String missingDurationJson = """
+                { "routes": [ { "summary": { "distance": 10.0 } } ] }
                 """;
-        
-        return new StubApiFetcher(sampleJson);
+        CapturingPresenter presenter = new CapturingPresenter();
+        BikeRouteInteractor interactor =
+                new BikeRouteInteractor(new StubApiFetcher(missingDurationJson), presenter);
+        interactor.execute(new BikeRouteInputData(0, 0, 1, 1));
+
+        Assertions.assertTrue(presenter.captured.hasError());
+        Assertions.assertEquals("Duration not found in ORS response.", presenter.captured.getErrorMessage());
+    }
+
+    @Test
+    void presentsErrorOnIoException() {
+        CapturingPresenter presenter = new CapturingPresenter();
+        BikeRouteInteractor interactor =
+                new BikeRouteInteractor(new IOExceptionApiFetcher(), presenter);
+
+        interactor.execute(new BikeRouteInputData(0, 0, 1, 1));
+
+        Assertions.assertTrue(presenter.captured.hasError());
+        Assertions.assertTrue(
+                presenter.captured.getErrorMessage().startsWith("Failed to fetch cycling directions"));
+    }
+
+    @Test
+    void preservesInterruptStatusOnInterruptedException() {
+        CapturingPresenter presenter = new CapturingPresenter();
+        BikeRouteInteractor interactor =
+                new BikeRouteInteractor(new InterruptedApiFetcher(), presenter);
+
+        interactor.execute(new BikeRouteInputData(0, 0, 1, 1));
+
+        Assertions.assertTrue(Thread.currentThread().isInterrupted(), "Interrupt flag should be set");
+        // Clear flag for other tests
+        Thread.interrupted();
+
+        Assertions.assertTrue(presenter.captured.hasError());
+        Assertions.assertEquals("Directions request interrupted.", presenter.captured.getErrorMessage());
     }
 
     private static class StubApiFetcher extends ApiFetcher {
@@ -85,6 +108,22 @@ class BikeRouteInteractorTest {
         public String fetchCyclingDirectionsJson(double startLon, double startLat,
                                                  double endLon, double endLat) {
             return json;
+        }
+    }
+
+    private static class IOExceptionApiFetcher extends ApiFetcher {
+        @Override
+        public String fetchCyclingDirectionsJson(double startLon, double startLat,
+                                                 double endLon, double endLat) throws java.io.IOException {
+            throw new java.io.IOException("Simulated IO failure");
+        }
+    }
+
+    private static class InterruptedApiFetcher extends ApiFetcher {
+        @Override
+        public String fetchCyclingDirectionsJson(double startLon, double startLat,
+                                                 double endLon, double endLat) throws InterruptedException {
+            throw new InterruptedException("Simulated interrupt");
         }
     }
 

@@ -73,10 +73,20 @@ public class BikeRouteOutputData {
         return bikeSegment != null ? bikeSegment.getDurationSeconds() / 60.0 : 0.0;
     }
 
+    /**
+     * Returns the error message, if any.
+     *
+     * @return error message or {@code null}
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * Returns whether an error occurred.
+     *
+     * @return {@code true} if an error is present, {@code false} otherwise
+     */
     public boolean hasError() {
         return errorMessage != null && !errorMessage.isBlank();
     }

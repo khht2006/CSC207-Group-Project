@@ -1,7 +1,10 @@
 package usecase;
 
-// Coordinates for querying a cycling route.
+/**
+ * Input data containing coordinates for querying a cycling route.
+ */
 public class BikeRouteInputData {
+
     private final double originLat;
     private final double originLon;
     private final double destinationLat;
@@ -18,18 +21,38 @@ public class BikeRouteInputData {
         this.destinationName = destinationName;
     }
 
+    /**
+     * Returns the origin latitude.
+     *
+     * @return origin latitude
+     */
     public double getOriginLat() {
         return originLat;
     }
 
+    /**
+     * Returns the origin longitude.
+     *
+     * @return origin longitude
+     */
     public double getOriginLon() {
         return originLon;
     }
 
+    /**
+     * Returns the destination latitude.
+     *
+     * @return destination latitude
+     */
     public double getDestinationLat() {
         return destinationLat;
     }
 
+    /**
+     * Returns the destination longitude.
+     *
+     * @return destination longitude
+     */
     public double getDestinationLon() {
         return destinationLon;
     }

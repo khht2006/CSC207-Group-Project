@@ -12,6 +12,11 @@ public class WalkRouteInteractor {
 
     private final ApiFetcher apiFetcher;
 
+    /**
+     * Constructs the WalkRouteInteractor.
+     *
+     * @param apiFetcher dependency used to fetch walking directions
+     */
     public WalkRouteInteractor(ApiFetcher apiFetcher) {
         this.apiFetcher = apiFetcher;
     }
@@ -19,7 +24,6 @@ public class WalkRouteInteractor {
     public Route execute(double startLat, double startLng,
                                      double endLat, double endLng) throws Exception {
 
-        // Call the existing method from ApiFetcher
         String jsonString = apiFetcher.fetchWalkingDirectionsJson(
                 startLng, startLat, endLng, endLat);
 
