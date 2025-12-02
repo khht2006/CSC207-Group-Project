@@ -10,6 +10,12 @@ import interface_adapter.GetBikeTimePresenter;
 import interface_adapter.GetBikeTimeViewModel;
 import interface_adapter.OriginalDestinationController;
 import interface_adapter.SearchHistoryGateway;
+import interface_adapter.fetch_location.GeocodeController;
+import interface_adapter.fetch_location.GeocodePresenter;
+import interface_adapter.fetch_location.GeocodeViewModel;
+import usecase.fetch_location.GeocodeLocationInteractor;
+import usecase.fetch_location.GeocodeOutputBoundary;
+
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -48,7 +54,7 @@ import view.SearchHistoryPanel;
  * <p>This class contains all dependency wiring and returns a
  * fully constructed {@link JFrame} ready to be displayed.</p>
  */
-public final class AppBuilder {
+public class AppBuilder {
 
     /** Screen identifier for origin input view. */
     public static final String ORIGIN = "origin";
@@ -74,8 +80,15 @@ public final class AppBuilder {
     /** Default frame height. */
     private static final int FRAME_HEIGHT = 300;
 
+    private final ApiFetcher apiFetcher = new ApiFetcher();
+    private GeocodeViewModel geocodeViewModel;
+
     /** Private constructor — prevents instantiation. */
-    private AppBuilder() { }
+    public AppBuilder() {
+        this.geocodeViewModel = new GeocodeViewModel();
+    }
+
+
 
     /**
      * Builds the entire application using Clean Architecture structure.
