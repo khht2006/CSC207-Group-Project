@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.get_bike_cost;
 
 /**
  * View model for storing and displaying the formatted bike travel cost.

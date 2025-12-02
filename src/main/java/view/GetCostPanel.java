@@ -4,7 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import interface_adapter.GetBikeCostViewModel;
+import interface_adapter.get_bike_cost.GetBikeCostViewModel;
 
 /**
  * Panel for displaying the computed biking cost.

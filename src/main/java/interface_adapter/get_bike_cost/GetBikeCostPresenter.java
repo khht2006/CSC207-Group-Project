@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.get_bike_cost;
 
 import usecase.get_bike_cost.GetBikeCostOutputBoundary;
 import usecase.get_bike_cost.GetBikeCostOutputData;

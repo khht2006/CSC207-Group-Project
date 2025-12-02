@@ -1,21 +1,18 @@
 package app;
 
-import java.awt.*;
-import javax.swing.*;
-
 import api.ApiFetcher;
 import interface_adapter.CompareViewModel;
-import interface_adapter.GetBikeCostController;
-import interface_adapter.GetBikeCostPresenter;
-import interface_adapter.GetBikeCostViewModel;
+import interface_adapter.get_bike_cost.GetBikeCostController;
+import interface_adapter.get_bike_cost.GetBikeCostPresenter;
+import interface_adapter.get_bike_cost.GetBikeCostViewModel;
 import interface_adapter.GetBikeTimeController;
 import interface_adapter.GetBikeTimePresenter;
 import interface_adapter.GetBikeTimeViewModel;
 import interface_adapter.OriginalDestinationController;
-import interface_adapter.SearchHistoryGateway;
-import interface_adapter.SearchHistoryViewModel;
-import interface_adapter.SearchHistoryPresenter;
-import interface_adapter.SearchHistoryController;
+import interface_adapter.search_history.SearchHistoryGateway;
+import interface_adapter.search_history.SearchHistoryViewModel;
+import interface_adapter.search_history.SearchHistoryPresenter;
+import interface_adapter.search_history.SearchHistoryController;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
