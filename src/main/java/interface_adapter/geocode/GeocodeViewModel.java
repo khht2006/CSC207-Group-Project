@@ -1,4 +1,4 @@
-package interface_adapter.fetch_location;
+package interface_adapter.geocode;
 
 import entity.Location;
 import java.beans.PropertyChangeListener;

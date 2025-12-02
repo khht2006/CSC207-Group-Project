@@ -1,7 +1,7 @@
 package view;
 
-import interface_adapter.fetch_location.GeocodeController; // Import the controller
-import interface_adapter.fetch_location.GeocodeViewModel;
+import interface_adapter.geocode.GeocodeController; // Import the controller
+import interface_adapter.geocode.GeocodeViewModel;
 import interface_adapter.original_destination.OriginalDestinationViewModel;
 
 import javax.swing.*;

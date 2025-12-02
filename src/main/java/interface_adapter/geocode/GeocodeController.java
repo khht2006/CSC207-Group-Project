@@ -1,7 +1,7 @@
-package interface_adapter.fetch_location;
+package interface_adapter.geocode;
 
-import usecase.fetch_location.GeocodeInputBoundary;
-import usecase.fetch_location.GeocodeInputData;
+import usecase.geocode.GeocodeInputBoundary;
+import usecase.geocode.GeocodeInputData;
 
 public class GeocodeController {
 

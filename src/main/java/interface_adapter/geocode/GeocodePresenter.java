@@ -1,8 +1,8 @@
-package interface_adapter.fetch_location;
+package interface_adapter.geocode;
 
 import entity.Location;
-import usecase.fetch_location.GeocodeOutputBoundary;
-import usecase.fetch_location.GeocodeOutputData;
+import usecase.geocode.GeocodeOutputBoundary;
+import usecase.geocode.GeocodeOutputData;
 import usecase.original_destination.OriginalDestinationInteractor;
 
 import java.util.List;

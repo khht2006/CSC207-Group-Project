@@ -1,4 +1,4 @@
-package usecase.fetch_location;
+package usecase.geocode;
 
 public class GeocodeInputData {
     private final String query;
