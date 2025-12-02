@@ -7,9 +7,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import entity.SearchRecord;
-import usecase.search_history.SearchHistoryData;
-
 /**
  * File-based implementation of {@link SearchHistoryInputData}.
  */

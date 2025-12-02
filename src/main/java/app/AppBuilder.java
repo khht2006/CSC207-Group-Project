@@ -126,7 +126,7 @@ public final class AppBuilder {
                             dest.getLatitude(), dest.getLongitude()
                     );
                     bikeTimePanel.updateBikeTimeText();
-                    final double bikeTime = bikeTimeViewModel.getBikeTimeValue();
+                    final double bikeTime = bikeTimeVM.getBikeTimeValue();
 
                     double walkTime;
                     try {
@@ -145,7 +145,7 @@ public final class AppBuilder {
                     bikeTimePanel.setWalkTimeText(walkTime);
 
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
-                    final double bikeCost = bikeCostViewModel.getBikeCostValue();
+                    final double bikeCost = bikeCostVM.getBikeCostValue();
 
                     final SearchRecord searchRecord = new SearchRecord(
                             originPanel.getOriginText(),
@@ -169,9 +169,9 @@ public final class AppBuilder {
         // Navigation: bikeCost → compare summary
         bikeCostPanel.getCompareButton().addActionListener(actionEvent -> {
 
-            compareViewModel.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
-            compareViewModel.setBikeTimeText(bikeTimeViewModel.getBikeTimeValue());
-            compareViewModel.setBikeCostText(bikeCostViewModel.getBikeCostText());
+            compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
+            compareVM.setBikeTimeText(bikeTimeVM.getBikeTimeValue());
+            compareVM.setBikeCostText(bikeCostVM.getBikeCostText());
 
             comparePanel.updateSummary();
             layout.show(root, COMPARE);
@@ -209,47 +209,11 @@ public final class AppBuilder {
         return frame;
     }
 
-    private static void clearSearchHistory() {
+    private static void clearHistoryFile() {
         try {
-            java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(AppBuilder.SEARCH_HISTORY_FILE));
-        }
-    }
-
-    /**
-     * Handles transition from the origin form to the Bike Time screen.
-     */
-    private static void handleOriginSubmit(
-            entity.Location origin,
-            entity.Location dest,
-            CardLayout layout,
-            JPanel root,
-            GetTimePanel bikeTimePanel,
-            GetBikeTimeViewModel bikeVM,
-            WalkRouteInteractor walkRoute,
-            GetBikeCostInteractor costInteractor,
-            GetBikeCostViewModel costVM,
-            SearchHistoryInputData historyGateway
-    ) {
-        layout.show(root, BIKE_TIME);
-
-        bikeTimePanel.requestBikeTime(
-                origin.getLatitude(), origin.getLongitude(),
-                dest.getLatitude(), dest.getLongitude()
-        );
-        bikeTimePanel.updateBikeTimeText();
-
-        double bikeTime = bikeVM.getBikeTimeValue();
-
-        double walkTime;
-        try {
-            WalkRouteInteractor.WalkRouteResponse walk =
-                    walkRoute.execute(
-                            origin.getLatitude(), origin.getLongitude(),
-                            dest.getLatitude(), dest.getLongitude()
-                    );
-            walkTime = walk.timeMinutes;
-        } catch (Exception ex) {
-            walkTime = -1;
+            Files.deleteIfExists(Path.of(SEARCH_HISTORY_FILE));
+        } catch (IOException ignored) {
+            // ignore
         }
     }
 }
