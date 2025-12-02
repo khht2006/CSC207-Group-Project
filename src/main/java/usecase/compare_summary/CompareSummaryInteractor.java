@@ -11,9 +11,9 @@ import interface_adapter.compare_summary.CompareSummaryPresenter;
  */
 public class CompareSummaryInteractor implements CompareSummaryInputBoundary {
 
-    private final CompareSummaryPresenter presenter;
+    private final CompareSummaryOutputBoundary presenter;
 
-    public CompareSummaryInteractor(CompareSummaryPresenter presenter) {
+    public CompareSummaryInteractor(CompareSummaryOutputBoundary presenter) {
         this.presenter = presenter;
     }
 
