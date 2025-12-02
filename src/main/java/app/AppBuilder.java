@@ -11,6 +11,7 @@ import interface_adapter.GetBikeTimeController;
 import interface_adapter.GetBikeTimePresenter;
 import interface_adapter.GetBikeTimeViewModel;
 import interface_adapter.OriginalDestinationController;
+import interface_adapter.fetch_location.GeocodeController;
 import interface_adapter.search_history.SearchHistoryGateway;
 import interface_adapter.fetch_location.GeocodePresenter;
 import interface_adapter.fetch_location.GeocodeViewModel;
@@ -96,8 +97,8 @@ public class AppBuilder {
 
         GeocodeViewModel geocodeVM = new GeocodeViewModel();
         GeocodePresenter geocodePresenter = new GeocodePresenter(geocodeVM);
-        GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher, geocodePresenter);
-
+        GeocodeLocationInteractor geocodeInteractor = new GeocodeLocationInteractor(apiFetcher, geocodePresenter);
+        GeocodeController geocodeController = new GeocodeController(geocodeInteractor);
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
 
         SearchHistoryInputData historyGateway = new SearchHistoryGateway();
@@ -147,7 +148,8 @@ public class AppBuilder {
         // ------- Origin → Bike Time -------
         new OriginalDestinationController(
                 originPanel,
-                geocode,
+                geocodeController,
+                geocodeVM,
                 (origin, dest) -> {
                     if (origin == null || dest == null) return;
                     if (origin.getName() == null || dest.getName() == null) return;
