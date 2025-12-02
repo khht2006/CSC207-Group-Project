@@ -1,4 +1,4 @@
-package usecase.fetch_location;
+package usecase.geocode;
 
 import api.ApiFetcher;
 import entity.Location;

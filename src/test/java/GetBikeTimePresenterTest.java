@@ -1,5 +1,5 @@
-package interface_adapter.bike_time;
-
+import interface_adapter.bike_time.GetBikeTimePresenter;
+import interface_adapter.bike_time.GetBikeTimeViewModel;
 import org.junit.jupiter.api.Test;
 import usecase.bike_route.BikeRouteOutputData;
 

@@ -1,4 +1,4 @@
-package usecase.fetch_location;
+package usecase.geocode;
 
 import entity.Location;
 import java.util.List;
