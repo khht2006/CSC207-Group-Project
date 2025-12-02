@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.compare_summary;
 
 import usecase.compare_summary.CompareSummaryInputBoundary;
 import usecase.compare_summary.CompareSummaryInputData;
@@ -8,15 +8,20 @@ import usecase.compare_summary.CompareSummaryInputData;
  * Mirrors the style of GetBikeTimeController: it adapts the UI-provided
  * latitude/longitude values into the interactor's input data and triggers execution.
  */
-public class CompareController {
+public class CompareSummaryController {
 
     private final CompareSummaryInputBoundary interactor;
 
-    public CompareController(CompareSummaryInputBoundary interactor) {
+    public CompareSummaryController(CompareSummaryInputBoundary interactor) {
         this.interactor = interactor;
     }
 
-    // Triggers the compare-summary use case for the provided coordinates.
+    /**
+     * Controller for the Compare Summary use case.
+     * @param walkMinutes walk time in minutes
+     * @param bikeMinutes bike time in minutes
+     * @param bikeCost bike cost in minutes
+     */
     public void execute(double walkMinutes,
                         double bikeMinutes,
                         double bikeCost) {

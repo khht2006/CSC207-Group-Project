@@ -1,7 +1,9 @@
 package app;
 
 import api.ApiFetcher;
-import interface_adapter.CompareViewModel;
+import interface_adapter.compare_summary.CompareSummaryController;
+import interface_adapter.compare_summary.CompareSummaryPresenter;
+import interface_adapter.compare_summary.CompareSummaryViewModel;
 import interface_adapter.GetBikeCostController;
 import interface_adapter.GetBikeCostPresenter;
 import interface_adapter.GetBikeCostViewModel;
@@ -34,6 +36,7 @@ import javax.swing.JPanel;
 
 import usecase.BikeRouteInteractor;
 import usecase.WalkRouteInteractor;
+import usecase.compare_summary.CompareSummaryInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
 
@@ -112,9 +115,12 @@ public class AppBuilder {
                 new GetBikeCostController(bikeCostInteractor, bikeTimeVM);
         GetCostPanel bikeCostPanel = new GetCostPanel(bikeCostVM);
 
-        // ----------------- COMPARE -----------------
-        CompareViewModel compareVM = new CompareViewModel();
-        CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareVM);
+        // ------- Compare Summary -------
+        final CompareSummaryViewModel compareSummaryViewModel = new CompareSummaryViewModel();
+        final CompareSummaryPresenter comparePresenter = new CompareSummaryPresenter(compareSummaryViewModel);
+        final CompareSummaryInteractor compareInteractor = new CompareSummaryInteractor(comparePresenter);
+        final CompareSummaryController compareController = new CompareSummaryController(compareInteractor);
+        final CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareSummaryViewModel);
 
         // ----------------- ORIGIN + HISTORY PANELS -----------------
         OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
@@ -180,10 +186,14 @@ public class AppBuilder {
             bikeCostPanel.updateBikeCostText();
         });
 
-        bikeCostPanel.getCompareButton().addActionListener(e -> {
-            compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
-            compareVM.setBikeTimeText(bikeTimeVM.getBikeTimeValue());
-            compareVM.setBikeCostText(bikeCostVM.getBikeCostText());
+        // Navigation: bikeCost → compare summary
+        bikeCostPanel.getCompareButton().addActionListener(actionEvent -> {
+
+            final double walkTime = bikeTimePanel.getWalkTimeValue();
+            final double bikeTime = bikeTimeVM.getBikeTimeValue();
+            final double bikeCost = bikeCostVM.getBikeCostValue();
+
+            compareController.execute(walkTime, bikeTime, bikeCost);
             comparePanel.updateSummary();
             layout.show(root, COMPARE);
         });
@@ -223,4 +233,86 @@ public class AppBuilder {
 
         return frame;
     }
+
+    /**
+     * Clears the search history file on startup.
+     */
+    private static void clearHistoryFile() {
+        try {
+            Files.deleteIfExists(Path.of(HISTORY_FILE));
+        } catch (IOException ignored) {
+            // file may not exist — ignore errors
+        }
+    }
+
+    /**
+     * Handles transition from the origin form to the Bike Time screen.
+     */
+    private static void handleOriginSubmit(
+            entity.Location origin,
+            entity.Location dest,
+            CardLayout layout,
+            JPanel root,
+            GetTimePanel bikeTimePanel,
+            GetBikeTimeViewModel bikeVM,
+            WalkRouteInteractor walkRoute,
+            GetBikeCostInteractor costInteractor,
+            GetBikeCostViewModel costVM,
+            SearchHistoryInputData historyGateway
+    ) {
+        layout.show(root, BIKE_TIME);
+
+        bikeTimePanel.requestBikeTime(
+                origin.getLatitude(), origin.getLongitude(),
+                dest.getLatitude(), dest.getLongitude(),
+                dest.getName()
+
+        );
+        bikeTimePanel.updateBikeTimeText();
+
+        double bikeTime = bikeVM.getBikeTimeValue();
+
+        double walkTime;
+        try {
+            final WalkRouteInteractor.WalkRouteResponse walk =
+                    walkRoute.execute(
+                            origin.getLatitude(), origin.getLongitude(),
+                            dest.getLatitude(), dest.getLongitude()
+                    );
+            walkTime = walk.getTimeMinutes();
+        } catch (Exception ex) {
+            walkTime = -1;
+        }
+
+        bikeTimePanel.setWalkTimeText(walkTime);
+
+        costInteractor.execute(new GetBikeCostInputData(bikeTime));
+
+        double bikeCost = costVM.getBikeCostValue();
+
+        historyGateway.save(
+                new SearchRecord(
+                        origin.getName(),
+                        dest.getName(),
+                        bikeTime,
+                        bikeCost,
+                        walkTime
+                )
+        );
+    }
+
+    /**
+     * Fills the compare summary view model with values.
+     */
+    private static void fillCompareSummary(
+            CompareSummaryViewModel compareVM,
+            GetBikeTimeViewModel bikeVM,
+            GetTimePanel bikeTimePanel,
+            GetBikeCostViewModel costVM
+    ) {
+        compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
+        compareVM.setBikeTimeText(bikeVM.getBikeTimeValue());
+        compareVM.setBikeCostText(costVM.getBikeCostText());
+    }
+
 }

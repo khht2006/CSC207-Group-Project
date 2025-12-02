@@ -1,21 +1,16 @@
-package interface_adapter;
+package interface_adapter.compare_summary;
 
-import usecase.BikeRouteOutputBoundary;
-import usecase.BikeRouteOutputData;
 import usecase.compare_summary.CompareSummaryOutputBoundary;
 import usecase.compare_summary.CompareSummaryOutputData;
-import usecase.get_bike_cost.GetBikeCostOutputBoundary;
-import usecase.get_bike_cost.GetBikeCostOutputData;
-
 
 /**
  * The Presenter for the Compare Summary case.
  */
-public class ComparePresenter implements CompareSummaryOutputBoundary {
+public class CompareSummaryPresenter implements CompareSummaryOutputBoundary {
 
-    private final CompareViewModel viewModel;
+    private final CompareSummaryViewModel viewModel;
 
-    public ComparePresenter(CompareViewModel viewModel) {
+    public CompareSummaryPresenter(CompareSummaryViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
@@ -35,7 +30,7 @@ public class ComparePresenter implements CompareSummaryOutputBoundary {
         viewModel.setDiffInMinutesText(diffInMinutes);
     }
 
-    public CompareViewModel getViewModel() {
+    public CompareSummaryViewModel getViewModel() {
         return viewModel;
     }
 }
