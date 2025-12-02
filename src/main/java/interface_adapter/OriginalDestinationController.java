@@ -1,20 +1,20 @@
 package interface_adapter;
 
+import entity.Location;
+import usecase.fetch_location.GeocodeLocationInteractor;
+import view.OriginalDestinationPanel;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import entity.Location;
-import usecase.GeocodeLocationInteractor;
-import view.OriginalDestinationPanel;
-
 /**
  * Controller for the "enter origin and destination" view.
+ *
  * Now supports:
  * - live suggestion lists for origin/destination (list of possible addresses)
  * - selecting a suggestion to fill the corresponding text field
@@ -124,7 +124,7 @@ public class OriginalDestinationController {
                         destinationSuggestions = results;
                     }
 
-                    final List<String> labels = new ArrayList<>();
+                    List<String> labels = new ArrayList<>();
                     for (Location loc : results) {
                         labels.add(loc.getName());
                     }

@@ -1,4 +1,4 @@
-package usecase;
+package usecase.fetch_location;
 
 import api.ApiFetcher;
 import entity.Location;
@@ -20,9 +20,10 @@ import java.util.regex.Pattern;
  * <p>
  * It returns a list of Location suggestions.
  */
-public class GeocodeLocationInteractor {
+public class GeocodeLocationInteractor implements GeocodeInputBoundary {
 
     private final ApiFetcher apiFetcher;
+    private final GeocodeOutputBoundary outputBoundary;
 
     // Regex patterns tailored for ORS geocode JSON structure
 
@@ -50,8 +51,9 @@ public class GeocodeLocationInteractor {
     private static final Pattern COORD_PATTERN =
             Pattern.compile("\"coordinates\"\\s*:\\s*\\[\\s*([-0-9.]+)\\s*,\\s*([-0-9.]+)\\s*]");
 
-    public GeocodeLocationInteractor(ApiFetcher apiFetcher) {
+    public GeocodeLocationInteractor(ApiFetcher apiFetcher, GeocodeOutputBoundary outputBoundary) {
         this.apiFetcher = apiFetcher;
+        this.outputBoundary = outputBoundary;
     }
 
     /**
@@ -103,6 +105,17 @@ public class GeocodeLocationInteractor {
     public Location findBestLocation(String text) throws IOException, InterruptedException {
         List<Location> results = searchLocations(text, 1);
         return results.isEmpty() ? null : results.get(0);
+    }
+
+    @Override
+    public void geocode(GeocodeInputData inputData) {
+        try {
+            List<Location> locations = searchLocations(inputData.getQuery(), inputData.getMaxResults());
+            GeocodeOutputData outputData = new GeocodeOutputData(locations, false);
+            outputBoundary.prepareSuccessView(outputData);
+        } catch (IOException | InterruptedException e) {
+            outputBoundary.prepareFailView("Failed to geocode location: " + e.getMessage());
+        }
     }
 
     // --- helpers -----------------------------------------------------------
