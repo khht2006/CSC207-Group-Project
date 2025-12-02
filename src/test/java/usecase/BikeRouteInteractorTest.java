@@ -7,25 +7,7 @@ import org.junit.jupiter.api.Test;
 class BikeRouteInteractorTest {
     @Test
     void parsesDurationMinutesFromOrsJson() {
-        // Given ORS-like directions JSON with a duration in seconds
-        String sampleJson = """
-                {
-                  "type": "FeatureCollection",
-                  "features": [
-                    {
-                      "type": "Feature",
-                      "properties": {
-                        "summary": {
-                          "distance": 1234.5,
-                          "duration": 1200.5
-                        }
-                      }
-                    }
-                  ]
-                }
-                """;
-
-        StubApiFetcher apiFetcher = new StubApiFetcher(sampleJson);
+        StubApiFetcher apiFetcher = new StubApiFetcher();
         CapturingPresenter presenter = new CapturingPresenter();
         BikeRouteInteractor interactor = new BikeRouteInteractor(apiFetcher, presenter);
 
@@ -53,38 +35,53 @@ class BikeRouteInteractorTest {
         Assertions.assertEquals("Destination Place", presenter.captured.getDestinationName());
     }
 
-    private static StubApiFetcher getStubApiFetcher() {
-        String sampleJson = """
+    private static class StubApiFetcher extends ApiFetcher {
+        private static final String ROUTE_JSON = """
                 {
-                  "type": "FeatureCollection",
-                  "features": [
+                  "routes": [
                     {
-                      "type": "Feature",
-                      "properties": {
-                        "summary": {
-                          "distance": 1234.5,
-                          "duration": 1200.5
+                      "summary": {
+                        "distance": 1234.5,
+                        "duration": 1200.5
+                      },
+                      "segments": [
+                        {
+                          "steps": [
+                            {"instruction": "Turn left"}
+                          ]
                         }
-                      }
+                      ]
                     }
                   ]
                 }
                 """;
-        
-        return new StubApiFetcher(sampleJson);
-    }
 
-    private static class StubApiFetcher extends ApiFetcher {
-        private final String json;
-
-        StubApiFetcher(String json) {
-            this.json = json;
-        }
+        private static final String STATION_INFO_JSON = """
+                {
+                  "data": {
+                    "stations": [
+                      {"name": "Ft. York / Capreol Crt.", "lat": 43.0005, "lon": -79.0005},
+                      {"name": "Harbord / Spadina", "lat": 43.1005, "lon": -79.1005}
+                    ]
+                  }
+                }
+                """;
 
         @Override
         public String fetchCyclingDirectionsJson(double startLon, double startLat,
                                                  double endLon, double endLat) {
-            return json;
+            return ROUTE_JSON;
+        }
+
+        @Override
+        public String fetchWalkingDirectionsJson(double startLon, double startLat,
+                                                 double endLon, double endLat) {
+            return ROUTE_JSON;
+        }
+
+        @Override
+        public String fetchBikeStationInformationJson() {
+            return STATION_INFO_JSON;
         }
     }
 
