@@ -1,17 +1,17 @@
 package view;
 
-import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Objects;
 
+import javax.swing.*;
+import javax.swing.event.DocumentListener;
+
 /**
  * Panel where user enters:
  * - current location (origin)
  * - destination
- *
  * Also displays a list of text suggestions (addresses/place names).
  * The panel is "dumb": it does not call APIs itself.
  */
@@ -37,20 +37,22 @@ public class OriginalDestinationPanel extends JPanel {
     public OriginalDestinationPanel() {
         super(new BorderLayout(10, 10));
 
-        JLabel title = new JLabel("Trip Planner - Enter Locations", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 18));
+        final int titleFontSize = 18;
+        final JLabel title = new JLabel("Trip Planner - Enter Locations", SwingConstants.CENTER);
+        title.setFont(new Font("SansSerif", Font.BOLD, titleFontSize));
         this.add(title, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(4, 4, 4, 4);
+        final int insets = 4;
+        final JPanel centerPanel = new JPanel(new GridBagLayout());
+        final GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(insets, insets, insets, insets);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        JLabel originLabel = new JLabel("Current location (origin):");
+        final JLabel originLabel = new JLabel("Current location (origin):");
         originField = new JTextField();
 
-        JLabel destinationLabel = new JLabel("Destination:");
+        final JLabel destinationLabel = new JLabel("Destination:");
         destinationField = new JTextField();
 
         // Row 0: origin label
@@ -59,15 +61,18 @@ public class OriginalDestinationPanel extends JPanel {
         centerPanel.add(originLabel, gbc);
 
         // Row 1: origin field
-        gbc.gridy = 1;
+        final int originFieldY = 1;
+        gbc.gridy = originFieldY;
         centerPanel.add(originField, gbc);
 
         // Row 2: destination label
-        gbc.gridy = 2;
+        final int destLabelY = 2;
+        gbc.gridy = destLabelY;
         centerPanel.add(destinationLabel, gbc);
 
         // Row 3: destination field
-        gbc.gridy = 3;
+        final int destFieldY = 3;
+        gbc.gridy = destFieldY;
         centerPanel.add(destinationField, gbc);
 
         this.add(centerPanel, BorderLayout.CENTER);
@@ -77,12 +82,12 @@ public class OriginalDestinationPanel extends JPanel {
         suggestionList = new JList<>(suggestionListModel);
         suggestionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JScrollPane suggestionScroll = new JScrollPane(suggestionList);
+        final JScrollPane suggestionScroll = new JScrollPane(suggestionList);
         suggestionScroll.setBorder(BorderFactory.createTitledBorder("Suggestions"));
 
         this.add(suggestionScroll, BorderLayout.WEST);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         swapButton = new JButton("Swap");
         continueButton = new JButton("Continue");
         continueButton.setEnabled(false);
@@ -109,7 +114,7 @@ public class OriginalDestinationPanel extends JPanel {
         });
 
         // Enable "Continue" only when both fields are non-empty
-        DocumentListener docListener = new javax.swing.event.DocumentListener() {
+        final DocumentListener docListener = new javax.swing.event.DocumentListener() {
             @Override
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 updateContinueEnabled();
@@ -135,6 +140,10 @@ public class OriginalDestinationPanel extends JPanel {
         return originField.getText();
     }
 
+    /**
+     * Set origin display text.
+     * @param text display text
+     */
     public void setOriginText(String text) {
         originField.setText(text == null ? "" : text);
     }
@@ -143,6 +152,10 @@ public class OriginalDestinationPanel extends JPanel {
         return destinationField.getText();
     }
 
+    /**
+     * Set destination display text.
+     * @param text display text
+     */
     public void setDestinationText(String text) {
         destinationField.setText(text == null ? "" : text);
     }
@@ -151,24 +164,41 @@ public class OriginalDestinationPanel extends JPanel {
         return activeField;
     }
 
+    /**
+     * Add continue listener.
+     * @param listener lister
+     */
     public void addContinueListener(ActionListener listener) {
         continueButton.addActionListener(listener);
     }
 
+    /**
+     * Add swap listener.
+     * @param listener listener
+     */
     public void addSwapListener(ActionListener listener) {
         swapButton.addActionListener(listener);
     }
 
+    /**
+     * Add origin document listener.
+     * @param listener listener
+     */
     public void addOriginDocumentListener(DocumentListener listener) {
         originField.getDocument().addDocumentListener(Objects.requireNonNull(listener));
     }
 
+    /**
+     * Add destination document listener.
+     * @param listener listener
+     */
     public void addDestinationDocumentListener(DocumentListener listener) {
         destinationField.getDocument().addDocumentListener(Objects.requireNonNull(listener));
     }
 
     /**
      * Update suggestion list with new text entries (e.g., addresses).
+     * @param suggestions suggestion list
      */
     public void updateSuggestions(List<String> suggestions) {
         suggestionListModel.clear();
@@ -181,10 +211,11 @@ public class OriginalDestinationPanel extends JPanel {
 
     /**
      * Register a listener when user clicks/changes selection in suggestion list.
+     * @param handler runnable handler
      */
     public void addSuggestionSelectionListener(Runnable handler) {
-        suggestionList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && handler != null) {
+        suggestionList.addListSelectionListener(event -> {
+            if (!event.getValueIsAdjusting() && handler != null) {
                 handler.run();
             }
         });
@@ -201,8 +232,8 @@ public class OriginalDestinationPanel extends JPanel {
     // --- Helpers -----------------------------------------------------------
 
     private void updateContinueEnabled() {
-        boolean hasOrigin = !originField.getText().isBlank();
-        boolean hasDestination = !destinationField.getText().isBlank();
+        final boolean hasOrigin = !originField.getText().isBlank();
+        final boolean hasDestination = !destinationField.getText().isBlank();
         continueButton.setEnabled(hasOrigin && hasDestination);
     }
 }

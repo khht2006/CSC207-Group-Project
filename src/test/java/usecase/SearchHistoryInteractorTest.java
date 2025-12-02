@@ -2,7 +2,7 @@ package usecase;
 
 import entity.SearchRecord;
 import org.junit.jupiter.api.Test;
-import usecase.search_history.SearchHistoryData;
+import usecase.search_history.SearchHistoryInputData;
 import usecase.search_history.SearchHistoryInteractor;
 import usecase.search_history.SearchHistoryOutputBoundary;
 import usecase.search_history.SearchHistoryOutputData;
@@ -25,7 +25,7 @@ class SearchHistoryInteractorTest {
         }
     }
 
-    private static class FakeGateway implements SearchHistoryData {
+    private static class FakeGateway implements SearchHistoryInputData {
         private final List<SearchRecord> records;
 
         FakeGateway(List<SearchRecord> records) {

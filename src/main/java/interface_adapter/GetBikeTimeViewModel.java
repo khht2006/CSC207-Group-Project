@@ -14,8 +14,12 @@ public class GetBikeTimeViewModel {
         this.bikeTimeText = bikeTimeText;
     }
 
+    /**
+     * Return the display text for bike time.
+     * @return the current bike time display string
+     */
     public double getBikeTimeValue() {
-        String num = bikeTimeText.replaceAll("[^0-9.]", "");
+        final String num = bikeTimeText.replaceAll("[^0-9.]", "");
         if (num.isEmpty()) {
             return 0.0;
         }
