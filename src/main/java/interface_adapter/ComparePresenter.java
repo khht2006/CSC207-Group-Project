@@ -29,7 +29,7 @@ public class ComparePresenter implements CompareSummaryOutputBoundary {
         viewModel.setBikeTimeText(bikeMinutes);
         viewModel.setWalkTimeText(walkMinutes);
         viewModel.setBikeCostText(String.format("$%.2f", bikeCost));
-        viewModel.setDiffInMinutesText(diffInMinutes);
+        viewModel.setDiffInMinutes(String.format("$%.1f", diffInMinutes));
     }
 
     public CompareViewModel getViewModel() {
