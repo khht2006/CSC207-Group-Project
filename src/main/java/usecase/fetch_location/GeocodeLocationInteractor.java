@@ -99,6 +99,20 @@ public class GeocodeLocationInteractor implements GeocodeInputBoundary {
         return rankAndTrim(locations, text, maxResults);
     }
 
+    @Override
+    public void findBestMatch(GeocodeInputData inputData) {
+        try {
+            Location bestLocation = findBestLocation(inputData.getQuery());
+            List<Location> singleResult = bestLocation != null
+                    ? List.of(bestLocation)
+                    : List.of();
+            GeocodeOutputData outputData = new GeocodeOutputData(singleResult, false);
+            outputBoundary.prepareSuccessView(outputData);
+        } catch (IOException | InterruptedException e) {
+            outputBoundary.prepareFailView("Failed to find best location: " + e.getMessage());
+        }
+    }
+
     /**
      * Convenience: returns the top (best) match, or null if none.
      */
