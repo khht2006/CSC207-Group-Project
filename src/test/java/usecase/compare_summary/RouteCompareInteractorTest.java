@@ -1,4 +1,4 @@
-package login;
+package usecase.compare_summary;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

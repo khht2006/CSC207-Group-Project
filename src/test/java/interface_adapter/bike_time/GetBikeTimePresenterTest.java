@@ -1,7 +1,5 @@
-package interface_adapter;
+package interface_adapter.bike_time;
 
-import interface_adapter.bike_time.GetBikeTimePresenter;
-import interface_adapter.bike_time.GetBikeTimeViewModel;
 import org.junit.jupiter.api.Test;
 import usecase.bike_route.BikeRouteOutputData;
 
@@ -12,7 +10,7 @@ class GetBikeTimePresenterTest {
 
     @Test
     void formatsDurationIntoViewModel() {
-        BikeRouteOutputData outputData = new BikeRouteOutputData(12.34);
+        BikeRouteOutputData outputData = new BikeRouteOutputData("Problem occurred");
         GetBikeTimeViewModel vm = new GetBikeTimeViewModel();
         GetBikeTimePresenter presenter = new GetBikeTimePresenter(vm);
 
@@ -24,7 +22,7 @@ class GetBikeTimePresenterTest {
 
     @Test
     void showsErrorMessage() {
-        BikeRouteOutputData errorData = new BikeRouteOutputData(-1, "Problem occurred");
+        BikeRouteOutputData errorData = new BikeRouteOutputData("Problem occurred");
         GetBikeTimeViewModel vm = new GetBikeTimeViewModel();
         GetBikeTimePresenter presenter = new GetBikeTimePresenter(vm);
 

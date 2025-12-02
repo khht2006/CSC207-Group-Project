@@ -1,11 +1,7 @@
-package usecase;
+package usecase.search_history;
 
 import entity.SearchRecord;
 import org.junit.jupiter.api.Test;
-import usecase.search_history.SearchHistoryInputData;
-import usecase.search_history.SearchHistoryInteractor;
-import usecase.search_history.SearchHistoryOutputBoundary;
-import usecase.search_history.SearchHistoryOutputData;
 
 import java.util.List;
 
@@ -41,6 +37,12 @@ class SearchHistoryInteractorTest {
         public List<SearchRecord> load() {
             return records;
         }
+
+        @Override
+        public void deleteAll() {
+
+        }
+
     }
 
     /**

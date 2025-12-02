@@ -1,12 +1,8 @@
-package usecase;
+package usecase.bike_route;
 
 import api.ApiFetcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import usecase.bike_route.BikeRouteInputData;
-import usecase.bike_route.BikeRouteInteractor;
-import usecase.bike_route.BikeRouteOutputBoundary;
-import usecase.bike_route.BikeRouteOutputData;
 
 class BikeRouteInteractorTest {
     @Test
@@ -66,7 +62,7 @@ class BikeRouteInteractorTest {
         CapturingPresenter presenter = new CapturingPresenter();
         BikeRouteInteractor interactor =
                 new BikeRouteInteractor(new StubApiFetcher(missingDurationJson), presenter);
-        interactor.execute(new BikeRouteInputData(0, 0, 1, 1));
+        interactor.execute(new BikeRouteInputData(0, 0, 1, 1, "Test Destination"));
 
         Assertions.assertTrue(presenter.captured.hasError());
         Assertions.assertEquals("Duration not found in ORS response.", presenter.captured.getErrorMessage());
@@ -78,7 +74,7 @@ class BikeRouteInteractorTest {
         BikeRouteInteractor interactor =
                 new BikeRouteInteractor(new IOExceptionApiFetcher(), presenter);
 
-        interactor.execute(new BikeRouteInputData(0, 0, 1, 1));
+        interactor.execute(new BikeRouteInputData(0, 0, 1, 1, "Test Destination"));
 
         Assertions.assertTrue(presenter.captured.hasError());
         Assertions.assertTrue(
@@ -91,7 +87,7 @@ class BikeRouteInteractorTest {
         BikeRouteInteractor interactor =
                 new BikeRouteInteractor(new InterruptedApiFetcher(), presenter);
 
-        interactor.execute(new BikeRouteInputData(0, 0, 1, 1));
+        interactor.execute(new BikeRouteInputData(0, 0, 1, 1, "Test Destination"));
 
         Assertions.assertTrue(Thread.currentThread().isInterrupted(), "Interrupt flag should be set");
         // Clear flag for other tests

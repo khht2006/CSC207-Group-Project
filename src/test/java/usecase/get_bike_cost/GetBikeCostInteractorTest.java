@@ -1,7 +1,6 @@
-package login;
+package usecase.get_bike_cost;
 
 import org.junit.jupiter.api.Test;
-import usecase.get_bike_cost.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

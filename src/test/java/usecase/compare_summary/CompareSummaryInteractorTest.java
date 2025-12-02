@@ -1,4 +1,4 @@
-package login;
+package usecase.compare_summary;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import interface_adapter.compare_summary.CompareSummaryPresenter;
 import interface_adapter.compare_summary.CompareSummaryViewModel;
-import usecase.compare_summary.CompareSummaryInputData;
-import usecase.compare_summary.CompareSummaryInteractor;
 
 public class CompareSummaryInteractorTest {
 
