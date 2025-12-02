@@ -1,6 +1,6 @@
 package usecase.compare_summary;
 
-import interface_adapter.ComparePresenter;
+import interface_adapter.compare_summary.CompareSummaryPresenter;
 
 /**
  * Simplified CompareSummaryInteractor that expects both walk and bike durations
@@ -11,9 +11,9 @@ import interface_adapter.ComparePresenter;
  */
 public class CompareSummaryInteractor implements CompareSummaryInputBoundary {
 
-    private final ComparePresenter presenter;
+    private final CompareSummaryPresenter presenter;
 
-    public CompareSummaryInteractor(ComparePresenter presenter) {
+    public CompareSummaryInteractor(CompareSummaryPresenter presenter) {
         this.presenter = presenter;
     }
 

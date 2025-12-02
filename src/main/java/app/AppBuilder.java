@@ -1,9 +1,9 @@
 package app;
 
 import api.ApiFetcher;
-import interface_adapter.CompareController;
-import interface_adapter.ComparePresenter;
-import interface_adapter.CompareViewModel;
+import interface_adapter.compare_summary.CompareSummaryController;
+import interface_adapter.compare_summary.CompareSummaryPresenter;
+import interface_adapter.compare_summary.CompareSummaryViewModel;
 import interface_adapter.GetBikeCostController;
 import interface_adapter.GetBikeCostPresenter;
 import interface_adapter.GetBikeCostViewModel;
@@ -29,9 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import usecase.BikeRouteInteractor;
-import usecase.fetch_location.GeocodeLocationInteractor;
 import usecase.WalkRouteInteractor;
-import usecase.compare_summary.CompareSummaryInputData;
 import usecase.compare_summary.CompareSummaryInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
@@ -126,11 +124,11 @@ public class AppBuilder {
         GetCostPanel bikeCostPanel = new GetCostPanel(bikeCostVM);
 
         // ------- Compare Summary -------
-        CompareViewModel compareVM = new CompareViewModel();
-        ComparePresenter comparePresenter = new ComparePresenter(compareVM);
-        CompareSummaryInteractor compareInteractor = new CompareSummaryInteractor(comparePresenter);
-        CompareController compareController = new CompareController(compareInteractor);
-        CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareVM);
+        final CompareSummaryViewModel compareSummaryViewModel = new CompareSummaryViewModel();
+        final CompareSummaryPresenter comparePresenter = new CompareSummaryPresenter(compareSummaryViewModel);
+        final CompareSummaryInteractor compareInteractor = new CompareSummaryInteractor(comparePresenter);
+        final CompareSummaryController compareController = new CompareSummaryController(compareInteractor);
+        final CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareSummaryViewModel);
 
         // ------- Origin + Search History -------
         OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
@@ -313,7 +311,7 @@ public class AppBuilder {
      * Fills the compare summary view model with values.
      */
     private static void fillCompareSummary(
-            CompareViewModel compareVM,
+            CompareSummaryViewModel compareVM,
             GetBikeTimeViewModel bikeVM,
             GetTimePanel bikeTimePanel,
             GetBikeCostViewModel costVM
