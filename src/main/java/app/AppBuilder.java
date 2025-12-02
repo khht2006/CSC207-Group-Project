@@ -83,9 +83,7 @@ public class AppBuilder {
     private final ApiFetcher apiFetcher = new ApiFetcher();
     private GeocodeViewModel geocodeViewModel;
 
-    /** Private constructor — prevents instantiation. */
     public AppBuilder() {
-        this.geocodeViewModel = new GeocodeViewModel();
     }
 
 
@@ -100,7 +98,11 @@ public class AppBuilder {
         clearHistoryFile();
 
         ApiFetcher apiFetcher = new ApiFetcher();
-        GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
+
+        GeocodeViewModel geocodeVM = new GeocodeViewModel();
+        GeocodePresenter geocodePresenter = new GeocodePresenter(geocodeVM);
+        GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher, geocodePresenter);
+
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
 
         SearchHistoryData historyGateway = new SearchHistoryGateway();
