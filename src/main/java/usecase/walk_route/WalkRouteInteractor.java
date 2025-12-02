@@ -1,13 +1,9 @@
-package usecase;
+package usecase.walk_route;
 
 import api.ApiFetcher;
-import entity.Route;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Interactor responsible for retrieving walking route data.

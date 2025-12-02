@@ -1,4 +1,4 @@
-package usecase;
+package usecase.bike_route;
 
 import entity.Route;
 import entity.Station;

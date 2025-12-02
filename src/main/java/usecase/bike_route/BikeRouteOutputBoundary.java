@@ -1,4 +1,4 @@
-package usecase;
+package usecase.bike_route;
 
 /**
  * Output boundary for presenting cycling route duration results.

@@ -1,7 +1,7 @@
-package interface_adapter;
+package interface_adapter.bike_time;
 
-import usecase.BikeRouteOutputBoundary;
-import usecase.BikeRouteOutputData;
+import usecase.bike_route.BikeRouteOutputBoundary;
+import usecase.bike_route.BikeRouteOutputData;
 
 // Presenter for biking time results.
 

@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.bike_cost;
 
 /**
  * View model for storing and displaying the formatted bike travel cost.
@@ -22,7 +22,7 @@ public class GetBikeCostViewModel {
         this.bikeCostText = bikeCostText;
     }
 
-    public void setBoldBikeCostValue(double bikeCostValue) {
+    public void setBikeCostValue(double bikeCostValue) {
         this.bikeCostValue = bikeCostValue;
     }
 

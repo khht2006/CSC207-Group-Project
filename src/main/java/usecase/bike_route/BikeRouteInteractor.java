@@ -1,4 +1,4 @@
-package usecase;
+package usecase.bike_route;
 
 import api.ApiFetcher;
 import entity.Route;
@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Interactor that handles cycling route duration retrieval and

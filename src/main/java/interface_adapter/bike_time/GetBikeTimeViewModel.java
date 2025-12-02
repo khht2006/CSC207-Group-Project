@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.bike_time;
 
 /**
  * View model for displaying bike travel time.

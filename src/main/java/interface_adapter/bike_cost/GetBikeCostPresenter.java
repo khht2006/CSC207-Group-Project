@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.bike_cost;
 
 import usecase.get_bike_cost.GetBikeCostOutputBoundary;
 import usecase.get_bike_cost.GetBikeCostOutputData;
@@ -28,7 +28,7 @@ public class GetBikeCostPresenter implements GetBikeCostOutputBoundary {
     @Override
     public void present(GetBikeCostOutputData outputData) {
         viewModel.setBikeCostText(String.format("$%.2f",outputData.getBikeCost()));
-        viewModel.setBoldBikeCostValue(outputData.getBikeCost());
+        viewModel.setBikeCostValue(outputData.getBikeCost());
     }
 
     /**

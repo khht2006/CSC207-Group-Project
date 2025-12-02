@@ -1,7 +1,9 @@
 package interface_adapter;
 
+import interface_adapter.bike_time.GetBikeTimePresenter;
+import interface_adapter.bike_time.GetBikeTimeViewModel;
 import org.junit.jupiter.api.Test;
-import usecase.BikeRouteOutputData;
+import usecase.bike_route.BikeRouteOutputData;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

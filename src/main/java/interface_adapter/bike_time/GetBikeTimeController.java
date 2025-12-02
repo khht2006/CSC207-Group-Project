@@ -1,7 +1,7 @@
-package interface_adapter;
+package interface_adapter.bike_time;
 
-import usecase.BikeRouteInputBoundary;
-import usecase.BikeRouteInputData;
+import usecase.bike_route.BikeRouteInputBoundary;
+import usecase.bike_route.BikeRouteInputData;
 
 // Controller for requesting biking time given origin/destination coordinates.
 public class GetBikeTimeController {

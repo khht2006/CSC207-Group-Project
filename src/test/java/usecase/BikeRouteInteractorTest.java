@@ -3,6 +3,10 @@ package usecase;
 import api.ApiFetcher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import usecase.bike_route.BikeRouteInputData;
+import usecase.bike_route.BikeRouteInteractor;
+import usecase.bike_route.BikeRouteOutputBoundary;
+import usecase.bike_route.BikeRouteOutputData;
 
 class BikeRouteInteractorTest {
     @Test

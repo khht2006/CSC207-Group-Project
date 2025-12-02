@@ -1,4 +1,4 @@
-package usecase;
+package usecase.bike_route;
 
 /**
  * Input boundary for requesting a cycling route duration.

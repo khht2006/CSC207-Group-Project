@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.original_destination;
 
 import entity.Location;
 import interface_adapter.fetch_location.GeocodeController;

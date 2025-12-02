@@ -1,4 +1,4 @@
-package usecase;
+package usecase.bike_route;
 
 /**
  * Input data containing coordinates for querying a cycling route.

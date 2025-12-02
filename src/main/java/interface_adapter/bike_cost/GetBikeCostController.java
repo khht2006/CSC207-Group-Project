@@ -1,5 +1,6 @@
-package interface_adapter;
+package interface_adapter.bike_cost;
 
+import interface_adapter.bike_time.GetBikeTimeViewModel;
 import usecase.get_bike_cost.GetBikeCostInputBoundary;
 import usecase.get_bike_cost.GetBikeCostInputData;
 
