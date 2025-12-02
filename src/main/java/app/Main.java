@@ -5,7 +5,7 @@ import javax.swing.*;
 public class Main {
     /**
      * Main app entry point.
-     * @param args command-line arguments
+     * @param args command-line arguments.
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

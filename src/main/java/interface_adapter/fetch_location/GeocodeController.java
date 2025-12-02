@@ -15,9 +15,17 @@ public class GeocodeController {
      * Triggers the geocoding search.
      * @param query The free-text query from the user.
      */
-    public void search(String query) {
-        // default maxResults to 5 or 10
-        GeocodeInputData inputData = new GeocodeInputData(query, 5);
+    public void search(String query, int maxResults) {
+        // default maxResults to 5
+        GeocodeInputData inputData = new GeocodeInputData(query, maxResults);
         interactor.geocode(inputData);
+    }
+
+    /**
+     * Triggers finding the single best match.
+     */
+    public void findBest(String query) {
+        GeocodeInputData inputData = new GeocodeInputData(query, 1);
+        interactor.findBestMatch(inputData);
     }
 }
