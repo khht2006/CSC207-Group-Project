@@ -7,12 +7,8 @@ public class GetBikeCostViewModel {
 
     /** The formatted bike cost text shown in the UI. */
     private String bikeCostText = "Bike Cost:";
+    private double bikeCostValue;
 
-    /**
-     * Returns the formatted bike cost text.
-     *
-     * @return the displayed bike cost text
-     */
     public String getBikeCostText() {
         return bikeCostText;
     }
@@ -24,6 +20,14 @@ public class GetBikeCostViewModel {
      */
     public void setBikeCostText(String bikeCostText) {
         this.bikeCostText = bikeCostText;
+    }
+
+    public void setBoldBikeCostValue(double bikeCostValue) {
+        this.bikeCostValue = bikeCostValue;
+    }
+
+    public double getBoldBikeCostValue() {
+        return bikeCostValue;
     }
 
     /**

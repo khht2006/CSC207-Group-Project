@@ -9,24 +9,16 @@ public class BikeRouteInputData {
     private final double originLon;
     private final double destinationLat;
     private final double destinationLon;
+    private final String destinationName;
 
-    /**
-     * Constructs a BikeRouteInputData instance.
-     *
-     * @param originLat origin latitude
-     * @param originLon origin longitude
-     * @param destinationLat destination latitude
-     * @param destinationLon destination longitude
-     */
-    public BikeRouteInputData(
-            double originLat,
-            double originLon,
-            double destinationLat,
-            double destinationLon) {
+    public BikeRouteInputData(double originLat, double originLon,
+                              double destinationLat, double destinationLon,
+                              String destinationName) {
         this.originLat = originLat;
         this.originLon = originLon;
         this.destinationLat = destinationLat;
         this.destinationLon = destinationLon;
+        this.destinationName = destinationName;
     }
 
     /**
@@ -63,5 +55,9 @@ public class BikeRouteInputData {
      */
     public double getDestinationLon() {
         return destinationLon;
+    }
+
+    public String getDestinationName() {
+        return destinationName;
     }
 }

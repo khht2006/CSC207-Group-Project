@@ -1,9 +1,13 @@
 package usecase;
 
 import api.ApiFetcher;
-import java.io.IOException;
+import entity.Route;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Interactor responsible for retrieving walking route data.
@@ -12,6 +16,7 @@ import org.json.JSONObject;
 public class WalkRouteInteractor {
 
     private final ApiFetcher apiFetcher;
+    private double timeMinutes;
 
     /**
      * Constructs the WalkRouteInteractor.
@@ -64,7 +69,7 @@ public class WalkRouteInteractor {
         /**
          * Creates a new WalkRouteResponse.
          *
-         * @param distanceKm route distance in kilometers
+         * @param distanceKm  route distance in kilometers
          * @param timeMinutes estimated duration in minutes
          */
         public WalkRouteResponse(double distanceKm, double timeMinutes) {
@@ -91,3 +96,4 @@ public class WalkRouteInteractor {
         }
     }
 }
+
