@@ -30,3 +30,4 @@ public class SearchHistoryPresenter implements SearchHistoryOutputBoundary {
         viewModel.setHistory(data.getRecords());
     }
 }
+//

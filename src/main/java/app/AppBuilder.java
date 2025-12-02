@@ -20,6 +20,17 @@ import interface_adapter.search_history.SearchHistoryViewModel;
 import interface_adapter.search_history.SearchHistoryPresenter;
 import interface_adapter.search_history.SearchHistoryController;
 
+import interface_adapter.delete_history.DeleteHistoryController;
+import interface_adapter.delete_history.DeleteHistoryPresenter;
+import interface_adapter.delete_history.DeleteHistoryViewModel;
+
+import usecase.delete_history.DeleteHistoryInteractor;
+
+
+import interface_adapter.fetch_location.GeocodePresenter;
+import interface_adapter.fetch_location.GeocodeViewModel;
+import usecase.fetch_location.GeocodeLocationInteractor;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.io.IOException;
@@ -101,22 +112,33 @@ public class AppBuilder {
         GeocodeController geocodeController = new GeocodeController(geocodeInteractor);
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
 
-        SearchHistoryInputData historyGateway = new SearchHistoryGateway();
+        // ----------------- GATEWAY -----------------
+        SearchHistoryGateway historyGateway = new SearchHistoryGateway();
 
-        // ------- Search History Use Case -------
-        SearchHistoryViewModel historyViewModel = new SearchHistoryViewModel();
-        SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyViewModel);
-        SearchHistoryInteractor historyInteractor = new SearchHistoryInteractor(historyGateway, historyPresenter);
-        SearchHistoryController historyController = new SearchHistoryController(historyInteractor);
+        // ----------------- SEARCH HISTORY -----------------
+        SearchHistoryViewModel historyVM = new SearchHistoryViewModel();
+        SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyVM);
+        SearchHistoryInteractor historyInteractor =
+                new SearchHistoryInteractor(historyGateway, historyPresenter);
+        SearchHistoryController historyController =
+                new SearchHistoryController(historyInteractor);
 
-        // ------- Bike Time Use Case -------
+        // ----------------- DELETE HISTORY -----------------
+        DeleteHistoryViewModel deleteVM = new DeleteHistoryViewModel();
+        DeleteHistoryPresenter deletePresenter = new DeleteHistoryPresenter(deleteVM);
+        DeleteHistoryInteractor deleteInteractor =
+                new DeleteHistoryInteractor(historyGateway, deletePresenter);
+        DeleteHistoryController deleteController =
+                new DeleteHistoryController(deleteInteractor);
+
+        // ----------------- BIKE TIME -----------------
         GetBikeTimeViewModel bikeTimeVM = new GetBikeTimeViewModel();
         GetBikeTimePresenter bikeTimePresenter = new GetBikeTimePresenter(bikeTimeVM);
         BikeRouteInteractor bikeRoute = new BikeRouteInteractor(apiFetcher, bikeTimePresenter);
         GetBikeTimeController bikeTimeController = new GetBikeTimeController(bikeRoute);
         GetTimePanel bikeTimePanel = new GetTimePanel(bikeTimeVM, bikeTimeController);
 
-        // ------- Bike Cost Use Case -------
+        // ----------------- BIKE COST -----------------
         GetBikeCostViewModel bikeCostVM = new GetBikeCostViewModel();
         GetBikeCostPresenter bikeCostPresenter = new GetBikeCostPresenter(bikeCostVM);
         GetBikeCostInteractor bikeCostInteractor = new GetBikeCostInteractor(bikeCostPresenter);
@@ -131,11 +153,11 @@ public class AppBuilder {
         final CompareSummaryController compareController = new CompareSummaryController(compareInteractor);
         final CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareSummaryViewModel);
 
-        // ------- Origin + Search History -------
+        // ----------------- ORIGIN + HISTORY PANELS -----------------
         OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
         SearchHistoryPanel historyPanel = new SearchHistoryPanel();
 
-        // ------- Navigation Setup -------
+        // ----------------- NAVIGATION -----------------
         CardLayout layout = new CardLayout();
         JPanel root = new JPanel(layout);
 
@@ -145,7 +167,7 @@ public class AppBuilder {
         root.add(comparePanel, COMPARE);
         root.add(historyPanel, SEARCH_HISTORY);
 
-        // ------- Origin → Bike Time -------
+        // ----------------- ORIGIN SUBMIT -----------------
         new OriginalDestinationController(
                 originPanel,
                 geocodeController,
@@ -183,7 +205,7 @@ public class AppBuilder {
                     bikeCostPanel.updateBikeCostText();
                     final double bikeCost = bikeCostVM.getBikeCostValue();
 
-                    final SearchRecord searchRecord = new SearchRecord(
+                    final SearchRecord record = new SearchRecord(
                             originPanel.getOriginText(),
                             originPanel.getDestinationText(),
                             bikeTime,
@@ -191,16 +213,15 @@ public class AppBuilder {
                             walkTime
                     );
 
-                    historyGateway.save(searchRecord);
+                    historyGateway.save(record);
                 }
         );
 
-        // Navigation buttons
-        bikeTimePanel.getCostButton().addActionListener(actionEvent -> {
+        // ----------------- BUTTONS -----------------
+        bikeTimePanel.getCostButton().addActionListener(e -> {
             layout.show(root, BIKE_COST);
             bikeCostController.calculateCost();
             bikeCostPanel.updateBikeCostText();
-            layout.show(root, BIKE_COST);
         });
 
         // Navigation: bikeCost → compare summary
@@ -215,15 +236,17 @@ public class AppBuilder {
             layout.show(root, COMPARE);
         });
 
-        // Back buttons
-        bikeTimePanel.getBackButton().addActionListener(actionEvent -> layout.show(root, ORIGIN));
-        bikeCostPanel.getBackButton().addActionListener(actionEvent -> layout.show(root, BIKE_TIME));
-        comparePanel.getBackButton().addActionListener(actionEvent -> layout.show(root, BIKE_COST));
+        bikeTimePanel.getBackButton().addActionListener(e ->
+                layout.show(root, ORIGIN));
+        bikeCostPanel.getBackButton().addActionListener(e ->
+                layout.show(root, BIKE_TIME));
+        comparePanel.getBackButton().addActionListener(e ->
+                layout.show(root, BIKE_COST));
 
-        // Search History button
-        originPanel.getViewHistoryButton().addActionListener(actionEvent -> {
+        // ----------------- VIEW HISTORY BUTTON -----------------
+        originPanel.getViewHistoryButton().addActionListener(e -> {
             historyController.execute();
-            final var records = historyViewModel.getHistory();
+            var records = historyVM.getHistory();
             if (records == null || records.isEmpty()) {
                 historyPanel.setNoHistoryMessage();
             } else {
@@ -232,10 +255,14 @@ public class AppBuilder {
             layout.show(root, SEARCH_HISTORY);
         });
 
-        historyPanel.getBackButton()
-                .addActionListener(e -> layout.show(root, ORIGIN));
+        historyPanel.getBackButton().addActionListener(e ->
+                layout.show(root, ORIGIN));
 
-        // ------- Final Frame -------
+        // ----------------- DELETE HISTORY BUTTON -----------------
+        originPanel.getDeleteHistoryButton().addActionListener(e -> {
+            deleteController.execute();
+        });
+
         JFrame frame = new JFrame("Grapes Trip Planner");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(root, BorderLayout.CENTER);

@@ -34,3 +34,4 @@ public class SearchHistoryInteractor implements SearchHistoryInputBoundary {
         presenter.present(new SearchHistoryOutputData(records));
     }
 }
+//
