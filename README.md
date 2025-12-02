@@ -27,14 +27,13 @@ of our program.
 | Use Case                      | Lead Developer |
 |-------------------------------|----------------|
 | Get Current Location          | Kalan          | 
-| Get Destination               | Kalan           |
+| Get Destination               | Janice         |
 | Show Bike Travel Time         | Elvis          |
 | Show Bike Travel Fare and GUI | Celine         |
 | Show Walking Summary          | Kyle           |
 | Compare Time and Cost and GUI | Kristen        |
 | Show Search History           | Celine         |
-| Delete Search  History        | Janice         |
-
+| Delete Search History         | Janice         |
 
 # About Us
 

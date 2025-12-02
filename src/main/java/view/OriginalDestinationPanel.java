@@ -1,5 +1,9 @@
 package view;
 
+import interface_adapter.geocode.GeocodeController; // Import the controller
+import interface_adapter.geocode.GeocodeViewModel;
+import interface_adapter.original_destination.OriginalDestinationViewModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -16,14 +20,13 @@ public class OriginalDestinationPanel extends JPanel {
     private final JButton viewHistoryButton;
     private final JButton deleteHistoryButton;
 
-    // NEW – suggestion list GUI
     private final JList<String> suggestionList;
     private final DefaultListModel<String> suggestionModel;
 
     public enum ActiveField { ORIGIN, DESTINATION, NONE }
     private ActiveField activeField = ActiveField.NONE;
 
-    public OriginalDestinationPanel() {
+    public OriginalDestinationPanel(GeocodeController geocodeController) { // Updated constructor
 
         setLayout(new BorderLayout());
 
@@ -74,6 +77,46 @@ public class OriginalDestinationPanel extends JPanel {
         // Track which field is active (needed for suggestion selection)
         originField.addCaretListener(e -> activeField = ActiveField.ORIGIN);
         destinationField.addCaretListener(e -> activeField = ActiveField.DESTINATION);
+
+        // Setup debounced listeners
+        addDebouncedSuggestionListeners(geocodeController);
+    }
+
+    //Encapsulates debouncing logic
+    private void addDebouncedSuggestionListeners(GeocodeController geocodeController) {
+        Runnable fetchSuggestions = () -> {
+            String text;
+            if (getActiveField() == ActiveField.ORIGIN) {
+                text = getOriginText();
+            } else {
+                text = getDestinationText();
+            }
+            if (!text.isBlank()) {
+                geocodeController.search(text, 5);
+            }
+        };
+
+        // Timer to delay geocode requests until the user stops typing
+        final Timer suggestionTimer = new Timer(300, e -> fetchSuggestions.run());
+        suggestionTimer.setRepeats(false);
+
+        DocumentListener suggestionListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                suggestionTimer.restart();
+            }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                suggestionTimer.restart();
+            }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                suggestionTimer.restart();
+            }
+        };
+
+        originField.getDocument().addDocumentListener(suggestionListener);
+        destinationField.getDocument().addDocumentListener(suggestionListener);
     }
 
     // ---------------- Accessors -----------------
@@ -108,14 +151,6 @@ public class OriginalDestinationPanel extends JPanel {
         continueButton.addActionListener(listener);
     }
 
-    public void addOriginDocumentListener(DocumentListener listener) {
-        originField.getDocument().addDocumentListener(listener);
-    }
-
-    public void addDestinationDocumentListener(DocumentListener listener) {
-        destinationField.getDocument().addDocumentListener(listener);
-    }
-
     public void addSuggestionSelectionListener(Runnable r) {
         suggestionList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -124,7 +159,32 @@ public class OriginalDestinationPanel extends JPanel {
         });
     }
 
+    public void observeViewModel(OriginalDestinationViewModel viewModel) {
+        viewModel.addPropertyChangeListener(evt -> {
+            switch (evt.getPropertyName()) {
+                case "originText" -> setOriginText((String) evt.getNewValue());
+                case "destinationText" -> setDestinationText((String) evt.getNewValue());
+                case "errorMessage" -> {
+                    String error = (String) evt.getNewValue();
+                    if (error != null) {
+                        JOptionPane.showMessageDialog(this, error, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+    }
+
+    public void observeGeocodeViewModel(GeocodeViewModel viewModel) {
+        viewModel.addPropertyChangeListener(evt -> {
+            if ("suggestions".equals(evt.getPropertyName())) {
+                @SuppressWarnings("unchecked")
+                List<String> newSuggestions = (List<String>) evt.getNewValue();
+                updateSuggestions(newSuggestions);
+            }
+        });
+    }
+
+
     public JButton getViewHistoryButton() { return viewHistoryButton; }
     public JButton getDeleteHistoryButton() { return deleteHistoryButton; }
 }
-//

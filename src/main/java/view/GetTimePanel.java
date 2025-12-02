@@ -1,7 +1,7 @@
 package view;
 
-import interface_adapter.GetBikeTimeController;
-import interface_adapter.GetBikeTimeViewModel;
+import interface_adapter.bike_time.GetBikeTimeController;
+import interface_adapter.bike_time.GetBikeTimeViewModel;
 
 import javax.swing.*;
 import java.awt.*;
