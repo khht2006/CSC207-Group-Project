@@ -7,8 +7,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import usecase.search_history.SearchHistoryInputData;
-
 /**
  * File-based implementation of {@link SearchHistoryInputData}.
  */
@@ -25,14 +23,13 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
     public void save(SearchRecord record) {
         try (FileWriter writer = new FileWriter(FILE_PATH, true)) {
             writer.write(
-                    record.getOrigin() + "|"
-                            + record.getDestination() + "|"
-                            + record.getBikeTime() + "|"
-                            + record.getBikeCost() + "|"
-                            + record.getWalkTime() + "\n"
+                    record.getOrigin() + "|" +
+                            record.getDestination() + "|" +
+                            record.getBikeTime() + "|" +
+                            record.getBikeCost() + "|" +
+                            record.getWalkTime() + "\n"
             );
-        }
-        catch (IOException ignored) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -43,29 +40,38 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
      */
     @Override
     public List<SearchRecord> load() {
-        final List<SearchRecord> history = new ArrayList<>();
+        List<SearchRecord> history = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                final String[] p = line.split("\\|");
-                final int len = 5;
-                if (p.length == len) {
+                String[] p = line.split("\\|");
+                if (p.length == 5) {
                     history.add(new SearchRecord(
-                            p[0],
-                            p[1],
-                            Double.parseDouble(p[2]),
-                            Double.parseDouble(p[3]),
-                            Double.parseDouble(p[4])
+                            p[0],               // origin
+                            p[1],               // destination
+                            Double.parseDouble(p[2]), // bike time
+                            Double.parseDouble(p[3]), // bike cost
+                            Double.parseDouble(p[4])  // walk time
                     ));
                 }
             }
-        }
-        catch (IOException ignored) {
-            // no existing files (empty history).
+        } catch (IOException ignored) {
+            // file might not exist — treat as empty history
         }
 
         return history;
+    }
+
+    /**
+     * Deletes all search history by clearing the file.
+     */
+    @Override
+    public void deleteAll() {
+        try {
+            new FileWriter(FILE_PATH, false).close(); // overwrite with empty file
+        } catch (IOException ignored) {
+        }
     }
 }
