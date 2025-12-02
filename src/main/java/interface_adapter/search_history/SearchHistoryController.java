@@ -30,3 +30,4 @@ public class SearchHistoryController {
         interactor.execute();
     }
 }
+//

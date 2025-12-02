@@ -30,3 +30,4 @@ public class SearchHistoryViewModel {
         return history;
     }
 }
+//

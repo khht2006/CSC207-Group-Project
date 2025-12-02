@@ -24,4 +24,7 @@ public interface SearchHistoryInputData {
      * @return a list of previously saved records
      */
     List<SearchRecord> load();
+    void deleteAll();
+
 }
+//
