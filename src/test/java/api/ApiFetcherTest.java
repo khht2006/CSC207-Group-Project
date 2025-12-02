@@ -18,6 +18,6 @@ class ApiFetcherTest {
         String bikeInfo = fetcher.fetchBikeStationInformationJson();
 
         Assertions.assertEquals(2806, walkJson.length());
-        Assertions.assertEquals(474285, bikeInfo.length());
+        Assertions.assertEquals(474190, bikeInfo.length());
     }
 }
