@@ -1,8 +1,5 @@
 package app;
 
-import java.awt.*;
-import javax.swing.*;
-
 import api.ApiFetcher;
 import interface_adapter.CompareViewModel;
 import interface_adapter.GetBikeCostController;
@@ -12,10 +9,13 @@ import interface_adapter.GetBikeTimeController;
 import interface_adapter.GetBikeTimePresenter;
 import interface_adapter.GetBikeTimeViewModel;
 import interface_adapter.OriginalDestinationController;
-import interface_adapter.SearchHistoryGateway;
-import interface_adapter.SearchHistoryViewModel;
-import interface_adapter.SearchHistoryPresenter;
-import interface_adapter.SearchHistoryController;
+import interface_adapter.search_history.SearchHistoryGateway;
+import interface_adapter.fetch_location.GeocodePresenter;
+import interface_adapter.fetch_location.GeocodeViewModel;
+import usecase.fetch_location.GeocodeLocationInteractor;
+import interface_adapter.search_history.SearchHistoryViewModel;
+import interface_adapter.search_history.SearchHistoryPresenter;
+import interface_adapter.search_history.SearchHistoryController;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -50,15 +50,36 @@ import view.SearchHistoryPanel;
  * - Navigation (CardLayout)
  * Returns JFrame.
  */
-public final class AppBuilder {
-    static final String ORIGIN = "origin";
-    static final String BIKE_TIME = "bikeTime";
-    static final String BIKE_COST = "bikeCost";
-    static final String SEARCH_HISTORY = "searchHistory";
-    static final String COMPARE = "compare";
-    static final String SEARCH_HISTORY_FILE = "search_history.txt";
+public class AppBuilder {
 
-    private AppBuilder() {
+    /** Screen identifier for origin input view. */
+    public static final String ORIGIN = "origin";
+
+    /** Screen identifier for bike time result view. */
+    public static final String BIKE_TIME = "bikeTime";
+
+    /** Screen identifier for bike cost result view. */
+    public static final String BIKE_COST = "bikeCost";
+
+    /** Screen identifier for comparison summary view. */
+    public static final String COMPARE = "compare";
+
+    /** Screen identifier for search history view. */
+    public static final String SEARCH_HISTORY = "searchHistory";
+
+    /** File where search history is stored. */
+    public static final String HISTORY_FILE = "search_history.txt";
+
+    /** Default frame width. */
+    private static final int FRAME_WIDTH = 600;
+
+    /** Default frame height. */
+    private static final int FRAME_HEIGHT = 300;
+
+    private final ApiFetcher apiFetcher = new ApiFetcher();
+    private GeocodeViewModel geocodeViewModel;
+
+    public AppBuilder() {
     }
 
     /**
@@ -70,7 +91,11 @@ public final class AppBuilder {
         clearHistoryFile();
 
         ApiFetcher apiFetcher = new ApiFetcher();
-        GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
+
+        GeocodeViewModel geocodeVM = new GeocodeViewModel();
+        GeocodePresenter geocodePresenter = new GeocodePresenter(geocodeVM);
+        GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher, geocodePresenter);
+
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
 
         SearchHistoryInputData historyGateway = new SearchHistoryGateway();
@@ -114,6 +139,7 @@ public final class AppBuilder {
         root.add(comparePanel, COMPARE);
         root.add(historyPanel, SEARCH_HISTORY);
 
+        // ------- Origin → Bike Time -------
         new OriginalDestinationController(
                 originPanel,
                 geocode,
@@ -127,9 +153,7 @@ public final class AppBuilder {
                             dest.getName()
                     );
                     bikeTimePanel.updateBikeTimeText();
-
-                    double bikeTime = bikeTimeVM.getTotalTimeMinutes();
-                    double cyclingTime = bikeTimeVM.getCyclingTimeMinutes();
+                    final double bikeTime = bikeTimeVM.getBikeTimeValue();
 
                     double walkTime;
                     try {
@@ -145,7 +169,7 @@ public final class AppBuilder {
 
                     bikeTimePanel.setWalkTimeText(walkTime);
 
-                    bikeCostInteractor.execute(new GetBikeCostInputData(cyclingTime));
+                    bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
                     final double bikeCost = bikeCostVM.getBikeCostValue();
 
                     final SearchRecord searchRecord = new SearchRecord(
@@ -165,17 +189,15 @@ public final class AppBuilder {
             layout.show(root, BIKE_COST);
             bikeCostController.calculateCost();
             bikeCostPanel.updateBikeCostText();
+            layout.show(root, BIKE_COST);
         });
 
         // Navigation: bikeCost → compare summary
-        bikeCostPanel.getCompareButton().addActionListener(e -> {
-
-            double bikeT = bikeTimeVM.getTotalTimeMinutes();
-            double walkT = bikeTimePanel.getWalkTimeValue();
+        bikeCostPanel.getCompareButton().addActionListener(actionEvent -> {
 
             compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
-            compareVM.setBikeTimeText(bikeTimeViewModel.getBikeTimeValue());
-            compareVM.setBikeCostText(bikeCostViewModel.getBikeCostText());
+            compareVM.setBikeTimeText(bikeTimeVM.getBikeTimeValue());
+            compareVM.setBikeCostText(bikeCostVM.getBikeCostText());
 
             comparePanel.updateSummary();
             layout.show(root, COMPARE);
@@ -199,23 +221,27 @@ public final class AppBuilder {
             layout.show(root, SEARCH_HISTORY);
         });
 
-        historyPanel.getBackButton().addActionListener(actionEvent -> layout.show(root, ORIGIN));
+        historyPanel.getBackButton()
+                .addActionListener(e -> layout.show(root, ORIGIN));
 
-        final JFrame frame = new JFrame("Grapes Trip Planner");
-        final int frameWidth = 600;
-        final int frameHeight = 300;
-
-        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        // ------- Final Frame -------
+        JFrame frame = new JFrame("Grapes Trip Planner");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(root, BorderLayout.CENTER);
-        frame.setSize(frameWidth, frameHeight);
+        frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setLocationRelativeTo(null);
 
         return frame;
     }
 
-    private static void clearSearchHistory() {
+    /**
+     * Clears the search history file on startup.
+     */
+    private static void clearHistoryFile() {
         try {
-            java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(AppBuilder.SEARCH_HISTORY_FILE));
+            Files.deleteIfExists(Path.of(HISTORY_FILE));
+        } catch (IOException ignored) {
+            // file may not exist — ignore errors
         }
     }
 
@@ -239,6 +265,7 @@ public final class AppBuilder {
         bikeTimePanel.requestBikeTime(
                 origin.getLatitude(), origin.getLongitude(),
                 dest.getLatitude(), dest.getLongitude()
+
         );
         bikeTimePanel.updateBikeTimeText();
 
@@ -255,5 +282,35 @@ public final class AppBuilder {
         } catch (Exception ex) {
             walkTime = -1;
         }
+
+        bikeTimePanel.setWalkTimeText(walkTime);
+
+        costInteractor.execute(new GetBikeCostInputData(bikeTime));
+
+        double bikeCost = costVM.getBikeCostValue();
+
+        historyGateway.save(
+                new SearchRecord(
+                        origin.getName(),
+                        dest.getName(),
+                        bikeTime,
+                        bikeCost,
+                        walkTime
+                )
+        );
+    }
+
+    /**
+     * Fills the compare summary view model with values.
+     */
+    private static void fillCompareSummary(
+            CompareViewModel compareVM,
+            GetBikeTimeViewModel bikeVM,
+            GetTimePanel bikeTimePanel,
+            GetBikeCostViewModel costVM
+    ) {
+        compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
+        compareVM.setBikeTimeText(bikeVM.getBikeTimeValue());
+        compareVM.setBikeCostText(costVM.getBikeCostText());
     }
 }

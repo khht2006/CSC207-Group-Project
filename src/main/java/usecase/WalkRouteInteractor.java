@@ -49,6 +49,14 @@ public class WalkRouteInteractor {
             }
         }
 
+        /**
+         * Returns the estimated travel time in minutes.
+         *
+         * @return the time in minutes
+         */
+        public double getTimeMinutes() {
+            return Math.round(timeMinutes * 100.0) / 100.0;
+        }
         return new Route(distanceMetres, timeSeconds, instructions);
     }
 }
