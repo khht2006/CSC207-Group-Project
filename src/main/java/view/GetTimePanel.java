@@ -65,7 +65,7 @@ public class GetTimePanel extends JPanel {
         backButton = new JButton("Back");
         costButton = new JButton("See Bike Cost");
 
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottom.add(backButton);
         bottom.add(costButton);
 
