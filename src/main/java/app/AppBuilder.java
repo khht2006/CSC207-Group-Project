@@ -1,8 +1,5 @@
 package app;
 
-import java.awt.*;
-import javax.swing.*;
-
 import api.ApiFetcher;
 import interface_adapter.CompareViewModel;
 import interface_adapter.GetBikeCostController;
@@ -12,15 +9,13 @@ import interface_adapter.GetBikeTimeController;
 import interface_adapter.GetBikeTimePresenter;
 import interface_adapter.GetBikeTimeViewModel;
 import interface_adapter.OriginalDestinationController;
-import interface_adapter.SearchHistoryGateway;
-import interface_adapter.fetch_location.GeocodeController;
+import interface_adapter.search_history.SearchHistoryGateway;
 import interface_adapter.fetch_location.GeocodePresenter;
 import interface_adapter.fetch_location.GeocodeViewModel;
 import usecase.fetch_location.GeocodeLocationInteractor;
-import usecase.fetch_location.GeocodeOutputBoundary;
-import interface_adapter.SearchHistoryViewModel;
-import interface_adapter.SearchHistoryPresenter;
-import interface_adapter.SearchHistoryController;
+import interface_adapter.search_history.SearchHistoryViewModel;
+import interface_adapter.search_history.SearchHistoryPresenter;
+import interface_adapter.search_history.SearchHistoryController;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -32,7 +27,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import usecase.BikeRouteInteractor;
-import usecase.fetch_location.GeocodeLocationInteractor;
 import usecase.WalkRouteInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
@@ -159,7 +153,7 @@ public class AppBuilder {
                             dest.getLatitude(), dest.getLongitude()
                     );
                     bikeTimePanel.updateBikeTimeText();
-                    final double bikeTime = bikeTimeViewModel.getBikeTimeValue();
+                    final double bikeTime = bikeTimeVM.getBikeTimeValue();
 
                     double walkTime;
                     try {
@@ -178,7 +172,7 @@ public class AppBuilder {
                     bikeTimePanel.setWalkTimeText(walkTime);
 
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
-                    final double bikeCost = bikeCostViewModel.getBikeCostValue();
+                    final double bikeCost = bikeCostVM.getBikeCostValue();
 
                     final SearchRecord searchRecord = new SearchRecord(
                             originPanel.getOriginText(),
@@ -203,9 +197,9 @@ public class AppBuilder {
         // Navigation: bikeCost → compare summary
         bikeCostPanel.getCompareButton().addActionListener(actionEvent -> {
 
-            compareViewModel.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
-            compareViewModel.setBikeTimeText(bikeTimeViewModel.getBikeTimeValue());
-            compareViewModel.setBikeCostText(bikeCostViewModel.getBikeCostText());
+            compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
+            compareVM.setBikeTimeText(bikeTimeVM.getBikeTimeValue());
+            compareVM.setBikeCostText(bikeCostVM.getBikeCostText());
 
             comparePanel.updateSummary();
             layout.show(root, COMPARE);

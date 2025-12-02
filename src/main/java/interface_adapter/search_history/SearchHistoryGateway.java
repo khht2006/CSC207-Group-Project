@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.search_history;
 
 import usecase.search_history.SearchHistoryInputData;
 import entity.SearchRecord;
@@ -7,8 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import entity.SearchRecord;
-import usecase.search_history.SearchHistoryData;
+import usecase.search_history.SearchHistoryInputData;
 
 /**
  * File-based implementation of {@link SearchHistoryInputData}.
