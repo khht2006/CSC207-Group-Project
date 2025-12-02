@@ -15,7 +15,7 @@ import java.util.function.BiConsumer;
 
 /**
  * Controller for the origin/destination view.
- * Delegates geocoding to GeocodeController (proper CA).
+ * Delegates geocoding to GeocodeController.
  */
 public class OriginalDestinationController {
 
@@ -27,6 +27,11 @@ public class OriginalDestinationController {
 
     private Location selectedOrigin;
     private Location selectedDestination;
+    private boolean swapping = false; // Flag to manage swap operation
+
+    private final Timer originDebounceTimer;
+    private final Timer destinationDebounceTimer;
+    private static final int DEBOUNCE_DELAY = 300; // milliseconds
 
     public OriginalDestinationController(
             OriginalDestinationPanel panel,
@@ -40,58 +45,55 @@ public class OriginalDestinationController {
         this.selectRouteController = selectRouteController;
         this.onValidLocations = onValidLocations;
 
+        originDebounceTimer = new Timer(DEBOUNCE_DELAY, e -> triggerSuggestions(true));
+        originDebounceTimer.setRepeats(false);
+        destinationDebounceTimer = new Timer(DEBOUNCE_DELAY, e -> triggerSuggestions(false));
+        destinationDebounceTimer.setRepeats(false);
+
         wireEvents();
         observeViewModel();
     }
 
     private void wireEvents() {
         panel.addSwapListener(actionEvent -> {
-            String origin = panel.getOriginText();
-            String dest = panel.getDestinationText();
-            panel.setOriginText(dest);
-            panel.setDestinationText(origin);
+            swapping = true;
+
+            // Swap the selected location objects
+            Location temp = selectedOrigin;
+            selectedOrigin = selectedDestination;
+            selectedDestination = temp;
+
+            // Swap the text in the UI fields
+            String originText = panel.getOriginText();
+            String destText = panel.getDestinationText();
+            panel.setOriginText(destText);
+            panel.setDestinationText(originText);
+
+            swapping = false;
         });
 
         panel.addContinueListener(actionEvent -> handleContinue());
 
         panel.addOriginDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
+            private void handleUpdate() {
+                if (swapping) return;
                 selectedOrigin = null;
-                triggerSuggestions(true);
+                originDebounceTimer.restart();
             }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                selectedOrigin = null;
-                triggerSuggestions(true);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                selectedOrigin = null;
-                triggerSuggestions(true);
-            }
+            @Override public void insertUpdate(DocumentEvent e) { handleUpdate(); }
+            @Override public void removeUpdate(DocumentEvent e) { handleUpdate(); }
+            @Override public void changedUpdate(DocumentEvent e) { handleUpdate(); }
         });
 
         panel.addDestinationDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
+            private void handleUpdate() {
+                if (swapping) return;
                 selectedDestination = null;
-                triggerSuggestions(false);
+                destinationDebounceTimer.restart();
             }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                selectedDestination = null;
-                triggerSuggestions(false);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                selectedDestination = null;
-                triggerSuggestions(false);
-            }
+            @Override public void insertUpdate(DocumentEvent e) { handleUpdate(); }
+            @Override public void removeUpdate(DocumentEvent e) { handleUpdate(); }
+            @Override public void changedUpdate(DocumentEvent e) { handleUpdate(); }
         });
 
         panel.addSuggestionSelectionListener(this::applySelectedSuggestion);
@@ -137,12 +139,12 @@ public class OriginalDestinationController {
 
         switch (panel.getActiveField()) {
             case ORIGIN -> {
-                    panel.setOriginText(selectedText);
-                    selectedOrigin = selectedLocation;
+                panel.setOriginText(selectedText);
+                selectedOrigin = selectedLocation;
             }
             case DESTINATION -> {
-                    panel.setDestinationText(selectedText);
-                    selectedDestination = selectedLocation;
+                panel.setDestinationText(selectedText);
+                selectedDestination = selectedLocation;
             }
             case NONE -> { // Do nothing
             }
@@ -163,4 +165,3 @@ public class OriginalDestinationController {
                 .orElse(null);
     }
 }
-//
