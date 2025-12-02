@@ -149,6 +149,9 @@ public class AppBuilder {
                 originPanel,
                 geocode,
                 (origin, dest) -> {
+                    if (origin == null || dest == null) return;
+                    if (origin.getName() == null || dest.getName() == null) return;
+                    if (origin.getName().isBlank() || dest.getName().isBlank()) return;
 
                     layout.show(root, BIKE_TIME);
 

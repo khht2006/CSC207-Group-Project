@@ -224,6 +224,9 @@ public class OriginalDestinationController {
                         return;
                     }
 
+                    if (isNotExactOrigin(result, originText)) return;
+                    if (isNotExactDestination(result, destText)) return;
+
                     if (onLocationsResolved != null) {
                         onLocationsResolved.accept(result.origin, result.destination);
                     }
@@ -236,6 +239,40 @@ public class OriginalDestinationController {
         };
 
         worker.execute();
+    }
+
+    private boolean isNotExactDestination(GeocodeResult result, String destText) {
+        final String geocodedDestName = result.destination.getName();
+        if (!geocodedDestName.equals(destText)) {
+            JOptionPane.showMessageDialog(
+                    panel,
+                    "The destination location does not exactly match your entry.\n" +
+                            "Your input: \"" + destText + "\"\n" +
+                            "Best match: \"" + geocodedDestName + "\"\n\n" +
+                            "Please select a valid suggestion from the list.",
+                    "Invalid Destination",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNotExactOrigin(GeocodeResult result, String originText) {
+        final String geocodedOriginName = result.origin.getName();
+        if (!geocodedOriginName.equals(originText)) {
+            JOptionPane.showMessageDialog(
+                    panel,
+                    "The origin location does not exactly match your entry.\n" +
+                            "Your input: \"" + originText + "\"\n" +
+                            "Best match: \"" + geocodedOriginName + "\"\n\n" +
+                            "Please select a valid suggestion from the list.",
+                    "Invalid Origin",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return true;
+        }
+        return false;
     }
 
     private void handleError(Exception exception) {
