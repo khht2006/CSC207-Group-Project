@@ -3,6 +3,7 @@ package interface_adapter;
 import entity.Location;
 import interface_adapter.fetch_location.GeocodeController;
 import interface_adapter.fetch_location.GeocodeViewModel;
+import interface_adapter.select_route_locations.SelectRouteLocationsController;
 import view.OriginalDestinationPanel;
 
 import javax.swing.*;
@@ -21,7 +22,8 @@ public class OriginalDestinationController {
     private final OriginalDestinationPanel panel;
     private final GeocodeController geocodeController;
     private final GeocodeViewModel geocodeViewModel;
-    private final BiConsumer<Location, Location> onLocationsResolved;
+    private final SelectRouteLocationsController selectRouteController;
+    private final BiConsumer<Location, Location> onValidLocations;
 
     private Location selectedOrigin;
     private Location selectedDestination;
@@ -30,11 +32,13 @@ public class OriginalDestinationController {
             OriginalDestinationPanel panel,
             GeocodeController geocodeController,
             GeocodeViewModel geocodeViewModel,
-            BiConsumer<Location, Location> onLocationsResolved) {
+            SelectRouteLocationsController selectRouteController,
+            BiConsumer<Location, Location> onValidLocations) {
         this.panel = panel;
         this.geocodeController = geocodeController;
         this.geocodeViewModel = geocodeViewModel;
-        this.onLocationsResolved = onLocationsResolved;
+        this.selectRouteController = selectRouteController;
+        this.onValidLocations = onValidLocations;
 
         wireEvents();
         observeViewModel();
@@ -146,34 +150,7 @@ public class OriginalDestinationController {
     }
 
     private void handleContinue() {
-        String originText = panel.getOriginText().trim();
-        String destText = panel.getDestinationText().trim();
-
-        if (originText.equalsIgnoreCase(destText)) {
-            JOptionPane.showMessageDialog(panel,
-                    "Starting Location and Destination are the same.\nPlease enter a different destination.",
-                    "Invalid Destination", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        // Validate both are exact matches from suggestions
-        if (selectedOrigin == null) {
-            JOptionPane.showMessageDialog(panel,
-                    "Please select a valid origin from the suggestions.",
-                    "Invalid Origin", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (selectedDestination == null) {
-            JOptionPane.showMessageDialog(panel,
-                    "Please select a valid destination from the suggestions.",
-                    "Invalid Destination", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (onLocationsResolved != null) {
-            onLocationsResolved.accept(selectedOrigin, selectedDestination);
-        }
+        selectRouteController.execute(selectedOrigin, selectedDestination);
     }
 
     private Location findLocationByName(String name) {

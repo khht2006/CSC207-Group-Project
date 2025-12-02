@@ -15,6 +15,8 @@ import interface_adapter.fetch_location.GeocodeController;
 import interface_adapter.search_history.SearchHistoryGateway;
 import interface_adapter.fetch_location.GeocodePresenter;
 import interface_adapter.fetch_location.GeocodeViewModel;
+import interface_adapter.select_route_locations.SelectRouteLocationsController;
+import interface_adapter.select_route_locations.SelectRouteLocationsPresenter;
 import usecase.fetch_location.GeocodeLocationInteractor;
 import interface_adapter.search_history.SearchHistoryViewModel;
 import interface_adapter.search_history.SearchHistoryPresenter;
@@ -36,6 +38,7 @@ import java.awt.CardLayout;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.BiConsumer;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -47,7 +50,7 @@ import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
 import usecase.search_history.SearchHistoryInputData;
 import usecase.search_history.SearchHistoryInteractor;
-import entity.SearchRecord;
+import usecase.select_route_locations.SelectRouteLocationsInteractor;
 import view.CompareSummaryPanel;
 import view.GetCostPanel;
 import view.GetTimePanel;
@@ -158,20 +161,18 @@ public class AppBuilder {
         SearchHistoryPanel historyPanel = new SearchHistoryPanel();
 
         // ----------------- NAVIGATION -----------------
-        CardLayout layout = new CardLayout();
-        JPanel root = new JPanel(layout);
-
+        final CardLayout layout = new CardLayout();
+        final JPanel root = new JPanel(layout);
         root.add(originPanel, ORIGIN);
         root.add(bikeTimePanel, BIKE_TIME);
         root.add(bikeCostPanel, BIKE_COST);
         root.add(comparePanel, COMPARE);
         root.add(historyPanel, SEARCH_HISTORY);
 
-        // ----------------- ORIGIN SUBMIT -----------------
-        new OriginalDestinationController(
-                originPanel,
-                geocodeController,
-                geocodeVM,
+        final AppNavigator navigator = new AppNavigator(root, layout);
+
+        // ----------------- SELECT ROUTE LOCATIONS -----------------
+        SelectRouteLocationsPresenter selectRoutePresenter = new SelectRouteLocationsPresenter(
                 (origin, dest) -> {
                     if (origin == null || dest == null) return;
                     if (origin.getName() == null || dest.getName() == null) return;
@@ -196,7 +197,7 @@ public class AppBuilder {
                                 );
                         walkTime = walk.getTimeMinutes();
                     } catch (Exception ex) {
-                        walkTime = -1;  // fallback
+                        walkTime = -1;
                     }
 
                     bikeTimePanel.setWalkTimeText(walkTime);
@@ -205,16 +206,29 @@ public class AppBuilder {
                     bikeCostPanel.updateBikeCostText();
                     final double bikeCost = bikeCostVM.getBikeCostValue();
 
-                    final SearchRecord record = new SearchRecord(
-                            originPanel.getOriginText(),
-                            originPanel.getDestinationText(),
+                    final entity.SearchRecord record = new entity.SearchRecord(
+                            origin.getName(),
+                            dest.getName(),
                             bikeTime,
                             bikeCost,
                             walkTime
                     );
-
                     historyGateway.save(record);
                 }
+        );
+
+        SelectRouteLocationsInteractor selectRouteInteractor =
+                new SelectRouteLocationsInteractor(selectRoutePresenter);
+        SelectRouteLocationsController selectRouteController =
+                new SelectRouteLocationsController(selectRouteInteractor);
+
+        // ----------------- ORIGIN SUBMIT -----------------
+        new OriginalDestinationController(
+                originPanel,
+                geocodeController,
+                geocodeVM,
+                selectRouteController,
+                (origin, dest) -> {} // Empty callback since presenter handles it now
         );
 
         // ----------------- BUTTONS -----------------
@@ -329,7 +343,7 @@ public class AppBuilder {
         double bikeCost = costVM.getBikeCostValue();
 
         historyGateway.save(
-                new SearchRecord(
+                new entity.SearchRecord(
                         origin.getName(),
                         dest.getName(),
                         bikeTime,
