@@ -1,14 +1,21 @@
 package view;
 
-import interface_adapter.CompareViewModel;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import interface_adapter.compare_summary.CompareSummaryViewModel;
 
 /**
  * The View for the Compare Summary use case.
  */
 public class CompareSummaryPanel extends JPanel {
-    private final transient CompareViewModel viewModel;
+    private final transient CompareSummaryViewModel viewModel;
     private final JLabel titleLabel;
     private final JLabel walkTimeLabel;
     private final JLabel bikeTimeLabel;
@@ -21,7 +28,7 @@ public class CompareSummaryPanel extends JPanel {
      *
      * @param viewModel the view model providing summary data
      */
-    public CompareSummaryPanel(CompareViewModel viewModel) {
+    public CompareSummaryPanel(CompareSummaryViewModel viewModel) {
         this.viewModel = viewModel;
         setLayout(new BorderLayout());
 
@@ -57,9 +64,8 @@ public class CompareSummaryPanel extends JPanel {
     }
 
     /**
-     * Update compare summary text.
+     * Update compare summary text with labels from the view model.
      */
-    /** Updates the summary labels with current values from the view model. */
     public void updateSummary() {
         walkTimeLabel.setText(viewModel.getWalkTime());
         bikeTimeLabel.setText(viewModel.getBikeTime());
