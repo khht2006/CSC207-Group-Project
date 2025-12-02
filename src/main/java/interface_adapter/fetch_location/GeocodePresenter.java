@@ -1,34 +1,42 @@
 package interface_adapter.fetch_location;
 
+import entity.Location;
 import usecase.fetch_location.GeocodeOutputBoundary;
 import usecase.fetch_location.GeocodeOutputData;
-import interface_adapter.fetch_location.GeocodeViewModel; // Assuming the previous file was placed here
-// If not, I will adjust the import. Based on the previous prompt I put it in interface_adapter.fetch_location
-// but the user's view shows a flat structure. I will assume flat structure for now to match existing files
-// like GetBikeCostPresenter.
-// actually, let's look at GetBikeCostPresenter location. It is in interface_adapter.
-// So I will put GeocodeViewModel there too.
+import usecase.original_destination.OriginalDestinationInteractor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GeocodePresenter implements GeocodeOutputBoundary {
 
     private final GeocodeViewModel viewModel;
+    private final OriginalDestinationInteractor destinationInteractor;
 
-    public GeocodePresenter(GeocodeViewModel viewModel) {
+    public GeocodePresenter(GeocodeViewModel viewModel,
+                            OriginalDestinationInteractor destinationInteractor) {
         this.viewModel = viewModel;
+        this.destinationInteractor = destinationInteractor;
     }
 
     @Override
     public void prepareSuccessView(GeocodeOutputData outputData) {
-        // Update the view model with the list of locations found
-        viewModel.setErrorMessage(null);
-        viewModel.setLocations(outputData.getLocations());
+        List<Location> locations = outputData.getLocations();
+
+        // Update interactor with available locations
+        destinationInteractor.updateAvailableLocations(locations);
+
+        // Update view model with string suggestions
+        List<String> suggestions = locations.stream()
+                .map(Location::getName)
+                .collect(Collectors.toList());
+
+        viewModel.setLocations(locations);
+        viewModel.setSuggestions(suggestions);
     }
 
     @Override
     public void prepareFailView(String error) {
-        // Update the view model with the error message
         viewModel.setErrorMessage(error);
-        // Optionally clear locations or keep previous ones
-        // viewModel.setLocations(new ArrayList<>());
     }
 }
