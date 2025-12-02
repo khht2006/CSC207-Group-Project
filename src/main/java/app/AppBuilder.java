@@ -1,6 +1,7 @@
 package app;
 
 import api.ApiFetcher;
+import entity.Location;
 import interface_adapter.calculate_route.CalculateRouteController;
 import interface_adapter.calculate_route.CalculateRoutePresenter;
 import interface_adapter.compare_summary.CompareSummaryController;
@@ -14,6 +15,8 @@ import interface_adapter.bike_time.GetBikeTimePresenter;
 import interface_adapter.bike_time.GetBikeTimeViewModel;
 import interface_adapter.original_destination.OriginalDestinationController;
 import interface_adapter.fetch_location.GeocodeController;
+import interface_adapter.original_destination.OriginalDestinationPresenter;
+import interface_adapter.original_destination.OriginalDestinationViewModel;
 import interface_adapter.search_history.SearchHistoryGateway;
 import interface_adapter.fetch_location.GeocodePresenter;
 import interface_adapter.fetch_location.GeocodeViewModel;
@@ -41,6 +44,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import usecase.bike_route.BikeRouteInteractor;
+import usecase.original_destination.OriginalDestinationInteractor;
 import usecase.walk_route.WalkRouteInteractor;
 import usecase.compare_summary.CompareSummaryInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
@@ -104,8 +108,18 @@ public class AppBuilder {
 
         ApiFetcher apiFetcher = new ApiFetcher();
 
+        // ----------------- ORIGINAL DESTINATION -----------------
+        OriginalDestinationViewModel originViewModel = new OriginalDestinationViewModel();
+        OriginalDestinationPresenter originPresenter =
+                new OriginalDestinationPresenter(originViewModel);
+        OriginalDestinationInteractor originInteractor =
+                new OriginalDestinationInteractor(originPresenter);
+        OriginalDestinationController originController =
+                new OriginalDestinationController(originInteractor);
+        // ----------------- GEOCODE (LOCATION SEARCH) -----------------
+
         GeocodeViewModel geocodeVM = new GeocodeViewModel();
-        GeocodePresenter geocodePresenter = new GeocodePresenter(geocodeVM);
+        GeocodePresenter geocodePresenter = new GeocodePresenter(geocodeVM, originInteractor);
         GeocodeLocationInteractor geocodeInteractor = new GeocodeLocationInteractor(apiFetcher, geocodePresenter);
         GeocodeController geocodeController = new GeocodeController(geocodeInteractor);
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
@@ -153,6 +167,9 @@ public class AppBuilder {
 
         // ----------------- ORIGIN + HISTORY PANELS -----------------
         OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
+        // Wire panel to observe view models
+        originPanel.observeViewModel(originViewModel);
+        originPanel.observeGeocodeViewModel(geocodeVM);
         SearchHistoryPanel historyPanel = new SearchHistoryPanel();
 
         // ----------------- NAVIGATION -----------------
@@ -194,18 +211,70 @@ public class AppBuilder {
         SelectRouteLocationsController selectRouteController =
                 new SelectRouteLocationsController(selectRouteInteractor);
 
+        // ----------------- TEXT FIELD UPDATES (for suggestions) -----------------
+        Runnable fetchSuggestions = () -> {
+            String text;
+            if (originPanel.getActiveField() == OriginalDestinationPanel.ActiveField.ORIGIN) {
+                text = originPanel.getOriginText();
+            } else {
+                text = originPanel.getDestinationText();
+            }
+            if (!text.isBlank()) {
+                geocodeController.search(text, 5);
+            }
+        };
+
+        javax.swing.event.DocumentListener suggestionListener = new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { fetchSuggestions.run(); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { fetchSuggestions.run(); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { fetchSuggestions.run(); }
+        };
+
+        originPanel.addOriginDocumentListener(suggestionListener);
+        originPanel.addDestinationDocumentListener(suggestionListener);
 
 
-        // ----------------- ORIGIN SUBMIT -----------------
-        new OriginalDestinationController(
-                originPanel,
-                geocodeController,
-                geocodeVM,
-                selectRouteController,
-                (origin, dest) -> {} // Empty callback since presenter handles it now
-        );
 
+        // Wire panel to observe view model
+        originPanel.observeViewModel(originViewModel);
         // ----------------- BUTTONS -----------------
+
+
+        // ----------------- SWAP -----------------
+        originPanel.addSwapListener(e -> {
+            String origin = originPanel.getOriginText();
+            String dest = originPanel.getDestinationText();
+            originController.swapLocations(origin, dest);
+        });
+
+        // ----------------- SUGGESTION SELECTION -----------------
+        originPanel.addSuggestionSelectionListener(() -> {
+            String selected = originPanel.getSelectedSuggestionText();
+            if (selected == null || selected.isBlank()) {
+                return;
+            }
+
+            if (originPanel.getActiveField() == OriginalDestinationPanel.ActiveField.ORIGIN) {
+                originPanel.setOriginText(selected);
+                originController.selectOrigin(selected);
+            } else if (originPanel.getActiveField() == OriginalDestinationPanel.ActiveField.DESTINATION) {
+                originPanel.setDestinationText(selected);
+                originController.selectDestination(selected);
+            }
+        });
+
+
+        // ----------------- CONTINUE -----------------
+        originPanel.addContinueListener(e -> {
+            Location origin = originInteractor.getSelectedOrigin();
+            Location dest = originInteractor.getSelectedDestination();
+            selectRouteController.execute(origin, dest);
+        });
+
+
         bikeTimePanel.getCostButton().addActionListener(e -> {
             layout.show(root, BIKE_COST);
             bikeCostController.calculateCost();

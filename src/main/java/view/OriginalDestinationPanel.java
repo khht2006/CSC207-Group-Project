@@ -1,5 +1,8 @@
 package view;
 
+import interface_adapter.fetch_location.GeocodeViewModel;
+import interface_adapter.original_destination.OriginalDestinationViewModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -123,6 +126,32 @@ public class OriginalDestinationPanel extends JPanel {
             }
         });
     }
+
+    public void observeViewModel(OriginalDestinationViewModel viewModel) {
+        viewModel.addPropertyChangeListener(evt -> {
+            switch (evt.getPropertyName()) {
+                case "originText" -> setOriginText((String) evt.getNewValue());
+                case "destinationText" -> setDestinationText((String) evt.getNewValue());
+                case "errorMessage" -> {
+                    String error = (String) evt.getNewValue();
+                    if (error != null) {
+                        JOptionPane.showMessageDialog(this, error, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+    }
+
+    public void observeGeocodeViewModel(GeocodeViewModel viewModel) {
+        viewModel.addPropertyChangeListener(evt -> {
+            if ("suggestions".equals(evt.getPropertyName())) {
+                @SuppressWarnings("unchecked")
+                List<String> newSuggestions = (List<String>) evt.getNewValue();
+                updateSuggestions(newSuggestions);
+            }
+        });
+    }
+
 
     public JButton getViewHistoryButton() { return viewHistoryButton; }
     public JButton getDeleteHistoryButton() { return deleteHistoryButton; }
