@@ -29,16 +29,10 @@ public class GetBikeCostController {
      * and sends the input data to the interactor for cost calculation.
      */
     public void calculateCost() {
-        final String timeText = timeViewModel.getBikeTimeText();
-
-        final String numberOnly = timeText
-                .replace("Bike Time:", "")
-                .replace("minutes", "")
-                .trim();
-
-        final double minutes = Double.parseDouble(numberOnly);
-
-        final GetBikeCostInputData inputData = new GetBikeCostInputData(minutes);
-        interactor.execute(inputData);
+        double bikeTime = timeViewModel.getBikeTimeValue();
+        if (Double.isNaN(bikeTime) || bikeTime < 0) {
+            bikeTime = 0.0;
+        }
+        interactor.execute(new GetBikeCostInputData(bikeTime));
     }
 }
