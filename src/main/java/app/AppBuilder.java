@@ -1,6 +1,8 @@
 package app;
 
 import api.ApiFetcher;
+import interface_adapter.CompareController;
+import interface_adapter.ComparePresenter;
 import interface_adapter.CompareViewModel;
 import interface_adapter.GetBikeCostController;
 import interface_adapter.GetBikeCostPresenter;
@@ -29,6 +31,8 @@ import javax.swing.JPanel;
 import usecase.BikeRouteInteractor;
 import usecase.fetch_location.GeocodeLocationInteractor;
 import usecase.WalkRouteInteractor;
+import usecase.compare_summary.CompareSummaryInputData;
+import usecase.compare_summary.CompareSummaryInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
 import usecase.search_history.SearchHistoryInputData;
@@ -123,6 +127,9 @@ public class AppBuilder {
 
         // ------- Compare Summary -------
         CompareViewModel compareVM = new CompareViewModel();
+        ComparePresenter comparePresenter = new ComparePresenter(compareVM);
+        CompareSummaryInteractor compareInteractor = new CompareSummaryInteractor(comparePresenter);
+        CompareController compareController = new CompareController(compareInteractor);
         CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareVM);
 
         // ------- Origin + Search History -------
@@ -196,10 +203,11 @@ public class AppBuilder {
         // Navigation: bikeCost → compare summary
         bikeCostPanel.getCompareButton().addActionListener(actionEvent -> {
 
-            compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
-            compareVM.setBikeTimeText(bikeTimeVM.getBikeTimeValue());
-            compareVM.setBikeCostText(bikeCostVM.getBikeCostText());
+            final double walkTime = bikeTimePanel.getWalkTimeValue();
+            final double bikeTime = bikeTimeVM.getBikeTimeValue();
+            final double bikeCost = bikeCostVM.getBikeCostValue();
 
+            compareController.execute(walkTime, bikeTime, bikeCost);
             comparePanel.updateSummary();
             layout.show(root, COMPARE);
         });
