@@ -66,5 +66,6 @@ class SearchHistoryInteractorTest {
         assertEquals("A", out.get(0).getOrigin());
         assertEquals("D", out.get(1).getDestination());
         assertEquals(1.5, out.get(0).getBikeCost());
+        assertEquals(10.0, out.get(0).getTimeSavedMinutes());
     }
 }

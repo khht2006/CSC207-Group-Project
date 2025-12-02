@@ -4,6 +4,8 @@ import usecase.BikeRouteOutputBoundary;
 import usecase.BikeRouteOutputData;
 import usecase.get_bike_cost.GetBikeCostOutputBoundary;
 import usecase.get_bike_cost.GetBikeCostOutputData;
+import usecase.compare_summary.CompareSummaryOutputBoundary;
+import usecase.compare_summary.CompareSummaryOutputData;
 
 /**
  * The Presenter for the Compare Summary case.

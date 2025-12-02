@@ -29,14 +29,9 @@ public class GetBikeCostController {
      * and sends the input data to the interactor for cost calculation.
      */
     public void calculateCost() {
-        final String timeText = timeViewModel.getBikeTimeText();
-
-        final String numberOnly = timeText
-                .replace("Bike Time:", "")
-                .replace("minutes", "")
-                .trim();
-
-        final double minutes = Double.parseDouble(numberOnly);
+        // Use the numeric value already stored on the view model instead of parsing the label text,
+        // which may contain HTML.
+        final double minutes = timeViewModel.getCyclingTimeMinutes();
 
         final GetBikeCostInputData inputData = new GetBikeCostInputData(minutes);
         interactor.execute(inputData);

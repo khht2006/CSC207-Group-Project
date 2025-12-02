@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import api.ApiFetcher;
+import interface_adapter.ComparePresenter;
 import interface_adapter.CompareViewModel;
 import interface_adapter.GetBikeCostController;
 import interface_adapter.GetBikeCostPresenter;
@@ -31,6 +32,8 @@ import usecase.GeocodeLocationInteractor;
 import usecase.WalkRouteInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
+import usecase.compare_summary.CompareSummaryInteractor;
+import usecase.compare_summary.CompareSummaryInputData;
 import usecase.search_history.SearchHistoryInputData;
 import usecase.search_history.SearchHistoryInteractor;
 import entity.SearchRecord;
@@ -67,7 +70,7 @@ public final class AppBuilder {
      */
     public static JFrame build() {
 
-        clearHistoryFile();
+        clearSearchHistory();
 
         ApiFetcher apiFetcher = new ApiFetcher();
         GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
@@ -98,6 +101,8 @@ public final class AppBuilder {
 
         // ------- Compare Summary -------
         CompareViewModel compareVM = new CompareViewModel();
+        ComparePresenter comparePresenter = new ComparePresenter(compareVM);
+        CompareSummaryInteractor compareInteractor = new CompareSummaryInteractor(comparePresenter);
         CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareVM);
 
         // ------- Origin + Search History -------
@@ -148,12 +153,15 @@ public final class AppBuilder {
                     bikeCostInteractor.execute(new GetBikeCostInputData(cyclingTime));
                     final double bikeCost = bikeCostVM.getBikeCostValue();
 
+                    final double timeSaved = (walkTime > 0 && bikeTime > 0) ? walkTime - bikeTime : 0.0;
+
                     final SearchRecord searchRecord = new SearchRecord(
                             originPanel.getOriginText(),
                             originPanel.getDestinationText(),
                             bikeTime,
                             bikeCost,
-                            walkTime
+                            walkTime,
+                            timeSaved
                     );
 
                     historyGateway.save(searchRecord);
@@ -172,10 +180,9 @@ public final class AppBuilder {
 
             double bikeT = bikeTimeVM.getTotalTimeMinutes();
             double walkT = bikeTimePanel.getWalkTimeValue();
+            double bikeCostValue = bikeCostVM.getBikeCostValue();
 
-            compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
-            compareVM.setBikeTimeText(bikeTimeViewModel.getBikeTimeValue());
-            compareVM.setBikeCostText(bikeCostViewModel.getBikeCostText());
+            compareInteractor.execute(new CompareSummaryInputData(walkT, bikeT, bikeCostValue));
 
             comparePanel.updateSummary();
             layout.show(root, COMPARE);
@@ -216,44 +223,8 @@ public final class AppBuilder {
     private static void clearSearchHistory() {
         try {
             java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(AppBuilder.SEARCH_HISTORY_FILE));
-        }
-    }
-
-    /**
-     * Handles transition from the origin form to the Bike Time screen.
-     */
-    private static void handleOriginSubmit(
-            entity.Location origin,
-            entity.Location dest,
-            CardLayout layout,
-            JPanel root,
-            GetTimePanel bikeTimePanel,
-            GetBikeTimeViewModel bikeVM,
-            WalkRouteInteractor walkRoute,
-            GetBikeCostInteractor costInteractor,
-            GetBikeCostViewModel costVM,
-            SearchHistoryInputData historyGateway
-    ) {
-        layout.show(root, BIKE_TIME);
-
-        bikeTimePanel.requestBikeTime(
-                origin.getLatitude(), origin.getLongitude(),
-                dest.getLatitude(), dest.getLongitude()
-        );
-        bikeTimePanel.updateBikeTimeText();
-
-        double bikeTime = bikeVM.getBikeTimeValue();
-
-        double walkTime;
-        try {
-            WalkRouteInteractor.WalkRouteResponse walk =
-                    walkRoute.execute(
-                            origin.getLatitude(), origin.getLongitude(),
-                            dest.getLatitude(), dest.getLongitude()
-                    );
-            walkTime = walk.timeMinutes;
-        } catch (Exception ex) {
-            walkTime = -1;
+        } catch (java.io.IOException ignored) {
+            // If we cannot delete, continue without failing startup
         }
     }
 }

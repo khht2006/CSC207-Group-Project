@@ -10,6 +10,7 @@ public class SearchRecord {
     private final double bikeTime;
     private final double bikeCost;
     private final double walkTime;
+    private final double timeSavedMinutes;
 
     /**
      * Creates a new {@code SearchRecord} with the given trip information.
@@ -22,11 +23,28 @@ public class SearchRecord {
      */
     public SearchRecord(String origin, String destination,
                         double bikeTime, double bikeCost, double walkTime) {
+        this(origin, destination, bikeTime, bikeCost, walkTime, walkTime - bikeTime);
+    }
+
+    /**
+     * Creates a new {@code SearchRecord} with the given trip information, including time saved.
+     *
+     * @param origin           the starting location
+     * @param destination      the ending location
+     * @param bikeTime         the biking time in minutes
+     * @param bikeCost         the biking cost
+     * @param walkTime         the walking time in minutes
+     * @param timeSavedMinutes the time saved by biking (walk - bike) in minutes
+     */
+    public SearchRecord(String origin, String destination,
+                        double bikeTime, double bikeCost, double walkTime,
+                        double timeSavedMinutes) {
         this.origin = origin;
         this.destination = destination;
         this.bikeTime = bikeTime;
         this.bikeCost = bikeCost;
         this.walkTime = walkTime;
+        this.timeSavedMinutes = timeSavedMinutes;
     }
 
     /**
@@ -62,5 +80,12 @@ public class SearchRecord {
      */
     public double getWalkTime() {
         return walkTime;
+    }
+
+    /**
+     * @return the time saved by biking in minutes
+     */
+    public double getTimeSavedMinutes() {
+        return timeSavedMinutes;
     }
 }

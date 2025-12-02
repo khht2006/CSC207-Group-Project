@@ -55,6 +55,7 @@ public class SearchHistoryPanel extends JPanel {
             final String walk = String.format("%.1f", r.getWalkTime());
             final String bike = String.format("%.1f", r.getBikeTime());
             final String cost = String.format("%.2f", r.getBikeCost());
+            final String saved = String.format("%.1f", r.getTimeSavedMinutes());
 
             sb.append(r.getOrigin())
                     .append(" → ")
@@ -63,6 +64,7 @@ public class SearchHistoryPanel extends JPanel {
                     .append("Walk: ").append(walk).append(" min")
                     .append(" | Bike: ").append(bike).append(" min")
                     .append(" | Cost: $").append(cost)
+                    .append(" | Saved: ").append(saved).append(" min")
                     .append("\n")
                     .append("------------------------------------------------\n");
         }

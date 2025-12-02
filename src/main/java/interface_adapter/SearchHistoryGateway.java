@@ -6,10 +6,6 @@ import entity.SearchRecord;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import entity.SearchRecord;
-import usecase.search_history.SearchHistoryData;
-
 /**
  * File-based implementation of {@link SearchHistoryInputData}.
  */
@@ -30,7 +26,8 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
                             + record.getDestination() + "|"
                             + record.getBikeTime() + "|"
                             + record.getBikeCost() + "|"
-                            + record.getWalkTime() + "\n"
+                            + record.getWalkTime() + "|"
+                            + record.getTimeSavedMinutes() + "\n"
             );
         }
         catch (IOException ignored) {
@@ -51,14 +48,23 @@ public class SearchHistoryGateway implements SearchHistoryInputData {
 
             while ((line = reader.readLine()) != null) {
                 final String[] p = line.split("\\|");
-                final int len = 5;
-                if (p.length == len) {
+                if (p.length >= 5) {
+                    final double bikeTime = Double.parseDouble(p[2]);
+                    final double bikeCost = Double.parseDouble(p[3]);
+                    final double walkTime = Double.parseDouble(p[4]);
+
+                    // Support both old (5-field) and new (6-field) formats.
+                    final double timeSaved = p.length >= 6
+                            ? Double.parseDouble(p[5])
+                            : walkTime - bikeTime;
+
                     history.add(new SearchRecord(
                             p[0],
                             p[1],
-                            Double.parseDouble(p[2]),
-                            Double.parseDouble(p[3]),
-                            Double.parseDouble(p[4])
+                            bikeTime,
+                            bikeCost,
+                            walkTime,
+                            timeSaved
                     ));
                 }
             }

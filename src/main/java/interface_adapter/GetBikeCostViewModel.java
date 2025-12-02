@@ -28,10 +28,14 @@ public class GetBikeCostViewModel {
      * @return the numeric bike cost, or 0.0 if no number is present
      */
     public double getBikeCostValue() {
-        final String number = bikeCostText.replaceAll("[^0-9.]", "");
-        if (number.isEmpty()) {
-            return 0.0;
+        if (bikeCostValue > 0) {
+            return bikeCostValue;
         }
-        return Double.parseDouble(number);
+        final String number = bikeCostText.replaceAll("[^0-9.]", "");
+        return number.isEmpty() ? 0.0 : Double.parseDouble(number);
+    }
+
+    public void setBikeCostValue(double bikeCostValue) {
+        this.bikeCostValue = bikeCostValue;
     }
 }
