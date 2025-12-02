@@ -1,25 +1,27 @@
 package login;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
-import interface_adapter.ComparePresenter;
-import interface_adapter.CompareViewModel;
-import usecase.compare_summary.*;
+import interface_adapter.compare_summary.CompareSummaryPresenter;
+import interface_adapter.compare_summary.CompareSummaryViewModel;
+import usecase.compare_summary.CompareSummaryInputData;
+import usecase.compare_summary.CompareSummaryInteractor;
 
 public class CompareSummaryInteractorTest {
 
     @Test
     void testUpdate() {
-        CompareViewModel viewModel = new CompareViewModel();
-        ComparePresenter presenter = new ComparePresenter(viewModel);
-        CompareSummaryInteractor interactor = new CompareSummaryInteractor(presenter);
+        final CompareSummaryViewModel viewModel = new CompareSummaryViewModel();
+        final CompareSummaryPresenter presenter = new CompareSummaryPresenter(viewModel);
+        final CompareSummaryInteractor interactor = new CompareSummaryInteractor(presenter);
 
-        double walkMinutes = 12.7;
-        double bikeMinutes = 7.9;
-        double bikeCost = 1.00 + 0.12 * bikeMinutes;
+        final double walkMinutes = 12.7;
+        final double bikeMinutes = 7.9;
+        final double bikeCost = 1.00 + 0.12 * bikeMinutes;
 
-        CompareSummaryInputData inputData = new CompareSummaryInputData(walkMinutes, bikeMinutes, bikeCost);
+        final CompareSummaryInputData inputData = new CompareSummaryInputData(walkMinutes, bikeMinutes, bikeCost);
 
         interactor.execute(inputData);
         assertEquals("Walk Time: 12.7 minutes", viewModel.getWalkTime());
@@ -31,20 +33,18 @@ public class CompareSummaryInteractorTest {
     @Test
     void testZeroMinutes() {
         // arrange
-        CompareViewModel viewModel = new interface_adapter.CompareViewModel();
-        ComparePresenter presenter = new interface_adapter.ComparePresenter(viewModel);
-        CompareSummaryInteractor interactor = new CompareSummaryInteractor(presenter);
+        final CompareSummaryViewModel viewModel = new CompareSummaryViewModel();
+        final CompareSummaryPresenter presenter = new CompareSummaryPresenter(viewModel);
+        final CompareSummaryInteractor interactor = new CompareSummaryInteractor(presenter);
 
-        double walkMinutes = 5.0;
-        double bikeMinutes = 0.0;
-        double bikeCost = 1.00 + 0.12 * bikeMinutes;
+        final double walkMinutes = 5.0;
+        final double bikeMinutes = 0.0;
+        final double bikeCost = 1.00 + 0.12 * bikeMinutes;
 
-        CompareSummaryInputData input = new CompareSummaryInputData(walkMinutes, bikeMinutes, bikeCost);
+        final CompareSummaryInputData input = new CompareSummaryInputData(walkMinutes, bikeMinutes, bikeCost);
 
-        // act
         interactor.execute(input);
 
-        // assert
         assertEquals("Walk Time: 5.0 minutes", viewModel.getWalkTime());
         assertEquals("Bike Time: 0.0 minutes", viewModel.getBikeTime());
         assertEquals("$1.00", viewModel.getBikeCost());
