@@ -166,7 +166,7 @@ public class AppBuilder {
         final CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareSummaryViewModel);
 
         // ----------------- ORIGIN + HISTORY PANELS -----------------
-        OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
+        OriginalDestinationPanel originPanel = new OriginalDestinationPanel(geocodeController); // Pass controller
         // Wire panel to observe view models
         originPanel.observeViewModel(originViewModel);
         originPanel.observeGeocodeViewModel(geocodeVM);
@@ -211,32 +211,7 @@ public class AppBuilder {
         SelectRouteLocationsController selectRouteController =
                 new SelectRouteLocationsController(selectRouteInteractor);
 
-        // ----------------- TEXT FIELD UPDATES (for suggestions) -----------------
-        Runnable fetchSuggestions = () -> {
-            String text;
-            if (originPanel.getActiveField() == OriginalDestinationPanel.ActiveField.ORIGIN) {
-                text = originPanel.getOriginText();
-            } else {
-                text = originPanel.getDestinationText();
-            }
-            if (!text.isBlank()) {
-                geocodeController.search(text, 5);
-            }
-        };
-
-        javax.swing.event.DocumentListener suggestionListener = new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { fetchSuggestions.run(); }
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { fetchSuggestions.run(); }
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { fetchSuggestions.run(); }
-        };
-
-        originPanel.addOriginDocumentListener(suggestionListener);
-        originPanel.addDestinationDocumentListener(suggestionListener);
-
-
+        // REMOVED: Text field update logic is now in OriginalDestinationPanel
 
         // Wire panel to observe view model
         originPanel.observeViewModel(originViewModel);
