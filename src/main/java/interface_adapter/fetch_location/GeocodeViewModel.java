@@ -13,6 +13,7 @@ import java.util.List;
 public class GeocodeViewModel {
 
     private List<Location> locations = new ArrayList<>();
+    private List<String> suggestions = new ArrayList<>();
     private String errorMessage = null;
 
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
@@ -25,6 +26,16 @@ public class GeocodeViewModel {
         List<Location> oldLocations = this.locations;
         this.locations = locations;
         support.firePropertyChange("locations", oldLocations, locations);
+    }
+
+    public List<String> getSuggestions() {
+        return suggestions;
+    }
+
+    public void setSuggestions(List<String> suggestions) {
+        List<String> oldSuggestions = this.suggestions;
+        this.suggestions = suggestions;
+        support.firePropertyChange("suggestions", oldSuggestions, suggestions);
     }
 
     public String getErrorMessage() {

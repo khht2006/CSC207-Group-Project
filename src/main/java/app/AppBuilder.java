@@ -1,35 +1,38 @@
 package app;
 
 import api.ApiFetcher;
+import entity.Location;
+import interface_adapter.calculate_route.CalculateRouteController;
+import interface_adapter.calculate_route.CalculateRoutePresenter;
 import interface_adapter.compare_summary.CompareSummaryController;
 import interface_adapter.compare_summary.CompareSummaryPresenter;
 import interface_adapter.compare_summary.CompareSummaryViewModel;
-import interface_adapter.GetBikeCostController;
-import interface_adapter.GetBikeCostPresenter;
-import interface_adapter.GetBikeCostViewModel;
-import interface_adapter.GetBikeTimeController;
-import interface_adapter.GetBikeTimePresenter;
-import interface_adapter.GetBikeTimeViewModel;
-import interface_adapter.OriginalDestinationController;
+import interface_adapter.bike_cost.GetBikeCostController;
+import interface_adapter.bike_cost.GetBikeCostPresenter;
+import interface_adapter.bike_cost.GetBikeCostViewModel;
+import interface_adapter.bike_time.GetBikeTimeController;
+import interface_adapter.bike_time.GetBikeTimePresenter;
+import interface_adapter.bike_time.GetBikeTimeViewModel;
+import interface_adapter.original_destination.OriginalDestinationController;
 import interface_adapter.fetch_location.GeocodeController;
+import interface_adapter.original_destination.OriginalDestinationPresenter;
+import interface_adapter.original_destination.OriginalDestinationViewModel;
 import interface_adapter.search_history.SearchHistoryGateway;
 import interface_adapter.fetch_location.GeocodePresenter;
 import interface_adapter.fetch_location.GeocodeViewModel;
+import interface_adapter.select_route_locations.SelectRouteLocationsController;
+import interface_adapter.select_route_locations.SelectRouteLocationsPresenter;
+import usecase.calculate_route.CalculateRouteInteractor;
 import usecase.fetch_location.GeocodeLocationInteractor;
 import interface_adapter.search_history.SearchHistoryViewModel;
 import interface_adapter.search_history.SearchHistoryPresenter;
 import interface_adapter.search_history.SearchHistoryController;
-
 import interface_adapter.delete_history.DeleteHistoryController;
 import interface_adapter.delete_history.DeleteHistoryPresenter;
 import interface_adapter.delete_history.DeleteHistoryViewModel;
 
 import usecase.delete_history.DeleteHistoryInteractor;
 
-
-import interface_adapter.fetch_location.GeocodePresenter;
-import interface_adapter.fetch_location.GeocodeViewModel;
-import usecase.fetch_location.GeocodeLocationInteractor;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -40,14 +43,14 @@ import java.nio.file.Path;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import usecase.BikeRouteInteractor;
-import usecase.WalkRouteInteractor;
+import usecase.bike_route.BikeRouteInteractor;
+import usecase.original_destination.OriginalDestinationInteractor;
+import usecase.walk_route.WalkRouteInteractor;
 import usecase.compare_summary.CompareSummaryInteractor;
 import usecase.get_bike_cost.GetBikeCostInputData;
 import usecase.get_bike_cost.GetBikeCostInteractor;
-import usecase.search_history.SearchHistoryInputData;
 import usecase.search_history.SearchHistoryInteractor;
-import entity.SearchRecord;
+import usecase.select_route_locations.SelectRouteLocationsInteractor;
 import view.CompareSummaryPanel;
 import view.GetCostPanel;
 import view.GetTimePanel;
@@ -90,10 +93,9 @@ public class AppBuilder {
     /** Default frame height. */
     private static final int FRAME_HEIGHT = 300;
 
-    private final ApiFetcher apiFetcher = new ApiFetcher();
-    private GeocodeViewModel geocodeViewModel;
 
     public AppBuilder() {
+        // utility class; no instances
     }
 
     /**
@@ -106,8 +108,18 @@ public class AppBuilder {
 
         ApiFetcher apiFetcher = new ApiFetcher();
 
+        // ----------------- ORIGINAL DESTINATION -----------------
+        OriginalDestinationViewModel originViewModel = new OriginalDestinationViewModel();
+        OriginalDestinationPresenter originPresenter =
+                new OriginalDestinationPresenter(originViewModel);
+        OriginalDestinationInteractor originInteractor =
+                new OriginalDestinationInteractor(originPresenter);
+        OriginalDestinationController originController =
+                new OriginalDestinationController(originInteractor);
+        // ----------------- GEOCODE (LOCATION SEARCH) -----------------
+
         GeocodeViewModel geocodeVM = new GeocodeViewModel();
-        GeocodePresenter geocodePresenter = new GeocodePresenter(geocodeVM);
+        GeocodePresenter geocodePresenter = new GeocodePresenter(geocodeVM, originInteractor);
         GeocodeLocationInteractor geocodeInteractor = new GeocodeLocationInteractor(apiFetcher, geocodePresenter);
         GeocodeController geocodeController = new GeocodeController(geocodeInteractor);
         WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
@@ -154,70 +166,90 @@ public class AppBuilder {
         final CompareSummaryPanel comparePanel = new CompareSummaryPanel(compareSummaryViewModel);
 
         // ----------------- ORIGIN + HISTORY PANELS -----------------
-        OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
+        OriginalDestinationPanel originPanel = new OriginalDestinationPanel(geocodeController); // Pass controller
+        // Wire panel to observe view models
+        originPanel.observeViewModel(originViewModel);
+        originPanel.observeGeocodeViewModel(geocodeVM);
         SearchHistoryPanel historyPanel = new SearchHistoryPanel();
 
         // ----------------- NAVIGATION -----------------
-        CardLayout layout = new CardLayout();
-        JPanel root = new JPanel(layout);
-
+        final CardLayout layout = new CardLayout();
+        final JPanel root = new JPanel(layout);
         root.add(originPanel, ORIGIN);
         root.add(bikeTimePanel, BIKE_TIME);
         root.add(bikeCostPanel, BIKE_COST);
         root.add(comparePanel, COMPARE);
         root.add(historyPanel, SEARCH_HISTORY);
 
-        // ----------------- ORIGIN SUBMIT -----------------
-        new OriginalDestinationController(
-                originPanel,
-                geocodeController,
-                geocodeVM,
-                (origin, dest) -> {
-                    if (origin == null || dest == null) return;
-                    if (origin.getName() == null || dest.getName() == null) return;
-                    if (origin.getName().isBlank() || dest.getName().isBlank()) return;
 
-                    layout.show(root, BIKE_TIME);
-
-                    bikeTimePanel.requestBikeTime(
-                            origin.getLatitude(), origin.getLongitude(),
-                            dest.getLatitude(), dest.getLongitude(),
-                            dest.getName()
-                    );
-                    bikeTimePanel.updateBikeTimeText();
-                    final double bikeTime = bikeTimeVM.getBikeTimeValue();
-
-                    double walkTime;
-                    try {
-                        final WalkRouteInteractor.WalkRouteResponse walk =
-                                walkRoute.execute(
-                                        origin.getLatitude(), origin.getLongitude(),
-                                        dest.getLatitude(), dest.getLongitude()
-                                );
-                        walkTime = walk.getTimeMinutes();
-                    } catch (Exception ex) {
-                        walkTime = -1;  // fallback
-                    }
-
-                    bikeTimePanel.setWalkTimeText(walkTime);
-
-                    bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
-                    bikeCostPanel.updateBikeCostText();
-                    final double bikeCost = bikeCostVM.getBikeCostValue();
-
-                    final SearchRecord record = new SearchRecord(
-                            originPanel.getOriginText(),
-                            originPanel.getDestinationText(),
-                            bikeTime,
-                            bikeCost,
-                            walkTime
-                    );
-
-                    historyGateway.save(record);
-                }
+        // ----------------- CALCULATE ROUTE -----------------
+        CalculateRoutePresenter calculatePresenter = new CalculateRoutePresenter(
+                bikeTimePanel,
+                bikeTimeVM,
+                bikeCostVM,
+                () -> layout.show(root, BIKE_TIME)
         );
 
+        CalculateRouteInteractor calculateInteractor = new CalculateRouteInteractor(
+                bikeRoute,
+                walkRoute,
+                historyGateway,
+                calculatePresenter,
+                bikeTimeVM
+        );
+
+        CalculateRouteController calculateController =
+                new CalculateRouteController(calculateInteractor);
+
+        // ----------------- SELECT ROUTE LOCATIONS -----------------
+        SelectRouteLocationsPresenter selectRoutePresenter = new SelectRouteLocationsPresenter(
+                calculateController::execute
+        );
+
+        SelectRouteLocationsInteractor selectRouteInteractor =
+                new SelectRouteLocationsInteractor(selectRoutePresenter);
+        SelectRouteLocationsController selectRouteController =
+                new SelectRouteLocationsController(selectRouteInteractor);
+
+        // REMOVED: Text field update logic is now in OriginalDestinationPanel
+
+        // Wire panel to observe view model
+        originPanel.observeViewModel(originViewModel);
         // ----------------- BUTTONS -----------------
+
+
+        // ----------------- SWAP -----------------
+        originPanel.addSwapListener(e -> {
+            String origin = originPanel.getOriginText();
+            String dest = originPanel.getDestinationText();
+            originController.swapLocations(origin, dest);
+        });
+
+        // ----------------- SUGGESTION SELECTION -----------------
+        originPanel.addSuggestionSelectionListener(() -> {
+            String selected = originPanel.getSelectedSuggestionText();
+            if (selected == null || selected.isBlank()) {
+                return;
+            }
+
+            if (originPanel.getActiveField() == OriginalDestinationPanel.ActiveField.ORIGIN) {
+                originPanel.setOriginText(selected);
+                originController.selectOrigin(selected);
+            } else if (originPanel.getActiveField() == OriginalDestinationPanel.ActiveField.DESTINATION) {
+                originPanel.setDestinationText(selected);
+                originController.selectDestination(selected);
+            }
+        });
+
+
+        // ----------------- CONTINUE -----------------
+        originPanel.addContinueListener(e -> {
+            Location origin = originInteractor.getSelectedOrigin();
+            Location dest = originInteractor.getSelectedDestination();
+            selectRouteController.execute(origin, dest);
+        });
+
+
         bikeTimePanel.getCostButton().addActionListener(e -> {
             layout.show(root, BIKE_COST);
             bikeCostController.calculateCost();
@@ -283,73 +315,4 @@ public class AppBuilder {
         }
     }
 
-    /**
-     * Handles transition from the origin form to the Bike Time screen.
-     */
-    private static void handleOriginSubmit(
-            entity.Location origin,
-            entity.Location dest,
-            CardLayout layout,
-            JPanel root,
-            GetTimePanel bikeTimePanel,
-            GetBikeTimeViewModel bikeVM,
-            WalkRouteInteractor walkRoute,
-            GetBikeCostInteractor costInteractor,
-            GetBikeCostViewModel costVM,
-            SearchHistoryInputData historyGateway
-    ) {
-        layout.show(root, BIKE_TIME);
-
-        bikeTimePanel.requestBikeTime(
-                origin.getLatitude(), origin.getLongitude(),
-                dest.getLatitude(), dest.getLongitude(),
-                dest.getName()
-
-        );
-        bikeTimePanel.updateBikeTimeText();
-
-        double bikeTime = bikeVM.getBikeTimeValue();
-
-        double walkTime;
-        try {
-            final WalkRouteInteractor.WalkRouteResponse walk =
-                    walkRoute.execute(
-                            origin.getLatitude(), origin.getLongitude(),
-                            dest.getLatitude(), dest.getLongitude()
-                    );
-            walkTime = walk.getTimeMinutes();
-        } catch (Exception ex) {
-            walkTime = -1;
-        }
-
-        bikeTimePanel.setWalkTimeText(walkTime);
-
-        costInteractor.execute(new GetBikeCostInputData(bikeTime));
-
-        double bikeCost = costVM.getBikeCostValue();
-
-        historyGateway.save(
-                new SearchRecord(
-                        origin.getName(),
-                        dest.getName(),
-                        bikeTime,
-                        bikeCost,
-                        walkTime
-                )
-        );
-    }
-
-    /**
-     * Fills the compare summary view model with values.
-     */
-    private static void fillCompareSummary(
-            CompareSummaryViewModel compareVM,
-            GetBikeTimeViewModel bikeVM,
-            GetTimePanel bikeTimePanel,
-            GetBikeCostViewModel costVM
-    ) {
-        compareVM.setWalkTimeText(bikeTimePanel.getWalkTimeValue());
-        compareVM.setBikeTimeText(bikeVM.getBikeTimeValue());
-        compareVM.setBikeCostText(costVM.getBikeCostText());
-    }
 }
