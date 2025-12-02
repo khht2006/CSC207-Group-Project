@@ -4,6 +4,7 @@ import api.ApiFetcher;
 import java.io.IOException;
 import org.json.JSONObject;
 
+
 /**
  * Interactor responsible for retrieving walking route data.
  * It requests data from an API and converts it into a response object.
@@ -46,8 +47,8 @@ public class WalkRouteInteractor {
                 .getJSONObject(0)
                 .getJSONObject("summary");
 
-        double distanceKm = summary.getDouble("distance") / 1000.0;
-        double timeMinutes = summary.getDouble("duration") / 60.0;
+        double distanceKm = summary.getDouble("distance") / 1000.00;
+        double timeMinutes = summary.getDouble("duration") / 60.00;
 
         return new WalkRouteResponse(distanceKm, timeMinutes);
     }
@@ -77,7 +78,7 @@ public class WalkRouteInteractor {
          * @return the distance in km
          */
         public double getDistanceKm() {
-            return distanceKm;
+            return Math.round(distanceKm * 100.0) / 100.0;
         }
 
         /**
@@ -86,7 +87,7 @@ public class WalkRouteInteractor {
          * @return the time in minutes
          */
         public double getTimeMinutes() {
-            return timeMinutes;
+            return Math.round(timeMinutes * 100.0) / 100.0;
         }
     }
 }
