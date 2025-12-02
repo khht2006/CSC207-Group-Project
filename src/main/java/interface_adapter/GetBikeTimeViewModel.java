@@ -5,6 +5,8 @@ package interface_adapter;
  */
 public class GetBikeTimeViewModel {
     private String bikeTimeText = "Bike Time:";
+    private double cyclingTimeMinutes;
+    private double totalTimeMinutes;
 
     public String getBikeTimeText() {
         return bikeTimeText;
@@ -14,15 +16,24 @@ public class GetBikeTimeViewModel {
         this.bikeTimeText = bikeTimeText;
     }
 
-    /**
-     * Return the display text for bike time.
-     * @return the current bike time display string
-     */
-    public double getBikeTimeValue() {
-        final String num = bikeTimeText.replaceAll("[^0-9.]", "");
-        if (num.isEmpty()) {
-            return 0.0;
-        }
-        return Double.parseDouble(num);
+    public double getCyclingTimeMinutes() {
+        return cyclingTimeMinutes;
     }
+
+    public void setCyclingTimeMinutes(double cyclingTimeMinutes) {
+        this.cyclingTimeMinutes = cyclingTimeMinutes;
+    }
+
+    public double getTotalTimeMinutes() {
+        return totalTimeMinutes;
+    }
+
+    public void setTotalTimeMinutes(double totalTimeMinutes) {
+        this.totalTimeMinutes = totalTimeMinutes;
+    }
+
+    public double getBikeTimeValue() {
+        return getTotalTimeMinutes();
+    }
+
 }

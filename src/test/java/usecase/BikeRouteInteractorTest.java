@@ -29,7 +29,8 @@ class BikeRouteInteractorTest {
         CapturingPresenter presenter = new CapturingPresenter();
         BikeRouteInteractor interactor = new BikeRouteInteractor(apiFetcher, presenter);
 
-        BikeRouteInputData input = new BikeRouteInputData(43.0, -79.0, 43.1, -79.1);
+        BikeRouteInputData input = new BikeRouteInputData(43.0, -79.0, 43.1,
+                -79.1, "Destination Place");
 
         // When
         interactor.execute(input);
@@ -37,8 +38,19 @@ class BikeRouteInteractorTest {
         // Then
         Assertions.assertNotNull(presenter.captured, "Presenter should receive output");
         Assertions.assertFalse(presenter.captured.hasError(), "Output should not have error");
-        double expectedMinutes = 1200.5 / 60.0;
-        Assertions.assertEquals(expectedMinutes, presenter.captured.getDurationMinutes(), 1e-6);
+        double singleSegmentMin = 1200.5 / 60.0;
+        double expectedTotalMin = singleSegmentMin * 3;
+        Assertions.assertEquals(expectedTotalMin, presenter.captured.getTotalDurationMinutes(), 1e-6);
+        Assertions.assertEquals(singleSegmentMin, presenter.captured.getCyclingDurationMinutes(), 1e-6);
+
+        // Check instructions
+        Assertions.assertEquals("Turn left", presenter.captured.getWalkToStation().getTurnInstructions().get(0));
+
+        // Check stations
+        Assertions.assertNotNull(presenter.captured.getStartStation());
+        Assertions.assertEquals("Ft. York / Capreol Crt.", presenter.captured.getStartStation().getName());
+        // Check destination
+        Assertions.assertEquals("Destination Place", presenter.captured.getDestinationName());
     }
 
     @Test
