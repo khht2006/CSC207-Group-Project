@@ -11,18 +11,14 @@ import view.*;
 import javax.swing.*;
 import java.awt.*;
 
-
-
 /**
- * AppBuilder constructs the entire application:
+ * AppBuilder constructs the entire application using Clean Architecture:
  * - API fetcher
  * - Interactors (use cases)
  * - Presenters + view models
  * - Controllers
  * - Swing panels
  * - Navigation (CardLayout)
- *
- * Returns JFrame.
  */
 public class AppBuilder {
 
@@ -37,21 +33,20 @@ public class AppBuilder {
 
     public static JFrame build() {
 
-        // Delete history at app startup
         clearSearchHistory();
 
         ApiFetcher apiFetcher = new ApiFetcher();
         GeocodeLocationInteractor geocode = new GeocodeLocationInteractor(apiFetcher);
         SearchHistoryData historyGateway = new SearchHistoryGateway();
 
-        // Walking time use case
-        WalkRouteInteractor walkRoute = new WalkRouteInteractor(apiFetcher);
+        // Walking use case
+        WalkRouteInteractor walkRouteInteractor = new WalkRouteInteractor(apiFetcher);
 
         // Bike time use case
         GetBikeTimeViewModel bikeTimeVM = new GetBikeTimeViewModel();
         GetBikeTimePresenter bikeTimePresenter = new GetBikeTimePresenter(bikeTimeVM);
-        BikeRouteInteractor bikeRoute = new BikeRouteInteractor(apiFetcher, bikeTimePresenter);
-        GetBikeTimeController bikeTimeController = new GetBikeTimeController(bikeRoute);
+        BikeRouteInteractor bikeRouteInteractor = new BikeRouteInteractor(apiFetcher, bikeTimePresenter);
+        GetBikeTimeController bikeTimeController = new GetBikeTimeController(bikeRouteInteractor);
         GetTimePanel bikeTimePanel = new GetTimePanel(bikeTimeVM, bikeTimeController);
 
         // Bike cost use case
@@ -70,7 +65,7 @@ public class AppBuilder {
         OriginalDestinationPanel originPanel = new OriginalDestinationPanel();
         SearchHistoryPanel historyPanel = new SearchHistoryPanel();
 
-        // Search History CA use case wiring
+        // Search History use case
         SearchHistoryViewModel historyVM = new SearchHistoryViewModel();
         SearchHistoryPresenter historyPresenter = new SearchHistoryPresenter(historyVM);
         SearchHistoryInteractor historyInteractor =
@@ -87,13 +82,21 @@ public class AppBuilder {
         root.add(comparePanel, COMPARE);
         root.add(historyPanel, SEARCH_HISTORY);
 
+        // Walking output boundary to update panel
+        WalkRouteOutputBoundary walkPresenter = new WalkRouteOutputBoundary() {
+            @Override
+            public void present(WalkRouteOutputData outputData) {
+                bikeTimePanel.setWalkTimeText(outputData.timeMinutes);
+            }
+        };
+
         new OriginalDestinationController(
                 originPanel,
                 geocode,
                 (origin, dest) -> {
-
                     layout.show(root, BIKE_TIME);
 
+                    // Bike time
                     bikeTimePanel.requestBikeTime(
                             origin.getLatitude(), origin.getLongitude(),
                             dest.getLatitude(), dest.getLongitude()
@@ -101,31 +104,25 @@ public class AppBuilder {
                     bikeTimePanel.updateBikeTimeText();
                     double bikeTime = bikeTimeVM.getBikeTimeValue();
 
-                    double walkTime;
-                    try {
-                        WalkRouteInteractor.WalkRouteResponse walk =
-                                walkRoute.execute(
-                                        origin.getLatitude(), origin.getLongitude(),
-                                        dest.getLatitude(), dest.getLongitude()
-                                );
-                        walkTime = walk.getTimeMinutes();
-                    } catch (Exception ex) {
-                        walkTime = -1;
-                    }
+                    // Walking time using CA
+                    WalkRouteInputData walkInput = new WalkRouteInputData(
+                            origin.getLatitude(), origin.getLongitude(),
+                            dest.getLatitude(), dest.getLongitude()
+                    );
+                    walkRouteInteractor.execute(walkInput, walkPresenter);
 
-                    bikeTimePanel.setWalkTimeText(walkTime);
-
+                    // Bike cost
                     bikeCostInteractor.execute(new GetBikeCostInputData(bikeTime));
                     double bikeCost = bikeCostVM.getBikeCostValue();
 
+                    // Save search record
                     SearchRecord record = new SearchRecord(
                             originPanel.getOriginText(),
                             originPanel.getDestinationText(),
                             bikeTime,
                             bikeCost,
-                            walkTime
+                            bikeTimePanel.getWalkTimeValue()
                     );
-
                     historyGateway.save(record);
                 }
         );
@@ -149,7 +146,6 @@ public class AppBuilder {
         bikeCostPanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_TIME));
         comparePanel.getBackButton().addActionListener(e -> layout.show(root, BIKE_COST));
 
-        // Search History button
         originPanel.getViewHistoryButton().addActionListener(e -> {
             historyController.execute();
             var records = historyVM.getHistory();
