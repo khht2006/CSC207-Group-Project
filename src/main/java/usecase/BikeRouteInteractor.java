@@ -14,13 +14,24 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Interactor that handles cycling route duration retrieval and
+ * sends the results to the output boundary.
+ */
 public class BikeRouteInteractor implements BikeRouteInputBoundary {
 
     private final ApiFetcher apiFetcher;
     private final BikeRouteOutputBoundary presenter;
 
-    public BikeRouteInteractor(ApiFetcher apiFetcher,
-                               BikeRouteOutputBoundary presenter) {
+    /**
+     * Constructs a BikeRouteInteractor with required dependencies.
+     *
+     * @param apiFetcher API fetcher used to request cycling directions
+     * @param presenter output boundary for presenting results
+     */
+    public BikeRouteInteractor(
+            ApiFetcher apiFetcher,
+            BikeRouteOutputBoundary presenter) {
         this.apiFetcher = apiFetcher;
         this.presenter = presenter;
     }

@@ -10,6 +10,7 @@ public class Location {
     private final double longitude;
 
     /**
+     * An entity representing a location with a name and latitude/longitude coordinates.
      * @param name      human-readable label (e.g. "Toronto City Hall")
      * @param latitude  latitude in decimal degrees
      * @param longitude longitude in decimal degrees
@@ -26,6 +27,7 @@ public class Location {
 
     /**
      * Returns (lat, lon) in that order.
+     * @return (lat, lon)
      */
     public double[] getCoordinates() {
         return new double[]{latitude, longitude};

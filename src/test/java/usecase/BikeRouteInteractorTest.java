@@ -85,6 +85,22 @@ class BikeRouteInteractorTest {
         }
     }
 
+    private static class IOExceptionApiFetcher extends ApiFetcher {
+        @Override
+        public String fetchCyclingDirectionsJson(double startLon, double startLat,
+                                                 double endLon, double endLat) throws java.io.IOException {
+            throw new java.io.IOException("Simulated IO failure");
+        }
+    }
+
+    private static class InterruptedApiFetcher extends ApiFetcher {
+        @Override
+        public String fetchCyclingDirectionsJson(double startLon, double startLat,
+                                                 double endLon, double endLat) throws InterruptedException {
+            throw new InterruptedException("Simulated interrupt");
+        }
+    }
+
     private static class CapturingPresenter implements BikeRouteOutputBoundary {
         BikeRouteOutputData captured;
 

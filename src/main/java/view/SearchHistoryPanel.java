@@ -1,25 +1,29 @@
 package view;
 
-import usecase.search_history.SearchRecord;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import javax.swing.*;
+
+import entity.SearchRecord;
 
 /**
- * A panel that displays saved search history records.
+ * Panel for displaying previously saved search history records.
  */
 public class SearchHistoryPanel extends JPanel {
 
     private final JTextArea area;
     private final JButton backButton;
 
+    /**
+     * Creates a new {@code SearchHistoryPanel}.
+     */
     public SearchHistoryPanel() {
         setLayout(new BorderLayout());
 
-        JLabel title = new JLabel("Search History", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 18));
+        final JLabel title = new JLabel("Search History", SwingConstants.CENTER);
+        final int titleFontSize = 18;
+        title.setFont(new Font("SansSerif", Font.BOLD, titleFontSize));
 
         area = new JTextArea();
         area.setEditable(false);
@@ -31,20 +35,26 @@ public class SearchHistoryPanel extends JPanel {
         add(backButton, BorderLayout.SOUTH);
     }
 
-    /** Shows a message when no history exists. */
+    /**
+     * Displays a message indicating that no history is available.
+     */
     public void setNoHistoryMessage() {
         area.setText("No history yet.");
     }
 
-    /** Displays all saved search history records in a formatted list. */
+    /**
+     * Displays all saved search history records in a formatted list.
+     *
+     * @param records the list of records to show
+     */
     public void setHistory(List<SearchRecord> records) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         for (SearchRecord r : records) {
 
-            String walk = String.format("%.1f", r.getWalkTime());
-            String bike = String.format("%.1f", r.getBikeTime());
-            String cost = String.format("%.2f", r.getBikeCost());
+            final String walk = String.format("%.1f", r.getWalkTime());
+            final String bike = String.format("%.1f", r.getBikeTime());
+            final String cost = String.format("%.2f", r.getBikeCost());
 
             sb.append(r.getOrigin())
                     .append(" → ")
@@ -60,7 +70,11 @@ public class SearchHistoryPanel extends JPanel {
         area.setText(sb.toString());
     }
 
-
+    /**
+     * Returns the back button for navigation.
+     *
+     * @return the back button
+     */
     public JButton getBackButton() {
         return backButton;
     }

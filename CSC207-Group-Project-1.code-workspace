@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"java.project.sourcePaths": [
+			"src/main/java",
+			"src/main"
+		],
+		"java.dependency.packagePresentation": "flat"
+	}
+}

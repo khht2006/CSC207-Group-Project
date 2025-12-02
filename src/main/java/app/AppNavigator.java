@@ -5,7 +5,6 @@ import java.awt.*;
 
 /**
  * The helper class for switching views inside a CardLayout.
- *
  * The application stores panels inside a parent container "root",
  * and AppNavigator provides clean methods to show each screen.
  */
@@ -14,34 +13,39 @@ public class AppNavigator {
     private final JPanel root;
     private final CardLayout layout;
 
+    /**
+     * Creates a new navigator.
+     *
+     * @param root   root panel that holds all screens
+     * @param layout card layout managing the screens
+     */
     public AppNavigator(JPanel root, CardLayout layout) {
         this.root = root;
         this.layout = layout;
     }
 
-    /** Show the origin/destination entry screen. */
+    /** Switches to the origin screen. */
     public void showOrigin() {
-        layout.show(root, "origin");
+        layout.show(root, AppBuilder.ORIGIN);
     }
 
-    /** Show the bike time result screen. */
+    /** Switches to the bike time screen. */
     public void showBikeTime() {
-        layout.show(root, "bikeTime");
+        layout.show(root, AppBuilder.BIKE_TIME);
     }
 
-    /** Show the bike cost screen (for future use). */
+    /** Switches to the bike cost screen. */
     public void showBikeCost() {
-        layout.show(root, "bikeCost");
+        layout.show(root, AppBuilder.BIKE_COST);
     }
 
-    /**Show the search history screen.
-     */
+    /** Switches to the search history screen. */
     public void showSearchHistory() {
-        layout.show(root, "searchHistory");
+        layout.show(root, AppBuilder.SEARCH_HISTORY);
     }
 
-    /** Show the comparison summary screen (for future use). */
+    /** Switches to the comparison summary screen. */
     public void showCompareSummary() {
-        layout.show(root, "compare");
+        layout.show(root, AppBuilder.COMPARE);
     }
 }

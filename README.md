@@ -32,14 +32,15 @@ of our program.
 | Show Bike Travel Fare and GUI | Celine         |
 | Show Walking Summary          | Kyle           |
 | Compare Time and Cost and GUI | Kristen        |
+| Show Search History           | Celine         |
 
 # About Us
 
 We are the group "Grapes".
 
 Group Members:
-- Nahyun Ahn (https://github.com/janiceahn1109)
-- Siyi Chen (https://github.com/celinec41)
+- Nahyun (Janice) Ahn (https://github.com/janiceahn1109)
+- Siyi (Celine) Chen (https://github.com/celinec41)
 - Bo Kai Hu (https://github.com/khht2006)
 - Kalan Zachary Subieta (https://github.com/KalSub)
 - Kristen KY Wong (https://github.com/Phioniee)
