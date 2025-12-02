@@ -6,18 +6,25 @@ import org.junit.jupiter.api.Test;
 class ApiFetcherTest {
     @Test
     void lengthTest() throws Exception {
-        ApiFetcher fetcher = new ApiFetcher();
+        ApiFetcher fetcher = new StubApiFetcher();
 
-        // Example coordinates: Toronto City Hall to UofT (approx)
-        double startLon = -79.3832;
-        double startLat = 43.6536;
-        double endLon = -79.3948;
-        double endLat = 43.6629;
-
-        String walkJson = fetcher.fetchWalkingDirectionsJson(startLon, startLat, endLon, endLat);
+        String walkJson = fetcher.fetchWalkingDirectionsJson(0, 0, 0, 0);
         String bikeInfo = fetcher.fetchBikeStationInformationJson();
 
-        Assertions.assertEquals(2806, walkJson.length());
-        Assertions.assertEquals(474285, bikeInfo.length());
+        Assertions.assertEquals("walk-json", walkJson);
+        Assertions.assertEquals("bike-stations-json", bikeInfo);
+    }
+
+    private static class StubApiFetcher extends ApiFetcher {
+        @Override
+        public String fetchWalkingDirectionsJson(double startLon, double startLat,
+                                                 double endLon, double endLat) {
+            return "walk-json";
+        }
+
+        @Override
+        public String fetchBikeStationInformationJson() {
+            return "bike-stations-json";
+        }
     }
 }

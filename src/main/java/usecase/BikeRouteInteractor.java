@@ -84,14 +84,26 @@ public class BikeRouteInteractor implements BikeRouteInputBoundary {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             presenter.present(new BikeRouteOutputData("Directions request interrupted."));
-        } catch (IllegalStateException e) {
-            presenter.present(new BikeRouteOutputData(e.getMessage()));
+        } catch (IllegalStateException | org.json.JSONException e) {
+            presenter.present(new BikeRouteOutputData("Malformed directions response: " + e.getMessage()));
         }
     }
 
     private Route parseRoute(String jsonString) {
         JSONObject responseJson = new JSONObject(jsonString);
-        JSONObject routeJson = responseJson.getJSONArray("routes").getJSONObject(0);
+
+        // ORS can return either "routes" (v2) or GeoJSON "features".
+        JSONObject routeJson;
+        if (responseJson.has("routes")) {
+            routeJson = responseJson.getJSONArray("routes").getJSONObject(0);
+        } else if (responseJson.has("features")) {
+            routeJson = responseJson.getJSONArray("features")
+                    .getJSONObject(0)
+                    .getJSONObject("properties");
+        } else {
+            throw new IllegalStateException("No routes found in response.");
+        }
+
         JSONObject summary = routeJson.getJSONObject("summary");
 
         double distanceMeters = summary.getDouble("distance");
@@ -146,4 +158,3 @@ public class BikeRouteInteractor implements BikeRouteInputBoundary {
         return R * c * 1000; // meters
     }
 }
-
