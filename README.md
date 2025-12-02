@@ -33,6 +33,7 @@ of our program.
 | Show Walking Summary          | Kyle           |
 | Compare Time and Cost and GUI | Kristen        |
 | Show Search History           | Celine         |
+| Delete Search History         | Janice         |
 
 # About Us
 
